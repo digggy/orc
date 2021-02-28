@@ -1,6 +1,6 @@
 build
 .vscode
-cmake-build-debug
+cmake-build-debug-openwrt
 .pytest_cache
 .env
 scratch

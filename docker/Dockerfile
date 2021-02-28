@@ -1,4 +1,4 @@
-FROM openwrtorg/sdk:x86-64-18.06.4
+FROM openwrtorg/sdk:x86-64-19.07.7
 
 RUN ./scripts/feeds update && make defconfig && \
     ./scripts/feeds install libuci && \

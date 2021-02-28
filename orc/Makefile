@@ -6,6 +6,7 @@ PKG_RELEASE:=1
 
 PKG_MAINTAINER:=Malte Granderath <malte.granderath@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
+TARGET_CFLAGS += -ggdb3
 
 SOURCE_DIR:=/restconf
 
