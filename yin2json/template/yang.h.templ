@@ -5,11 +5,10 @@
 #include <json-c/json.h>
 #include <string.h>
 
-struct map_str2str{
+typedef struct map_str2str{
   char *key;
   char *str;
-};
-typedef struct map_str2str map_str2str;
+} map_str2str;
 
 static const map_str2str modulemap[] = {
     % for index, (name, content) in enumerate(modules):
@@ -31,7 +30,7 @@ static const map_str2str yang2regex[] = {
     % endfor
 };
 
-enum yang_type {
+typedef enum yang_type {
   NONE,
   BINARY,
   BITS,
@@ -52,8 +51,7 @@ enum yang_type {
   UINT_32,
   UINT_64,
   UNION
-};
-typedef enum yang_type yang_type;
+} yang_type;
 
 struct map_str2yang_type {
   char* str;

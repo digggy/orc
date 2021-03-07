@@ -6,7 +6,9 @@ import xmltodict
 from mako.lookup import TemplateLookup
 from mako.template import Template
 
+# Get the current directory for this file
 dirname = os.path.dirname(os.path.realpath(__file__))
+# Template Lookup
 mylookup = TemplateLookup(directories=[os.path.join(dirname, "./template")])
 header_file = Template(filename=os.path.join(dirname, "./template/yang.h.templ"), lookup=mylookup)
 
@@ -224,9 +226,11 @@ def main():
 
     modules = []
 
+    # Input yin files
     for file in args.file:
         with open(file) as yin:
             data = yin.read()
+            # converting the yin data to json format
             js = convert_yin_to_json(data)
             imported = Imported()
             js = convert(js, imported)

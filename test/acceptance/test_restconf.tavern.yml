@@ -191,7 +191,7 @@ stages:
         content-type: application/yang-data+json
         accept: application/yang-data+json
       json:
-        !include POST/new-item.yaml
+        !include POST/new-student.yaml
     response:
       status_code: 201
       headers:
@@ -227,7 +227,7 @@ stages:
         content-type: application/yang-data+json
         accept: application/yang-data+json
       json:
-        !include POST/new-item.yaml
+        !include POST/new-student.yaml
     response:
       status_code: 201
   - name: update key
