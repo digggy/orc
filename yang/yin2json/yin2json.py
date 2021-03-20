@@ -9,8 +9,8 @@ from mako.template import Template
 # Get the current directory for this file
 dirname = os.path.dirname(os.path.realpath(__file__))
 # Template Lookup
-mylookup = TemplateLookup(directories=[os.path.join(dirname, "./template")])
-header_file = Template(filename=os.path.join(dirname, "./template/yang.h.templ"), lookup=mylookup)
+mylookup = TemplateLookup(directories=[os.path.join(dirname, "template")])
+header_file = Template(filename=os.path.join(dirname, "template/yang.h.templ"), lookup=mylookup)
 
 types = {}
 ALLOWED_TYPES = {
