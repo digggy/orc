@@ -1,5 +1,10 @@
 #!/bin/bash
 
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+
+# cd to the directory of the bash script and get the files in relative location
+cd "$parent_path"
+
 declare -a f_array=("ietf-yang-types" "ietf-interfaces" "ietf-inet-types" "openwrt-network" "openwrt-system" "openwrt-uci-extension" "restconf-example")
 
 # converting the yang files to yin format
