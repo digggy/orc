@@ -36,9 +36,11 @@ An example of an annotated module is `/yang/restconf-example.yang`
 ## Building
 
 1. Clone this repository
-2. `Docker pull mgranderath/openwrt-build`
-3. `docker run -v $(pwd):/restconf mgranderath/openwrt-build`
-4. The generated `.ipk` will be in the `build` folder
+2. `cd docker`
+3. `docker build -t digggy/orc-sdk:1.0 .`
+2. `cd ..`
+4. `docker run -v $(pwd):/restconf mgranderath/openwrt-build`
+5. The generated `.ipk` will be in the `build` folder
 
 ## Architecture
 
