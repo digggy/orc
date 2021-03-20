@@ -26,12 +26,13 @@ An example of an annotated module is `/yang/restconf-example.yang`
    ```console
    pyang -f yin ./yang/restconf-example.yang -p ./yang -o ./yin/restconf-example.yin 
    ```
-2. Run the `main.py` script
+2. Run the `yin2json.py` script
    ```console
-   python3 ./yin2json/yin2json.py -y ./yin -o ./generated ./yin/restconf-example.yin ...
+   python3 ./yin2json/yin2json.py -y ./yin -o ./generated-for-openwrt ./yin/restconf-example.yin ...
    ```
-   This converts the YIN files and generates a `.h` file in `./generated` that has to be included in `/src/generated/yang.h`
-
+   This converts the YIN files and generates a `.h` file in `./generated-for-openwrt` that has to be included in `/src/generated/yang.h`
+   
+   A script file ``yang2json.sh`` is also provided for automation of conversion directly from yang to the `yang.h` header file.
 ## Building
 
 1. Clone this repository
