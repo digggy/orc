@@ -357,8 +357,8 @@ int data_get(struct CgiContext *cgi, char **pathvec) {
   }
 
   struct UciPath uci = INIT_UCI_PATH();
-
   module = yang_module_exists(module_name);
+  // module variable has the json_object of the module if it exists
   if (!module) {
     retval = restconf_unknown_namespace();
     goto done;

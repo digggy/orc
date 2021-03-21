@@ -75,6 +75,7 @@ int get_path_from_yang(struct json_object *jobj, struct UciPath *uci) {
   char *uci_section = NULL;
   char *uci_option = NULL;
   char *uci_section_type = NULL;
+
   json_object_object_get_ex(jobj, YANG_UCI_PACKAGE, &uci_value);
   if (json_object_get_type(uci_value) == json_type_string) {
     uci_package = (char *)json_object_get_string(uci_value);
