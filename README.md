@@ -3,6 +3,13 @@
 This is a prototype implementation of RESTCONF for the OpenWrt system that utilizes the UCI configuration files as a
 datastore.
 
+## Dev Environment Setup
+The steps to setup the development environment can be quite hectic.
+The following resources can help in development environment setup.
+[OpenWrt/LEDE Quick Start](https://digggy.medium.com/openwrt-quick-start-493e08ed73f)
+
+[UCI setup outside OpenWrt](https://openwrt.org/docs/techref/uci#usage_outside_of_openwrt)
+
 ## Requirements
 
 1. Python 3 for the YANG conversion script
