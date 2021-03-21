@@ -1,0 +1,64 @@
+module openwrt-operations {
+  namespace "urn:jacobs:yang:openwrt-operations";
+  prefix "oo";
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  import openwrt-uci-extension {
+    prefix uci;
+  }
+
+  contact "Digdarshan Kunwar <d.kunwar@jacobs-university.de>";
+    revision 2021-03-20 {
+      description "Inital set of operations";
+  }
+
+  grouping openwrt-operations-output {
+    description
+      "Used to return output from RPCs";
+    leaf result {
+      type string;
+      description
+        "Output returned by the network element";
+    }
+  }
+
+  rpc copy {
+    description
+      "Copy from one file to another";
+    
+    input {
+      leaf _source {
+        mandatory true;
+        type string;
+      }
+      leaf _destination {
+        mandatory true;
+        type string;
+      }
+    }
+    
+    output {
+      uses openwrt-operations-output;
+    }
+  }
+
+  rpc delete {
+    description
+      "Delete a file";
+  
+    input {
+      leaf _filename {
+        mandatory true;
+        type string;
+      }
+    }
+    
+    output {
+      uses cisco-xe-rpc-output;
+    }
+  }
+
+}

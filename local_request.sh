@@ -7,7 +7,7 @@ cd "$parent_path"
 REQUEST_METHOD=GET
 CONTENT_TYPE=application/yang-data+json
 HTTP_ACCEPT=application/yang-data+json
-REQUEST_URI=/cgi-bin/restconf
+REQUEST_URI=/cgi-bin/restconf/data/restconf-example:course
 CONTENT_LENGTH=0
 
 echo "
