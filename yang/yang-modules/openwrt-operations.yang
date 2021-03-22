@@ -57,7 +57,7 @@ module openwrt-operations {
     }
     
     output {
-      uses cisco-xe-rpc-output;
+      uses openwrt-operations-output;
     }
   }
 

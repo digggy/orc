@@ -382,6 +382,8 @@ int data_get(struct CgiContext *cgi, char **pathvec) {
   }
   err = RE_OK;
   yang_tree = build_recursive(top_level, &uci, &err, 1);
+
+  printf("JSON \n\n%s\n\n", json_object_to_json_string_ext(yang_tree, JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
   if (!yang_tree && err != RE_OK) {
     retval = print_error(err);
     goto done;
