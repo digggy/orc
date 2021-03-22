@@ -10,7 +10,7 @@ module openwrt-operations {
     prefix uci;
   }
 
-  contact "Digdarshan Kunwar <d.kunwar@jacobs-university.de>";
+  contact "username <username@jacobs-university.de>";
     revision 2021-03-20 {
       description "Inital set of operations";
   }
