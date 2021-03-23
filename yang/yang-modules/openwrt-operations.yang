@@ -15,6 +15,13 @@ module openwrt-operations {
       description "Inital set of operations";
   }
 
+   typedef percent {
+           type uint8 {
+               range "0 .. 100";
+           }
+           description "Percentage";
+   }
+
   grouping openwrt-operations-output {
     description
       "Used to return output from RPCs";
@@ -61,4 +68,105 @@ module openwrt-operations {
     }
   }
 
+  rpc ping {
+    description
+        "send ICMP ECHO_REQUEST to network hosts";
+    input {
+        leaf interval {
+            description
+                "Wait interval seconds between sending each packet";
+            type int64;
+            default 1;
+        }
+        leaf count {
+            description
+                "Stop after sending count ECHO_REQUEST packets.";
+            type int64;
+            default 4;
+        }
+        leaf quiet {
+            type boolean;
+            default "true";
+        }
+    }
+    output {
+        container result {
+
+            container summary {
+                leaf packets_transmitted {
+                    type int64;
+                }
+                leaf packets_received {
+                    type int64;
+                }
+                leaf packets_lost {
+                    type percent;
+                }
+                leaf time {
+                    type decimal64 {
+                         fraction-digits 2;
+                    }
+                }
+            }
+
+            container statistics {
+                leaf min {
+                    type decimal64 {
+                         fraction-digits 2;
+                    }
+                }
+                leaf avg {
+                    type decimal64 {
+                         fraction-digits 2;
+                    }
+                }
+                leaf max {
+                    type decimal64 {
+                         fraction-digits 2;
+                    }
+                }
+                leaf mdev {
+                    type decimal64 {
+                         fraction-digits 2;
+                    }
+                }
+            }
+
+            list icmp_sequences {
+              key "id";
+
+              leaf id {
+                description "packet id";
+                type uint8;
+              }
+
+              leaf bytes {
+                type uint8;
+              }
+
+              leaf target {
+                type string;
+              }
+
+              leaf target_ip {
+                type string;
+              }
+
+              leaf icmp_seq {
+                type uint8;
+              }
+
+              leaf ttl {
+                type uint8;
+              }
+
+              leaf time_taken {
+                type decimal64 {
+                    fraction-digits 2;
+                }
+              }
+            }
+        }
+    }
+  }
 }
