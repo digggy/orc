@@ -77,7 +77,7 @@ done:
  * @brief the operations root
  * @param cgi the cgi context
  */
-static int operations_root(struct CgiContext *cgi) {
+static int operations_root(struct CgiContext *cgi, char **pathvec) {
   content_type_json();
   headers_end();
 
@@ -141,7 +141,7 @@ int main(void) {
   if (strcmp(vec[0], "data") == 0) {
     retval = data_root(ctx, vec);
   } else if (strcmp(vec[0], "operations") == 0) {
-    retval = operations_root(ctx);
+    retval = operations_root(ctx, vec);
   } else if (strcmp(vec[0], "yang-library-version") == 0) {
     retval = yang_library_version(ctx);
   } else {
