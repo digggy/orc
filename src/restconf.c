@@ -38,11 +38,12 @@ static int api_root(struct CgiContext *cgi) {
 static int data_root(struct CgiContext *cgi, char **pathvec) {
   int retval = 1;
 
+  // Handle the endpoint data/
   if (vector_size(pathvec) <= 1) {
     // root
     if (is_OPTIONS(cgi->method)) {
       content_type_json();
-      printf("Allow: OPTIONS,HEAD,GET,POST,PUT,DELETE\n");
+      allowed_methods(pathvec);
       headers_end();
       goto done;
     } else if (is_HEAD(cgi->method) || is_GET(cgi->method)) {
@@ -57,6 +58,7 @@ static int data_root(struct CgiContext *cgi, char **pathvec) {
     goto done;
   }
 
+// Handle the endpoints after data/....
   if (is_GET(cgi->method)) {
     retval = data_get(cgi, pathvec);
   } else if (is_POST(cgi->method)) {
@@ -65,7 +67,11 @@ static int data_root(struct CgiContext *cgi, char **pathvec) {
     retval = data_delete(cgi, pathvec, 0);
   } else if (is_PUT(cgi->method)) {
     retval = data_put(cgi, pathvec, 0);
-  } else {
+  } else if (is_OPTIONS(cgi->method)) {
+    content_type_json();
+    allowed_methods(pathvec);
+    headers_end();
+  }else {
     retval = not_found(cgi);
   }
 
@@ -78,11 +84,29 @@ done:
  * @param cgi the cgi context
  */
 static int operations_root(struct CgiContext *cgi, char **pathvec) {
-  content_type_json();
-  headers_end();
+  int retval = 1;
 
-  printf("Operations root\n");
-  return 0;
+  // Handle the endpoint restconf/opearations/
+  if (vector_size(pathvec) <= 1) {
+    // root
+    if (is_OPTIONS(cgi->method)) {
+      content_type_json();
+      allowed_methods(pathvec);
+      headers_end();
+      goto done;
+    } else if (is_HEAD(cgi->method)) {
+      //TODO
+      retval = not_implemented(cgi);
+    } else if (is_GET(cgi->method)) {
+      //TODO
+      retval = not_implemented(cgi);
+    } else if (is_PUT(cgi->method) || is_POST(cgi->method)) {
+      retval = method_not_allowed(cgi);
+    }
+    goto done;
+  }
+  done:
+  return retval;
 }
 
 /**

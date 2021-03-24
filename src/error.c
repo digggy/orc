@@ -150,14 +150,6 @@ int restconf_unknown_element() {
   restconf_error("unknown-element");
   return 0;
 }
-/**
- * Method Not Allowed - method not allowed on the resource
- */
-int restconf_method_not_allowed() {
-  printf("Status: 405 Method Not Allowed\r\n");
-  content_type_json();
-  headers_end();
-  return 0; }
 
 /**
  * @brief print RESTCONF JSON error message depending on error

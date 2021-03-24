@@ -10,9 +10,12 @@ int forbidden(struct CgiContext *ctx);
 int not_acceptable(struct CgiContext *ctx);
 int internal_server_error(struct CgiContext *ctx);
 int not_implemented(struct CgiContext *ctx);
+int method_not_allowed(struct CgiContext *ctx);
 
 void content_type_json();
 void headers_end();
+void accept_patch();
+void allowed_methods(char** pathvec);
 
 char **path2vec(char *path, char *identifier);
 

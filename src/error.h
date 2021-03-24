@@ -30,7 +30,6 @@ int restconf_missing_element();
 int restconf_partial_operation();
 int restconf_operation_failed();
 int restconf_operation_failed_internal();
-int restconf_method_not_allowed();
 int restconf_unknown_element();
 
 int print_error(error err);

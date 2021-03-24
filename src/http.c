@@ -123,26 +123,47 @@ void content_type_json() {
  */
 void headers_end() { printf("\n\n"); }
 
-int is_OPTIONS(const char* method) {
-  return strcmp(method, "OPTIONS") == 0;
+/**
+ * The "Accept-Patch" header field MUST be supported and returned in the
+   response to the OPTIONS request
+ */
+void accept_patch() {
+  printf("Accept-Patch: application/yang-data+json;charset=utf-8;\n");
+};
+
+/**
+ * Allowed methods for the resource
+ */
+void allowed_methods(char **pathvec) {
+  // ToDo check the allowed operations on the resource
+  if (strcmp(pathvec[0], "data") == 0) {
+    printf("Allow: DELETE, GET, HEAD, PATCH, POST, PUT, OPTIONS");
+  } else if (!strcmp(pathvec[0], "operation") == 0) {
+    printf("Allow: OPTIONS, GET, HEAD");
+  }
+
+  // ToDo check for operations under operation resource
+  // POST and OPTION
+};
+
+/**
+ * Method Not Allowed - method not allowed on the resource
+ */
+int method_not_allowed(struct CgiContext *ctx) {
+  printf("Status: 405 Method Not Allowed\r\n");
+  content_type_json();
+  headers_end();
+  return 0;
 }
 
-int is_GET(const char* method) {
-  return strcmp(method, "GET") == 0;
-}
+int is_OPTIONS(const char *method) { return strcmp(method, "OPTIONS") == 0; }
 
-int is_HEAD(const char* method) {
-  return strcmp(method, "HEAD") == 0;
-}
+int is_GET(const char *method) { return strcmp(method, "GET") == 0; }
 
-int is_POST(const char* method) {
-  return strcmp(method, "POST") == 0;
-}
+int is_HEAD(const char *method) { return strcmp(method, "HEAD") == 0; }
 
-int is_DELETE(const char* method) {
-  return strcmp(method, "DELETE") == 0;
-}
+int is_POST(const char *method) { return strcmp(method, "POST") == 0; }
 
-int is_PUT(const char* method) {
-  return strcmp(method, "PUT") == 0;
-}
+int is_DELETE(const char *method) { return strcmp(method, "DELETE") == 0; }
+
+int is_PUT(const char *method) { return strcmp(method, "PUT") == 0; }
