@@ -136,10 +136,15 @@ void accept_patch() {
  */
 void allowed_methods(char **pathvec) {
   // ToDo check the allowed operations on the resource
+  accept_patch();
   if (strcmp(pathvec[0], "data") == 0) {
     printf("Allow: DELETE, GET, HEAD, PATCH, POST, PUT, OPTIONS");
   } else if (!strcmp(pathvec[0], "operation") == 0) {
-    printf("Allow: OPTIONS, GET, HEAD");
+    if (vector_size(pathvec) <= 1) {
+      printf("Allow: OPTIONS, GET, HEAD");
+    } else {
+      printf("Allow: OPTIONS, POST");
+    }
   }
 
   // ToDo check for operations under operation resource
