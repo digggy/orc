@@ -58,7 +58,7 @@ static int data_root(struct CgiContext *cgi, char **pathvec) {
     goto done;
   }
 
-// Handle the endpoints after data/....
+  // Handle the endpoints after data/....
   if (is_GET(cgi->method)) {
     retval = data_get(cgi, pathvec);
   } else if (is_POST(cgi->method)) {
@@ -71,7 +71,7 @@ static int data_root(struct CgiContext *cgi, char **pathvec) {
     content_type_json();
     allowed_methods(pathvec);
     headers_end();
-  }else {
+  } else {
     retval = not_found(cgi);
   }
 
@@ -95,17 +95,31 @@ static int operations_root(struct CgiContext *cgi, char **pathvec) {
       headers_end();
       goto done;
     } else if (is_HEAD(cgi->method)) {
-      //TODO
+      // TODO
       retval = not_implemented(cgi);
     } else if (is_GET(cgi->method)) {
-      //TODO
+      // TODO
       retval = not_implemented(cgi);
     } else if (is_PUT(cgi->method) || is_POST(cgi->method)) {
       retval = method_not_allowed(cgi);
     }
     goto done;
   }
-  done:
+  // Handle the endpoint after restconf/opearations/
+  if (is_GET(cgi->method) || is_DELETE(cgi->method) || is_PUT(cgi->method) ||
+      is_HEAD(cgi->method)) {
+    retval = method_not_allowed(cgi);
+  } else if (is_OPTIONS(cgi->method)) {
+    content_type_json();
+    allowed_methods(pathvec);
+    headers_end();
+  } else if (is_POST(cgi->method)) {
+    //TODO
+
+  } else {
+    retval = not_found(cgi);
+  }
+done:
   return retval;
 }
 
