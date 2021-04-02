@@ -222,11 +222,15 @@ def handle_typedef(typedefs):
 
 def process_node(generated, key, value, imported, groupings):
     if isinstance(value, dict):
-        inner_key = value["@name"]
+        if(key not in ["input", "output"]):
+            inner_key = value["@name"]
+        else:
+            inner_key = key
         if "mandatory" in value and value["mandatory"]["@value"] == "true":
             if not ("mandatory" in generated):
                 generated["mandatory"] = []
             generated["mandatory"].append(inner_key)
+        # TODO check why do we append to the list as we already process mandatory in convert fcn
         generated["map"][inner_key] = convert(value, imported, groupings, key)
     elif isinstance(value, list):
         for inner_value in value:
@@ -290,7 +294,7 @@ def convert(level, imported, groupings, object_type=None):
         if key == "unique":
             to_be_split = value["@value"]
             generated["unique"] = to_be_split.split()
-        if key in ["container", "leaf", "leaf-list", "list"]:
+        if key in ["container", "leaf", "leaf-list", "list", "rpc","input","output"]:
             process_node(generated, key, value, imported, groupings)
         if key == "uses":
             extract_uses(generated, value, imported, groupings)

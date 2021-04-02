@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="restconf-example"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:ex="http://example.org/example-last-modified"
+        xmlns:uci="urn:jacobs:yang:openwrt-uci">
+  <namespace uri="http://example.org/example-last-modified"/>
+  <prefix value="ex"/>
+  <import module="openwrt-uci-extension">
+    <prefix value="uci"/>
+  </import>
+  <typedef name="grade">
+    <type name="uint8">
+      <range value="0..100"/>
+    </type>
+  </typedef>
+  <typedef name="email">
+    <type name="string">
+      <pattern value="[A-Za-z0-9]*@university.de"/>
+    </type>
+  </typedef>
+  <container name="course">
+    <leaf name="name">
+      <type name="string"/>
+      <description>
+        <text>name of the course</text>
+      </description>
+    </leaf>
+    <leaf-list name="instructors">
+      <type name="string"/>
+      <description>
+        <text>list of names of instructors</text>
+      </description>
+    </leaf-list>
+    <leaf name="semester">
+      <type name="uint8">
+        <range value="1..6"/>
+      </type>
+    </leaf>
+    <list name="students">
+      <key value="firstname lastname age"/>
+      <leaf name="firstname">
+        <type name="string"/>
+      </leaf>
+      <leaf name="lastname">
+        <type name="string"/>
+      </leaf>
+      <leaf name="age">
+        <type name="uint8">
+          <range value="0..120"/>
+        </type>
+      </leaf>
+      <leaf name="major">
+        <type name="string">
+          <pattern value="(CS|IMS)"/>
+        </type>
+      </leaf>
+      <leaf name="grade">
+        <type name="grade"/>
+      </leaf>
+    </list>
+    <container name="instructor">
+      <leaf name="name">
+        <type name="string"/>
+      </leaf>
+      <leaf name="email">
+        <type name="email"/>
+      </leaf>
+    </container>
+  </container>
+</module>
