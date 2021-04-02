@@ -219,22 +219,23 @@ def handle_typedef(typedefs):
         for item in typedefs:
             handle_typedef(item)
 
-
 def process_node(generated, key, value, imported, groupings):
     if isinstance(value, dict):
         if(key not in ["input", "output"]):
             inner_key = value["@name"]
+            if "mandatory" in value and value["mandatory"]["@value"] == "true":
+                if not ("mandatory" in generated):
+                    generated["mandatory"] = []
+                generated["mandatory"].append(inner_key)
+                print("generated :{}\n".format(generated))
+            # TODO check why do we append to the list as we already process mandatory in convert fcn
+            generated["map"][inner_key] = convert(value, imported, groupings, key)
         else:
             inner_key = key
-        if "mandatory" in value and value["mandatory"]["@value"] == "true":
-            if not ("mandatory" in generated):
-                generated["mandatory"] = []
-            generated["mandatory"].append(inner_key)
-        # TODO check why do we append to the list as we already process mandatory in convert fcn
-        generated["map"][inner_key] = convert(value, imported, groupings, key)
+            generated["map"][inner_key] = convert(value, imported, groupings)
     elif isinstance(value, list):
         for inner_value in value:
-            process_node(generated, key, inner_value, imported, groupings)
+            process_node(generated, key, inner_value, imported, groupings)            
 
 def handle_grouping(value, imported, groupings):
     if isinstance(value, dict):
