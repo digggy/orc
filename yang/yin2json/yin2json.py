@@ -280,7 +280,9 @@ def convert(level, imported, groupings, object_type=None):
             handle_typedef(changed_level["typedef"])
     if object_type is not None:
         generated["type"] = object_type
-    generated["map"] = {}
+    # TODO remove the maps if the objet_type is a leaf or leaf-list
+    if(object_type not in ["leaf", "leaf-list"]):
+        generated["map"] = {}
     for key, value in changed_level.items():
         extract_uci_statements(generated, key, value, imported)
         if key == "grouping":
