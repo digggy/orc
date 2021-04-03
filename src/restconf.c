@@ -115,7 +115,7 @@ static int operations_root(struct CgiContext *cgi, char **pathvec) {
     headers_end();
   } else if (is_POST(cgi->method)) {
     //TODO
-
+    retval = invoke_operation(cgi, pathvec);
   } else {
     retval = not_found(cgi);
   }

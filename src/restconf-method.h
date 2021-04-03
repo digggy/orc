@@ -17,6 +17,8 @@ int data_post(struct CgiContext* cgi, char** pathvec, int root);
 int data_delete(struct CgiContext* cgi, char** pathvec, int root);
 int data_put(struct CgiContext* cgi, char** pathvec, int root);
 
+int invoke_operation(struct CgiContext *cgi, char **pathvec);
+
 struct json_object* build_recursive(struct json_object* jobj,
                                     struct UciPath* path, error* err, int root);
 struct UciPath* extract_paths(struct json_object* node, struct UciPath* uci,

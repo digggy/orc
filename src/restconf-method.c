@@ -345,6 +345,14 @@ int data_get(struct CgiContext *cgi, char **pathvec) {
   json_object *module = NULL;
   json_object *top_level = NULL;
   json_object *yang_tree = NULL;
+
+  /*
+   * Example request
+   * restconf/data/restconf-example:course/instructors
+   * module_name: restconf-example
+   * toplevel_name: course
+   */
+
   char *module_name = NULL;
   char *top_level_name = NULL;
   const char *type_string = NULL;
@@ -383,7 +391,9 @@ int data_get(struct CgiContext *cgi, char **pathvec) {
   err = RE_OK;
   yang_tree = build_recursive(top_level, &uci, &err, 1);
 
-//  printf("JSON \n\n%s\n\n", json_object_to_json_string_ext(yang_tree, JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
+//  printf("Print the JSON \n\n%s\n\n",
+//         json_object_to_json_string_ext(yang_tree, JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
+
   if (!yang_tree && err != RE_OK) {
     retval = print_error(err);
     goto done;
@@ -462,7 +472,7 @@ int data_post(struct CgiContext *cgi, char **pathvec, int root) {
     retval = restconf_malformed();
     goto done;
   }
-
+  // * Iterate through all keys and values of an object.
   json_object_object_foreach(content, root_key_string, root_val) {
     root_key = root_key_string;
     root_object = root_val;
@@ -961,4 +971,66 @@ done:
     vector_free(package_list);
   }
   return retval;
+}
+
+int invoke_operation(struct CgiContext *cgi, char **pathvec){
+  int retval = 1;
+  // content_raw is the content posted/put in the stdin
+  char *content_raw = NULL;
+  // content is the parsed json_object of the content_raw
+  struct json_object *content = NULL;
+  // Check if we have any errors during parsing the json_object
+  enum json_tokener_error parse_error;
+
+  char *module_name = NULL;
+  char *top_level_name = NULL;
+
+  json_object *module = NULL;
+  json_object *top_level = NULL;
+  // The key and value of the object in stdin (ie CONTENT coming from post request)
+  char *root_key = NULL;
+  struct json_object *root_object = NULL;
+
+  if ((content_raw = get_content()) == NULL) {
+    retval = restconf_malformed();
+    goto done;
+  }
+  content = json_tokener_parse_verbose(content_raw, &parse_error);
+  if (parse_error != json_tokener_success) {
+    retval = restconf_malformed();
+    goto done;
+  }
+  if (json_object_object_length(content) != 1) {
+    // Only 1 child is allowed
+    retval = restconf_malformed();
+    goto done;
+  }
+  // check if the module and top_level_names are rightly splitted
+  if (split_pair_by_char(pathvec[1], &module_name, &top_level_name, ':')) {
+    retval = restconf_badrequest();
+    goto done;
+  }
+  // * Iterate through all keys and values of an object.
+  // TODO  is root_key, root_object necessary ?
+  json_object_object_foreach(content, root_key_string, root_val) {
+    root_key = root_key_string;
+    root_object = root_val;
+  }
+
+  if (split_pair_by_char(pathvec[1], &module_name, &top_level_name, ':')) {
+    retval = restconf_badrequest();
+    goto done;
+  }
+
+  if (!(module = yang_module_exists(module_name))) {
+    retval = restconf_unknown_namespace();
+    goto done;
+  }
+
+
+  printf("Content stdin JSON \n\n%s\n\n",
+         json_object_to_json_string_ext(content, JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
+
+done:
+    return retval;
 }
