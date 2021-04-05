@@ -513,7 +513,7 @@ int data_post(struct CgiContext *cgi, char **pathvec, int root) {
       goto done;
     }
   }
-
+// type_string gives the value of type key of the top_level object
   type_string = json_get_string(top_level, YANG_TYPE);
   if (!type_string || yang_is_leaf(type_string)) {
     restconf_badrequest();
@@ -1021,15 +1021,29 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec){
     retval = restconf_badrequest();
     goto done;
   }
-
+  // Make sure the yang module exists in yang.h header file
   if (!(module = yang_module_exists(module_name))) {
     retval = restconf_unknown_namespace();
     goto done;
   }
 
+  // Get the top level json
+  top_level = json_get_object_from_map(module, top_level_name);
+  if (!top_level) {
+    retval = restconf_badrequest();
+    goto done;
+  }
 
-  printf("Content stdin JSON \n\n%s\n\n",
-         json_object_to_json_string_ext(content, JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
+  printf("Corresponding Module in JSON \n\n");
+  json_pretty_print(module);
+
+  //TODO verify the content with the yang module.
+  printf("Content stdin JSON \n\n");
+  json_pretty_print(content);
+
+  printf("top level JSON \n\n");
+  json_pretty_print(top_level);
+
 
 done:
     return retval;
