@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="openwrt-operations"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:oo="urn:jacobs:yang:openwrt-operations"
+        xmlns:inet="urn:ietf:params:xml:ns:yang:ietf-inet-types"
+        xmlns:uci="urn:jacobs:yang:openwrt-uci">
+  <namespace uri="urn:jacobs:yang:openwrt-operations"/>
+  <prefix value="oo"/>
+  <import module="ietf-inet-types">
+    <prefix value="inet"/>
+  </import>
+  <import module="openwrt-uci-extension">
+    <prefix value="uci"/>
+  </import>
+  <contact>
+    <text>username &lt;username@jacobs-university.de&gt;</text>
+  </contact>
+  <revision date="2021-03-20">
+    <description>
+      <text>Inital set of operations</text>
+    </description>
+  </revision>
+  <typedef name="percent">
+    <type name="uint8">
+      <range value="0 .. 100"/>
+    </type>
+    <description>
+      <text>Percentage</text>
+    </description>
+  </typedef>
+  <grouping name="openwrt-operations-output">
+    <description>
+      <text>Used to return output from RPCs</text>
+    </description>
+    <leaf name="result">
+      <type name="string"/>
+      <description>
+        <text>Output returned by the network element</text>
+      </description>
+    </leaf>
+  </grouping>
+  <rpc name="copy">
+    <description>
+      <text>Copy from one file to another</text>
+    </description>
+    <input>
+      <leaf name="_source">
+        <mandatory value="true"/>
+        <type name="string"/>
+      </leaf>
+      <leaf name="_destination">
+        <mandatory value="true"/>
+        <type name="string"/>
+      </leaf>
+    </input>
+    <output>
+      <uses name="openwrt-operations-output"/>
+    </output>
+  </rpc>
+  <rpc name="delete">
+    <description>
+      <text>Delete a file</text>
+    </description>
+    <input>
+      <leaf name="_filename">
+        <mandatory value="true"/>
+        <type name="string"/>
+      </leaf>
+    </input>
+    <output>
+      <uses name="openwrt-operations-output"/>
+    </output>
+  </rpc>
+  <rpc name="ping">
+    <description>
+      <text>send ICMP ECHO_REQUEST to network hosts</text>
+    </description>
+    <input>
+      <leaf name="interval">
+        <description>
+          <text>Wait interval seconds between sending each packet</text>
+        </description>
+        <type name="int64"/>
+        <default value="1"/>
+      </leaf>
+      <leaf name="count">
+        <description>
+          <text>Stop after sending count ECHO_REQUEST packets.</text>
+        </description>
+        <type name="int64"/>
+        <default value="4"/>
+      </leaf>
+      <leaf name="quiet">
+        <type name="boolean"/>
+        <default value="true"/>
+      </leaf>
+    </input>
+    <output>
+      <container name="result">
+        <container name="summary">
+          <leaf name="packets_transmitted">
+            <type name="int64"/>
+          </leaf>
+          <leaf name="packets_received">
+            <type name="int64"/>
+          </leaf>
+          <leaf name="packets_lost">
+            <type name="percent"/>
+          </leaf>
+          <leaf name="time">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+        </container>
+        <container name="statistics">
+          <leaf name="min">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+          <leaf name="avg">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+          <leaf name="max">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+          <leaf name="mdev">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+        </container>
+        <list name="icmp_sequences">
+          <key value="id"/>
+          <leaf name="id">
+            <description>
+              <text>packet id</text>
+            </description>
+            <type name="uint8"/>
+          </leaf>
+          <leaf name="bytes">
+            <type name="uint8"/>
+          </leaf>
+          <leaf name="target">
+            <type name="string"/>
+          </leaf>
+          <leaf name="target_ip">
+            <type name="string"/>
+          </leaf>
+          <leaf name="icmp_seq">
+            <type name="uint8"/>
+          </leaf>
+          <leaf name="ttl">
+            <type name="uint8"/>
+          </leaf>
+          <leaf name="time_taken">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+        </list>
+      </container>
+    </output>
+  </rpc>
+</module>
