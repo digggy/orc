@@ -20,3 +20,15 @@ int yang_is_leaf_list(const char* type_string) {
 int yang_is_container(const char* type_string) {
   return strcmp(type_string, YANG_CONTAINER) == 0;
 }
+
+int yang_is_rpc(const char* type_string) {
+  return strcmp(type_string, YANG_RPC) == 0;
+}
+
+int yang_is_input(const char* type_string) {
+  return strcmp(type_string, YANG_INPUT) == 0;
+}
+
+int yang_is_output(const char* type_string) {
+  return strcmp(type_string, YANG_OUTPUT) == 0;
+}
