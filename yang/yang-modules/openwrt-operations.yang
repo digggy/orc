@@ -171,78 +171,92 @@ module openwrt-operations {
   }
 
   rpc mtr {
-    output {
-    container report {
-        container mtr {
-            leaf src{
-                type string;
-            }
-            leaf dst{
-            // should be a choice between ipv4/6 or string representation
-                type string;
-            }
-            leaf tos{
-                type string;
-            }
-            leaf psize{
-                type uint8;
-            }
-            leaf bitpattern{
-                type string;
-            }
-            leaf tests{
-                type uint8;
-            }
+    input {
+        leaf interval {
+            description
+                "Wait interval seconds between sending each packet";
+            type int64;
+            default 1;
         }
-        list hubs {
-            key "count"
-
-            leaf count{
-                type uint8;
-            }
-
-            leaf host{
-                // should be a choice between ipv4/6 or string representation
-                type string;
-            }
-
-            leaf Loss%{
-                type decimal64 {
-                    fraction-digits 2;
-                }
-            }
-
-            leaf Snt{
-                type uint8;
-            }
-
-            leaf Last{
-                type decimal64 {
-                    fraction-digits 2;
-                }
-            }
-            leaf Avg{
-                type decimal64 {
-                    fraction-digits 2;
-                }
-            }
-            leaf Best{
-                type decimal64 {
-                    fraction-digits 2;
-                }
-            }
-            leaf Wrst{
-                type decimal64 {
-                    fraction-digits 2;
-                }
-            }
-            leaf StDev{
-                type decimal64 {
-                    fraction-digits 2;
-                }
-            }
+        leaf count {
+            description
+                "Stop after sending count ECHO_REQUEST packets.";
+            type int64;
+            default 4;
         }
     }
+    output {
+        container report {
+            container mtr {
+                leaf source {
+                    type string;
+                }
+                leaf destination {
+                // should be a choice between ipv4/6 or string representation
+                    type string;
+                }
+                leaf  type-of-service {
+                    type string;
+                }
+                leaf packet-size {
+                    type uint8;
+                }
+                leaf bitpattern {
+                    type string;
+                }
+                leaf tests{
+                    type uint8;
+                }
+            }
+            list hubs {
+                key "count";
+
+                leaf count{
+                    type uint8;
+                }
+
+                leaf host{
+                    // should be a choice between ipv4/6 or string representation
+                    type string;
+                }
+
+                leaf loss_percent{
+                    type decimal64 {
+                        fraction-digits 2;
+                    }
+                }
+
+                leaf sent{
+                    type uint8;
+                }
+
+                leaf last{
+                    type decimal64 {
+                        fraction-digits 2;
+                    }
+                }
+                leaf average_rtt{
+                    type decimal64 {
+                        fraction-digits 2;
+                    }
+                }
+                leaf best_rtt{
+                    type decimal64 {
+                        fraction-digits 2;
+                    }
+                }
+                leaf worst_rtt{
+                    type decimal64 {
+                        fraction-digits 2;
+                    }
+                }
+                leaf standard_deviation{
+                    type decimal64 {
+                        fraction-digits 2;
+                    }
+                }
+            }
+        }
     }
   }
 }

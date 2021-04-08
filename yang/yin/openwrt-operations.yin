@@ -167,4 +167,73 @@
       </container>
     </output>
   </rpc>
+  <rpc name="mtr">
+    <input/>
+    <output>
+      <container name="report">
+        <container name="mtr">
+          <leaf name="src">
+            <type name="string"/>
+          </leaf>
+          <leaf name="dst">
+            <type name="string"/>
+          </leaf>
+          <leaf name="tos">
+            <type name="string"/>
+          </leaf>
+          <leaf name="psize">
+            <type name="uint8"/>
+          </leaf>
+          <leaf name="bitpattern">
+            <type name="string"/>
+          </leaf>
+          <leaf name="tests">
+            <type name="uint8"/>
+          </leaf>
+        </container>
+        <list name="hubs">
+          <key value="count"/>
+          <leaf name="count">
+            <type name="uint8"/>
+          </leaf>
+          <leaf name="host">
+            <type name="string"/>
+          </leaf>
+          <leaf name="Loss%">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+          <leaf name="Snt">
+            <type name="uint8"/>
+          </leaf>
+          <leaf name="Last">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+          <leaf name="Avg">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+          <leaf name="Best">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+          <leaf name="Wrst">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+          <leaf name="StDev">
+            <type name="decimal64">
+              <fraction-digits value="2"/>
+            </type>
+          </leaf>
+        </list>
+      </container>
+    </output>
+  </rpc>
 </module>

@@ -76,3 +76,22 @@ int is_in_vector(char **vec, char *value) {
   }
   return 0;
 }
+
+/**
+ * @brief concatinates two string
+ * @param string_one the first string
+ * @param string_two the second string
+ * @return the concatinated string
+ */
+
+char *concat(const char *string_one, const char *string_two) {
+  // +1 for the null-terminator
+  char *result = malloc(strlen(string_one) + strlen(string_two) + 1);
+  if (result == NULL) {
+    fprintf(stderr, "Memory allocation failed");
+    exit(-1);
+  }
+  strcpy(result, string_one);
+  strcat(result, string_two);
+  return result;
+}
