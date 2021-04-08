@@ -12,6 +12,7 @@
 
 const char* json_get_string(struct json_object* jobj, const char* key);
 struct json_object* json_get_array(struct json_object* jobj, const char* key);
+struct json_object* json_get_objects_from_map(struct json_object* jobj);
 struct json_object* json_get_object_from_map(struct json_object* jobj,
                                              const char* key);
 void json_pretty_print(struct json_object* jobj);

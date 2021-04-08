@@ -29,6 +29,17 @@ struct json_object* json_get_array(struct json_object* jobj, const char* key) {
 }
 
 /**
+ * Return json_objects from "map"
+ * @param jobj input object to be searched
+ * @return json_objects with the value
+ */
+struct json_object* json_get_objects_from_map(struct json_object* jobj){
+  json_object* tmp = NULL;
+  json_object_object_get_ex(jobj, YANG_MAP, &tmp);
+  return tmp;
+}
+
+/**
  * Return json_object from "map" with key
  * @param jobj input object to be searched
  * @param key the key of the value in "map"

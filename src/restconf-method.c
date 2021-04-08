@@ -1026,15 +1026,19 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     goto done;
   }
   content = json_tokener_parse_verbose(content_raw, &parse_error);
+  //  printf("Content stdin JSON \n\n");
+  //  json_pretty_print(content);
   if (parse_error != json_tokener_success) {
     retval = restconf_malformed();
     goto done;
   }
-  if (json_object_object_length(content) != 1) {
-    // Only 1 child is allowed
-    retval = restconf_malformed();
-    goto done;
-  }
+
+  //  if (json_object_object_length(content) != 1) {
+  //    // Only 1 child is allowed
+  //    retval = restconf_malformed();
+  //    goto done;
+  //  }
+
   // check if the module and top_level_names are rightly splitted
   if (split_pair_by_char(pathvec[1], &module_name, &top_level_name, ':')) {
     retval = restconf_badrequest();
@@ -1056,6 +1060,8 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     retval = restconf_unknown_namespace();
     goto done;
   }
+  //  printf("Corresponding Module in JSON \n\n");
+  //  json_pretty_print(module);
 
   // Get the top level json
   top_level = json_get_object_from_map(module, top_level_name);
@@ -1063,16 +1069,29 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     retval = restconf_badrequest();
     goto done;
   }
+  //  printf("top level JSON \n\n");
+  //  json_pretty_print(top_level);
 
-  printf("Corresponding Module in JSON \n\n");
-  json_pretty_print(module);
+  //check if the content is an rpc
+  if(!yang_is_rpc(json_get_string(top_level,YANG_TYPE))){
+    // TODO doesnt not have a rpc type
+    retval = restconf_badrequest();
+    goto done;
+  }
+  //check if it has input
+  struct json_object *input_child = json_get_object_from_map(top_level, YANG_INPUT);
+  if (!input_child) {
+    if (content){
+      // doesnt take any input
+      retval= restconf_badrequest();
+    }
+    // run operation without any input
+    goto done;
+  }else {
+    // TODO verify the content with the yang module.
+    validate_json_with_yang(content, json_get_objects_from_map(input_child));
 
-  // TODO verify the content with the yang module.
-  printf("Content stdin JSON \n\n");
-  json_pretty_print(content);
-
-  printf("top level JSON \n\n");
-  json_pretty_print(top_level);
+  }
 
 done:
   return retval;

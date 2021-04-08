@@ -321,3 +321,50 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
   }
   return 0;
 }
+
+int validate_json_with_yang(struct json_object* object,
+                            struct json_object* yang) {
+  //  printf("\n Yang ----------------------\n");
+  //  json_pretty_print(yang);
+  //  printf("\n Object ----------------------\n");
+  //  json_pretty_print(object);
+
+  json_object_object_foreach(yang, key, yang_node) {
+    int exists;
+    struct json_object* content_json;
+    const char* yang_node_type = NULL;
+    exists = json_object_object_get_ex(object, key, &content_json);
+    if (exists) {
+      yang_node_type = json_get_string(yang_node, YANG_TYPE);
+
+      if (yang_is_leaf(yang_node_type)) {
+        // leaf doesnt have any child so do a validation check
+        error err;
+        if ((err = yang_verify_leaf(content_json, yang_node)) != RE_OK) {
+          return err;
+        }
+        // printf("leaf is fine \n");
+      } else if (yang_is_leaf_list(yang_node_type)) {
+        // leaf-list doesnt have any child so do a validation check
+        error err;
+        if ((err = yang_verify_leaf_list(content_json, yang_node)) != RE_OK) {
+          return err;
+        }
+        // printf("leaf-list verified\n");
+      } else if (yang_is_container(yang_node_type)) {
+        // container has child so further validation check
+        printf("It is container\n");
+      }else if (yang_is_list(yang_node_type)) {
+        // list has childrens so further validation checks to its elements
+        printf("It is list\n");
+      }
+
+    } else {
+      // check for mandatory
+      // send error
+      // printf("%s not found in JSON", key);
+    }
+  }
+
+  return 0;
+}
