@@ -169,4 +169,80 @@ module openwrt-operations {
         }
     }
   }
+
+  rpc mtr {
+    output {
+    container report {
+        container mtr {
+            leaf src{
+                type string;
+            }
+            leaf dst{
+            // should be a choice between ipv4/6 or string representation
+                type string;
+            }
+            leaf tos{
+                type string;
+            }
+            leaf psize{
+                type uint8;
+            }
+            leaf bitpattern{
+                type string;
+            }
+            leaf tests{
+                type uint8;
+            }
+        }
+        list hubs {
+            key "count"
+
+            leaf count{
+                type uint8;
+            }
+
+            leaf host{
+                // should be a choice between ipv4/6 or string representation
+                type string;
+            }
+
+            leaf Loss%{
+                type decimal64 {
+                    fraction-digits 2;
+                }
+            }
+
+            leaf Snt{
+                type uint8;
+            }
+
+            leaf Last{
+                type decimal64 {
+                    fraction-digits 2;
+                }
+            }
+            leaf Avg{
+                type decimal64 {
+                    fraction-digits 2;
+                }
+            }
+            leaf Best{
+                type decimal64 {
+                    fraction-digits 2;
+                }
+            }
+            leaf Wrst{
+                type decimal64 {
+                    fraction-digits 2;
+                }
+            }
+            leaf StDev{
+                type decimal64 {
+                    fraction-digits 2;
+                }
+            }
+        }
+    }
+    }
+  }
 }
