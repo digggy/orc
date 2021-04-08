@@ -12,6 +12,7 @@
 #include "vector.h"
 #include "yang-util.h"
 #include "yang-verify.h"
+#define BUFSIZE 128
 
 static UciWritePair **verify_content_yang(struct json_object *content,
                                           struct json_object *yang_node,
@@ -126,7 +127,7 @@ static UciWritePair **verify_content_yang(struct json_object *content,
     return command_list;
   }
   if (yang_is_list(child_type)) {
-      get_leaf_as_name(yang_node, content, path);
+    get_leaf_as_name(yang_node, content, path);
   }
   json_object_object_foreach(content, key, val) {
     struct json_object *child = NULL;
@@ -391,8 +392,9 @@ int data_get(struct CgiContext *cgi, char **pathvec) {
   err = RE_OK;
   yang_tree = build_recursive(top_level, &uci, &err, 1);
 
-//  printf("Print the JSON \n\n%s\n\n",
-//         json_object_to_json_string_ext(yang_tree, JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
+  //  printf("Print the JSON \n\n%s\n\n",
+  //         json_object_to_json_string_ext(yang_tree, JSON_C_TO_STRING_SPACED |
+  //         JSON_C_TO_STRING_PRETTY));
 
   if (!yang_tree && err != RE_OK) {
     retval = print_error(err);
@@ -513,7 +515,7 @@ int data_post(struct CgiContext *cgi, char **pathvec, int root) {
       goto done;
     }
   }
-// type_string gives the value of type key of the top_level object
+  // type_string gives the value of type key of the top_level object
   type_string = json_get_string(top_level, YANG_TYPE);
   if (!type_string || yang_is_leaf(type_string)) {
     restconf_badrequest();
@@ -973,7 +975,34 @@ done:
   return retval;
 }
 
-int invoke_operation(struct CgiContext *cgi, char **pathvec){
+int run_command(void) {
+  char *cmd = "mtr -r -j -c 5 google.com";
+  char *output = "";
+  char buf[BUFSIZE];
+  FILE *fp;
+  struct json_object *parsed_json_result;
+  if ((fp = popen(cmd, "r")) == NULL) {
+    fprintf(stderr, "Error opening pipe!\n");
+    return -1;
+  }
+  while (fgets(buf, BUFSIZE, fp) != NULL) {
+    output = concat(output, buf);
+  }
+  if (pclose(fp)) {
+    fprintf(stderr, "Command not found or exited with error status\n");
+    return -1;
+  }
+
+  parsed_json_result = json_tokener_parse(output);
+  printf(" this is parsed json \n \n \n \n %s\n",
+         json_object_to_json_string_ext(
+             parsed_json_result,
+             JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
+
+  return 0;
+}
+
+int invoke_operation(struct CgiContext *cgi, char **pathvec) {
   int retval = 1;
   // content_raw is the content posted/put in the stdin
   char *content_raw = NULL;
@@ -987,7 +1016,8 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec){
 
   json_object *module = NULL;
   json_object *top_level = NULL;
-  // The key and value of the object in stdin (ie CONTENT coming from post request)
+  // The key and value of the object in stdin (ie CONTENT coming from post
+  // request)
   char *root_key = NULL;
   struct json_object *root_object = NULL;
 
@@ -1037,14 +1067,13 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec){
   printf("Corresponding Module in JSON \n\n");
   json_pretty_print(module);
 
-  //TODO verify the content with the yang module.
+  // TODO verify the content with the yang module.
   printf("Content stdin JSON \n\n");
   json_pretty_print(content);
 
   printf("top level JSON \n\n");
   json_pretty_print(top_level);
 
-
 done:
-    return retval;
+  return retval;
 }

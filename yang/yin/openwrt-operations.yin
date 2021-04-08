@@ -168,20 +168,35 @@
     </output>
   </rpc>
   <rpc name="mtr">
-    <input/>
+    <input>
+      <leaf name="interval">
+        <description>
+          <text>Wait interval seconds between sending each packet</text>
+        </description>
+        <type name="int64"/>
+        <default value="1"/>
+      </leaf>
+      <leaf name="count">
+        <description>
+          <text>Stop after sending count ECHO_REQUEST packets.</text>
+        </description>
+        <type name="int64"/>
+        <default value="4"/>
+      </leaf>
+    </input>
     <output>
       <container name="report">
         <container name="mtr">
-          <leaf name="src">
+          <leaf name="source">
             <type name="string"/>
           </leaf>
-          <leaf name="dst">
+          <leaf name="destination">
             <type name="string"/>
           </leaf>
-          <leaf name="tos">
+          <leaf name="type-of-service">
             <type name="string"/>
           </leaf>
-          <leaf name="psize">
+          <leaf name="packet-size">
             <type name="uint8"/>
           </leaf>
           <leaf name="bitpattern">
@@ -199,35 +214,35 @@
           <leaf name="host">
             <type name="string"/>
           </leaf>
-          <leaf name="Loss%">
+          <leaf name="loss_percent">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
           </leaf>
-          <leaf name="Snt">
+          <leaf name="sent">
             <type name="uint8"/>
           </leaf>
-          <leaf name="Last">
+          <leaf name="last">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
           </leaf>
-          <leaf name="Avg">
+          <leaf name="average_rtt">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
           </leaf>
-          <leaf name="Best">
+          <leaf name="best_rtt">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
           </leaf>
-          <leaf name="Wrst">
+          <leaf name="worst_rtt">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
           </leaf>
-          <leaf name="StDev">
+          <leaf name="standard_deviation">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>

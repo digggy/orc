@@ -227,7 +227,6 @@ def process_node(generated, key, value, imported, groupings):
                 if not ("mandatory" in generated):
                     generated["mandatory"] = []
                 generated["mandatory"].append(inner_key)
-                print("generated :{}\n".format(generated))
             # TODO check why do we append to the list as we already process mandatory in convert fcn
             generated["map"][inner_key] = convert(value, imported, groupings, key)
         else:
