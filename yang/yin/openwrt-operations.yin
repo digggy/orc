@@ -28,6 +28,9 @@
       <text>Percentage</text>
     </description>
   </typedef>
+  <extension name="flag">
+    <argument name="name"/>
+  </extension>
   <grouping name="openwrt-operations-output">
     <description>
       <text>Used to return output from RPCs</text>
@@ -169,11 +172,15 @@
   </rpc>
   <rpc name="mtr">
     <input>
+      <leaf name="destination">
+        <type name="string"/>
+      </leaf>
       <leaf name="interval">
         <description>
           <text>Wait interval seconds between sending each packet</text>
         </description>
         <type name="int64"/>
+        <oo:flag name="i"/>
         <default value="1"/>
       </leaf>
       <leaf name="count">
@@ -181,6 +188,7 @@
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
         <type name="int64"/>
+        <oo:flag name="c"/>
         <default value="4"/>
       </leaf>
     </input>

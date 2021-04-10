@@ -975,13 +975,14 @@ done:
   return retval;
 }
 
-int run_command(void) {
-  char *cmd = "mtr -r -j -c 5 google.com";
+int run_command(char *command_with_options) {
+  //  char *cmd = "mtr -r -j -c 5 google.com";
+  printf("--> %s", command_with_options);
   char *output = "";
   char buf[BUFSIZE];
   FILE *fp;
   struct json_object *parsed_json_result;
-  if ((fp = popen(cmd, "r")) == NULL) {
+  if ((fp = popen(command_with_options, "r")) == NULL) {
     fprintf(stderr, "Error opening pipe!\n");
     return -1;
   }
@@ -994,7 +995,7 @@ int run_command(void) {
   }
 
   parsed_json_result = json_tokener_parse(output);
-  printf(" this is parsed json \n \n \n \n %s\n",
+  printf("\n RESULT : This is parsed json \n\n \n %s\n",
          json_object_to_json_string_ext(
              parsed_json_result,
              JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
@@ -1021,13 +1022,16 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
   char *root_key = NULL;
   struct json_object *root_object = NULL;
 
+  // command options
+  char **command_options = NULL;
+  char *command = "mtr -j ";
+  vector_push_back(command_options,command);
+
   if ((content_raw = get_content()) == NULL) {
     retval = restconf_malformed();
     goto done;
   }
   content = json_tokener_parse_verbose(content_raw, &parse_error);
-  //  printf("Content stdin JSON \n\n");
-  //  json_pretty_print(content);
   if (parse_error != json_tokener_success) {
     retval = restconf_malformed();
     goto done;
@@ -1072,25 +1076,34 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
   //  printf("top level JSON \n\n");
   //  json_pretty_print(top_level);
 
-  //check if the content is an rpc
-  if(!yang_is_rpc(json_get_string(top_level,YANG_TYPE))){
+  // check if the content is an rpc
+  if (!yang_is_rpc(json_get_string(top_level, YANG_TYPE))) {
     // TODO doesnt not have a rpc type
     retval = restconf_badrequest();
     goto done;
   }
-  //check if it has input
-  struct json_object *input_child = json_get_object_from_map(top_level, YANG_INPUT);
+  // check if it has input
+  struct json_object *input_child =
+      json_get_object_from_map(top_level, YANG_INPUT);
   if (!input_child) {
-    if (content){
+    if (content) {
       // doesnt take any input
-      retval= restconf_badrequest();
+      retval = restconf_badrequest();
     }
     // run operation without any input
     goto done;
-  }else {
+  } else {
     // TODO verify the content with the yang module.
-    validate_json_with_yang(content, json_get_objects_from_map(input_child));
-
+    error err;
+    if ((err = validate_json_with_yang(content,
+                                       json_get_objects_from_map(input_child),
+                                       command_options)) != RE_OK) {
+      retval = restconf_malformed();
+      goto done;
+    };
+    printf("Validation passed \n");
+    printf("%s", *command_options);
+//    run_command(*command_options);
   }
 
 done:

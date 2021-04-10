@@ -22,6 +22,10 @@ module openwrt-operations {
            description "Percentage";
    }
 
+    extension flag {
+        argument name;
+    }
+
   grouping openwrt-operations-output {
     description
       "Used to return output from RPCs";
@@ -172,16 +176,22 @@ module openwrt-operations {
 
   rpc mtr {
     input {
+        leaf destination {
+        // should be a choice between ipv4/6 or string representation
+            type string;
+        }
         leaf interval {
             description
                 "Wait interval seconds between sending each packet";
             type int64;
+            oo:flag "i";
             default 1;
         }
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
             type int64;
+            oo:flag "c";
             default 4;
         }
     }

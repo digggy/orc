@@ -120,6 +120,10 @@ def extract_uci_statements(generated, key, value, imported):
     if key == imported.openwrt_prefix + ":leaf-as-type":
         generated["leaf-as-type"] = value["@name"]
 
+def handle_flags(generated, key, value, imported):
+    if key == "oo:flag":
+        generated["flag"] = value["@name"]
+
 
 def extract_type_statements(generated, key, value, imported):
     type_name = value["@name"]
@@ -284,6 +288,7 @@ def convert(level, imported, groupings, object_type=None):
         generated["map"] = {}
     for key, value in changed_level.items():
         extract_uci_statements(generated, key, value, imported)
+        handle_flags(generated, key, value, imported)
         if key == "grouping":
             handle_grouping(value, imported, groupings)
         if key == "type":

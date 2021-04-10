@@ -86,6 +86,8 @@ int is_in_vector(char **vec, char *value) {
 
 char *concat(const char *string_one, const char *string_two) {
   // +1 for the null-terminator
+//  printf("string one %s \n", string_one);
+//  printf("string two %s \n", string_two);
   char *result = malloc(strlen(string_one) + strlen(string_two) + 1);
   if (result == NULL) {
     fprintf(stderr, "Memory allocation failed");

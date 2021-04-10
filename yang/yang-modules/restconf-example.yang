@@ -18,71 +18,76 @@ module restconf-example {
     }
   }
 
-  
+  uci:package "restconf-example";
   container course {
-  
+    uci:section-name "course";
+    uci:section "course";
+
     leaf name {
-  
+      uci:option "name";
       type string;
       description "name of the course";
     }
 
     leaf-list instructors {
-  
+      uci:option "instructors";
       type string;
       description "list of names of instructors";
     }
 
     leaf semester {
-      
+      uci:option "semester";
       type uint8 {
         range "1..6";
       }
     }
 
     list students {
+      uci:section "student";
+      uci:leaf-as-name "lastname";
 
       key "firstname lastname age";
       leaf firstname {
-        
+        uci:option "firstname";
         type string;
       }
 
       leaf lastname {
-        
+        uci:option "lastname";
         type string;
       }
 
       leaf age {
-        
+        uci:option "age";
         type uint8 {
           range "0..120";
         }
       }
 
       leaf major {
+        uci:option "major";
         type string {
           pattern "(CS|IMS)";
         }
       }
 
       leaf grade {
-
+        uci:option "grade";
         type grade;
       }
     }
 
     container instructor {
-      
-      
+      uci:section-name "instructor";
+      uci:section "instructor";
 
       leaf name {
-      
+        uci:option "name";
         type string;
       }
 
       leaf email {
-        
+        uci:option "email";
         type email;
       }
     }
