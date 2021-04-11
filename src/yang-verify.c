@@ -19,10 +19,6 @@ error yang_verify_leaf(struct json_object* leaf, struct json_object* yang) {
   struct json_object* type = NULL;
   json_type value_type = json_object_get_type(leaf);
 
-  //  json_pretty_print(leaf);
-  //  json_pretty_print(yang);
-  //  printf("--------------\n");
-
   if (value_type == json_type_object || value_type == json_type_array) {
     return INVALID_TYPE;
   }
@@ -201,17 +197,18 @@ static int verify_value_from_imported(const char* type, const char* value) {
  */
 
 int has_decimal(const char* str){
-  int exclamationCheck = 0;
+  int decimalCheck = 0;
   if(strchr(str, '.') != NULL)
   {
-    exclamationCheck = 1;
+    decimalCheck = 1;
   }
-  return exclamationCheck;
+  return decimalCheck;
 }
 static int yang_verify_value_type(struct json_object* type, const char* value) {
   const char* leaf_type = NULL;
   int is_object = 0;
-  enum other_check { NONE, RANGE, PATTERN } verify_type = NONE;
+
+  enum other_check { NONE, RANGE, PATTERN, FRACTION_DIGITS } verify_type = NONE;
   if (json_object_get_type(type) == json_type_object) {
     leaf_type = json_get_string(type, YANG_LEAF_TYPE);
     is_object = 1;
@@ -296,6 +293,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       };
       break;
     case DECIMAL_64:
+      verify_type = FRACTION_DIGITS;
 
     case ENUMERATION:
     case BITS:
@@ -351,6 +349,21 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
           }
         }
         return 1;
+      }
+      case FRACTION_DIGITS: {
+        int exists;
+        struct json_object * jo_temp = NULL;
+        char* before_decimal=NULL;
+        char* after_decimal=NULL;
+        exists = json_object_object_get_ex(type, YANG_FRACTION_DIGITS, &jo_temp);
+        if(!exists){
+          return 1;
+        }
+        int fraction_digits = json_object_get_int64(jo_temp);
+        split_pair_by_char(value,&before_decimal,&after_decimal,'.');
+        if(strlen(after_decimal) != fraction_digits){
+          return 1;
+        }
       }
       default:
         break;

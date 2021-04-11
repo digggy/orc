@@ -199,6 +199,12 @@ module openwrt-operations {
             oo:flag "c";
             default 4;
         }
+        leaf test_decimal {
+            type decimal64 {
+                fraction-digits 2;
+            }
+            default 4.0;
+        }
     }
     output {
         container report {

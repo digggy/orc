@@ -196,6 +196,12 @@
         <oo:flag name="c"/>
         <default value="4"/>
       </leaf>
+      <leaf name="test_decimal">
+        <type name="decimal64">
+          <fraction-digits value="2"/>
+        </type>
+        <default value="4.0"/>
+      </leaf>
     </input>
     <output>
       <container name="report">

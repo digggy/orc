@@ -145,6 +145,12 @@ def extract_type_statements(generated, key, value, imported):
             "leaf-type": type_name,
             "pattern": "^" + value["pattern"]["@value"] + "$"
         }
+    if type_name == "decimal64" and "fraction-digits" in value:
+        type_name = {
+            "leaf-type": type_name,
+            "fraction-digits": value["fraction-digits"]["@value"]
+        }
+
     if range_allowed(type_name) and "range" in value:
         range_split = get_range(value["range"]["@value"].split("..", 1), type_name)
         type_name = {

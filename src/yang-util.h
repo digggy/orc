@@ -15,6 +15,7 @@
 #define YANG_KEYS "keys"
 #define YANG_UNIQUE "unique"
 #define YANG_MANDATORY "mandatory"
+#define YANG_FRACTION_DIGITS "fraction-digits"
 #define YANG_LEAF_TYPE "leaf-type"
 #define YANG_MAP "map"
 #define YANG_TYPE "type"
