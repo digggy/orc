@@ -1001,10 +1001,15 @@ int run_command(const char *command, char **command_arguments) {
   }
 
   parsed_json_result = json_tokener_parse(output);
-  printf("\n RESULT : This is parsed json \n\n \n %s\n",
-         json_object_to_json_string_ext(
-             parsed_json_result,
-             JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
+
+  content_type_json();
+  headers_end();
+  json_pretty_print(parsed_json_result);
+
+//  printf("\n RESULT : This is parsed json \n\n \n %s\n",
+//         json_object_to_json_string_ext(
+//             parsed_json_result,
+//             JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
 
   return 0;
 }
@@ -1106,8 +1111,8 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
       goto done;
     };
   }
-  printf("main command : %s \n", command);
-  //   run_command(command, input_command->command);
+//  printf("main command : %s \n", command);
+  run_command(command, input_command->command);
 
 done:
   return retval;
