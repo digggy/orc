@@ -324,52 +324,60 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
   return 0;
 }
 
-int validate_json_with_yang(struct json_object* object,
-                            struct json_object* yang, char** command_options) {
+struct command_arguments* yang_verify_input(struct json_object* object,
+                                            struct json_object* yang) {
   //    printf("\n Yang ----------------------\n");
   //    json_pretty_print(yang);
   //    printf("\n Object ----------------------\n");
   //    json_pretty_print(object);
   //  char** command_options = NULL;
 
+  error err;
+  // struct that we return to the program
+  command_arguments* cmd = malloc(sizeof(command_arguments));
+  if (!cmd) {
+    fprintf(stderr, "Memory allocation failed");
+    return NULL;
+  }
+  cmd->command = NULL;
+  cmd->error = RE_OK;
+
   json_object_object_foreach(object, key, content_json_value) {
     int exists;
     struct json_object* yang_node;
     const char* yang_node_type = NULL;
-//    char* flag_with_value = "";
-    char * flag_with_value = malloc(sizeof(flag_with_value));
-
+    char* flag_with_value = (char*)malloc(sizeof(char*));
     /*
      * TODO iterate through yang to check if there are any mandatory nodes and
      * check if they are present in content_json_value
      */
+
     exists = json_object_object_get_ex(yang, key, &yang_node);
     if (exists) {
       yang_node_type = json_get_string(yang_node, YANG_TYPE);
       if (yang_is_leaf(yang_node_type)) {
         // leaf doesnt have any child so do a validation check
-        error err;
         struct json_object* flag_name;
         if ((err = yang_verify_leaf(content_json_value, yang_node)) != RE_OK) {
-          return err;
+          cmd->error = err;
+          return cmd;
         }
         if (json_object_object_get_ex(yang_node, YANG_OPERATION_FLAG,
                                       &flag_name)) {
           flag_with_value = concat("-", json_object_get_string(flag_name));
         }
         // adding the actuall value that comes from the input
-        flag_with_value = concat(flag_with_value,
-                                 json_object_get_string(content_json_value));
+        flag_with_value =
+            concat(flag_with_value, json_object_get_string(content_json_value));
         strcat(flag_with_value, " ");
-//        *command_options = concat(*command_options, flag_with_value);
+        vector_push_back(cmd->command,flag_with_value);
 
-        vector_push_back(command_options, flag_with_value);
       } else if (yang_is_leaf_list(yang_node_type)) {
         // leaf-list doesnt have any child so do a validation check
-        error err;
         if ((err = yang_verify_leaf_list(content_json_value, yang_node)) !=
             RE_OK) {
-          return err;
+          cmd->error = err;
+          return cmd;
         }
         // printf("leaf-list verified\n");
       } else if (yang_is_container(yang_node_type)) {
@@ -381,9 +389,10 @@ int validate_json_with_yang(struct json_object* object,
       }
     } else {
       // doesnt key doesnt exists
-      return NO_SUCH_ELEMENT;
+      cmd->error = NO_SUCH_ELEMENT;
+      return cmd;
     }
   }
   //  options = command_options;
-  return RE_OK;
+  return cmd;
 }

@@ -25,6 +25,9 @@ module openwrt-operations {
     extension flag {
         argument name;
     }
+    extension command-name {
+            argument name;
+    }
 
   grouping openwrt-operations-output {
     description
@@ -175,6 +178,7 @@ module openwrt-operations {
   }
 
   rpc mtr {
+    oo:command-name "mtr";
     input {
         leaf destination {
         // should be a choice between ipv4/6 or string representation

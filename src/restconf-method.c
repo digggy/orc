@@ -1022,11 +1022,6 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
   char *root_key = NULL;
   struct json_object *root_object = NULL;
 
-  // command options
-  char **command_options = NULL;
-  char *command = "mtr -j ";
-  vector_push_back(command_options,command);
-
   if ((content_raw = get_content()) == NULL) {
     retval = restconf_malformed();
     goto done;
@@ -1094,16 +1089,13 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     goto done;
   } else {
     // TODO verify the content with the yang module.
-    error err;
-    if ((err = validate_json_with_yang(content,
-                                       json_get_objects_from_map(input_child),
-                                       command_options)) != RE_OK) {
+    command_arguments *input_command =
+        yang_verify_input(content, json_get_objects_from_map(input_child));
+    if (input_command->error != RE_OK) {
       retval = restconf_malformed();
       goto done;
     };
     printf("Validation passed \n");
-    printf("%s", *command_options);
-//    run_command(*command_options);
   }
 
 done:
