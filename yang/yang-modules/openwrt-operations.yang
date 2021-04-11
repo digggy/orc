@@ -82,13 +82,13 @@ module openwrt-operations {
         leaf interval {
             description
                 "Wait interval seconds between sending each packet";
-            type int64;
+            type int32;
             default 1;
         }
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
-            type int64;
+            type int32;
             default 4;
         }
         leaf quiet {
@@ -101,10 +101,10 @@ module openwrt-operations {
 
             container summary {
                 leaf packets_transmitted {
-                    type int64;
+                    type int32;
                 }
                 leaf packets_received {
-                    type int64;
+                    type int32;
                 }
                 leaf packets_lost {
                     type percent;
@@ -182,19 +182,20 @@ module openwrt-operations {
     input {
         leaf destination {
         // should be a choice between ipv4/6 or string representation
+            mandatory true;
             type string;
         }
         leaf interval {
             description
                 "Wait interval seconds between sending each packet";
-            type int64;
+            type int32;
             oo:flag "i";
             default 1;
         }
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
-            type int64;
+            type int32;
             oo:flag "c";
             default 4;
         }

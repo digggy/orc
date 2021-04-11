@@ -975,13 +975,19 @@ done:
   return retval;
 }
 
-int run_command(char *command_with_options) {
-  //  char *cmd = "mtr -r -j -c 5 google.com";
-  printf("--> %s", command_with_options);
+int run_command(const char *command, char **command_arguments) {
+  char command_with_options[1024];
+  strcpy(command_with_options, command);
+  strcat(command_with_options, " ");
   char *output = "";
   char buf[BUFSIZE];
   FILE *fp;
   struct json_object *parsed_json_result;
+  for (int i = 0; i < vector_size(command_arguments); i++) {
+    strcat(command_with_options, command_arguments[i]);
+    strcat(command_with_options, " ");
+  }
+  //  printf("the command is %s : ", command_with_options);
   if ((fp = popen(command_with_options, "r")) == NULL) {
     fprintf(stderr, "Error opening pipe!\n");
     return -1;
@@ -1068,8 +1074,6 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     retval = restconf_badrequest();
     goto done;
   }
-  //  printf("top level JSON \n\n");
-  //  json_pretty_print(top_level);
 
   // check if the content is an rpc
   if (!yang_is_rpc(json_get_string(top_level, YANG_TYPE))) {
@@ -1077,26 +1081,33 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     retval = restconf_badrequest();
     goto done;
   }
+  const char *command = json_get_string(top_level, YANG_OPERATION_COMMAND);
+  if (!command) {
+    // if there is no oo:command-name in the yang we assume that the the
+    // toplevel name is the command
+    command = top_level_name;
+  }
   // check if it has input
   struct json_object *input_child =
       json_get_object_from_map(top_level, YANG_INPUT);
+  command_arguments *input_command = NULL;
   if (!input_child) {
     if (content) {
       // doesnt take any input
       retval = restconf_badrequest();
     }
-    // run operation without any input
+    // TODO run operation without any input
     goto done;
   } else {
     // TODO verify the content with the yang module.
-    command_arguments *input_command =
-        yang_verify_input(content, json_get_objects_from_map(input_child));
+    input_command = yang_verify_input(content, input_child);
     if (input_command->error != RE_OK) {
       retval = restconf_malformed();
       goto done;
     };
-    printf("Validation passed \n");
   }
+  printf("main command : %s \n", command);
+  //   run_command(command, input_command->command);
 
 done:
   return retval;

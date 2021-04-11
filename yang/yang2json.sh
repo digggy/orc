@@ -23,3 +23,6 @@ done
 # converting the yin format to json for openwrt
 echo "python3 ./yin2json/yin2json.py -y ./yin -o ./generated-for-openwrt/ $all_files"
 python3 ./yin2json/yin2json.py -y ./yin/ -o ./generated-for-openwrt/ $all_files
+
+# modify the source file in src
+python3 ./yin2json/yin2json.py -y ./yin/ -o ../src/generated/ $all_files

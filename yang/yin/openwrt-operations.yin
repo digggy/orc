@@ -86,14 +86,14 @@
         <description>
           <text>Wait interval seconds between sending each packet</text>
         </description>
-        <type name="int64"/>
+        <type name="int32"/>
         <default value="1"/>
       </leaf>
       <leaf name="count">
         <description>
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
-        <type name="int64"/>
+        <type name="int32"/>
         <default value="4"/>
       </leaf>
       <leaf name="quiet">
@@ -105,10 +105,10 @@
       <container name="result">
         <container name="summary">
           <leaf name="packets_transmitted">
-            <type name="int64"/>
+            <type name="int32"/>
           </leaf>
           <leaf name="packets_received">
-            <type name="int64"/>
+            <type name="int32"/>
           </leaf>
           <leaf name="packets_lost">
             <type name="percent"/>
@@ -177,13 +177,14 @@
     <oo:command-name name="mtr -r -j"/>
     <input>
       <leaf name="destination">
+        <mandatory value="true"/>
         <type name="string"/>
       </leaf>
       <leaf name="interval">
         <description>
           <text>Wait interval seconds between sending each packet</text>
         </description>
-        <type name="int64"/>
+        <type name="int32"/>
         <oo:flag name="i"/>
         <default value="1"/>
       </leaf>
@@ -191,7 +192,7 @@
         <description>
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
-        <type name="int64"/>
+        <type name="int32"/>
         <oo:flag name="c"/>
         <default value="4"/>
       </leaf>
