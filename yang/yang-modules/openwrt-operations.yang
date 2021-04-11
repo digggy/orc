@@ -178,7 +178,7 @@ module openwrt-operations {
   }
 
   rpc mtr {
-    oo:command-name "mtr";
+    oo:command-name "mtr -r -j";
     input {
         leaf destination {
         // should be a choice between ipv4/6 or string representation

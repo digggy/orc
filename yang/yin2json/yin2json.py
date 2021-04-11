@@ -124,7 +124,7 @@ def handle_flags(generated, key, value, imported):
     if key == "oo:flag":
         generated["flag"] = value["@name"]
     if key == "oo:command-name":
-        generated["flag"] = value["@name"]
+        generated["command-name"] = value["@name"]
 
 
 def extract_type_statements(generated, key, value, imported):
