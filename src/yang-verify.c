@@ -196,10 +196,9 @@ static int verify_value_from_imported(const char* type, const char* value) {
  * @return 0 if verified else 0
  */
 
-int has_decimal(const char* str){
+int has_decimal(const char* str) {
   int decimalCheck = 0;
-  if(strchr(str, '.') != NULL)
-  {
+  if (strchr(str, '.') != NULL) {
     decimalCheck = 1;
   }
   return decimalCheck;
@@ -226,7 +225,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       break;
     case INT_8: {
       verify_type = RANGE;
-      if(has_decimal(value)){
+      if (has_decimal(value)) {
         return 1;
       };
       int integer = strtoimax(value, NULL, 10);
@@ -235,7 +234,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
     }
     case INT_16: {
       verify_type = RANGE;
-      if(has_decimal(value)){
+      if (has_decimal(value)) {
         return 1;
       };
       int integer = strtoimax(value, NULL, 10);
@@ -244,7 +243,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
     }
     case INT_32: {
       verify_type = RANGE;
-      if(has_decimal(value)){
+      if (has_decimal(value)) {
         return 1;
       };
       int integer = strtoimax(value, NULL, 10);
@@ -253,7 +252,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
     }
     case UINT_8: {
       verify_type = RANGE;
-      if(has_decimal(value)){
+      if (has_decimal(value)) {
         return 1;
       };
       int integer = strtoimax(value, NULL, 10);
@@ -262,7 +261,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
     }
     case UINT_16: {
       verify_type = RANGE;
-      if(has_decimal(value)){
+      if (has_decimal(value)) {
         return 1;
       };
       int integer = strtoimax(value, NULL, 10);
@@ -271,7 +270,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
     }
     case UINT_32: {
       verify_type = RANGE;
-      if(has_decimal(value)){
+      if (has_decimal(value)) {
         return 1;
       };
       int integer = strtoimax(value, NULL, 10);
@@ -288,7 +287,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
     }
     case INT_64:
       verify_type = RANGE;
-      if(has_decimal(value)){
+      if (has_decimal(value)) {
         return 1;
       };
       break;
@@ -352,16 +351,17 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       }
       case FRACTION_DIGITS: {
         int exists;
-        struct json_object * jo_temp = NULL;
-        char* before_decimal=NULL;
-        char* after_decimal=NULL;
-        exists = json_object_object_get_ex(type, YANG_FRACTION_DIGITS, &jo_temp);
-        if(!exists){
+        struct json_object* jo_temp = NULL;
+        char* before_decimal = NULL;
+        char* after_decimal = NULL;
+        exists =
+            json_object_object_get_ex(type, YANG_FRACTION_DIGITS, &jo_temp);
+        if (!exists) {
           return 1;
         }
         int fraction_digits = json_object_get_int64(jo_temp);
-        split_pair_by_char(value,&before_decimal,&after_decimal,'.');
-        if(strlen(after_decimal) != fraction_digits){
+        split_pair_by_char(value, &before_decimal, &after_decimal, '.');
+        if (strlen(after_decimal) != fraction_digits) {
           return 1;
         }
       }
@@ -372,10 +372,31 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
   return 0;
 }
 
+error yang_verify_container(struct json_object* content_container,
+                            struct json_object* yang) {
+  int error;
+  const char* value = NULL;
+  json_type value_type = json_object_get_type(content_container);
+
+  if (value_type != json_type_object) {
+    return INVALID_TYPE;
+  }
+  error = yang_verify_output(content_container, yang);
+  return RE_OK;
+};
+
+error yang_verify_list(struct json_object* content_list,
+                       struct json_object* yang) {
+  return RE_OK;
+};
+
 struct command_arguments* yang_verify_input(struct json_object* content_object,
                                             struct json_object* input_child) {
   int mandatory_exist = 1;
   struct json_object* yang = json_get_objects_from_map(input_child);
+  if (!yang) {
+    return YANG_SCHEMA_ERROR;
+  }
   error err;
   // struct that we return to the program
   command_arguments* cmd = malloc(sizeof(command_arguments));
@@ -391,20 +412,21 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
     struct json_object* mandatory = NULL;
     if (!(mandatory = json_get_array(input_child, YANG_MANDATORY))) {
       mandatory_exist = 0;
-    }
-    for (int j = 0; j < json_object_array_length(mandatory); j++) {
-      int exists = 0;
-      char* mandatory_key = NULL;
-      struct json_object* jo_mandatory_key = NULL;
-      struct json_object* jo_mandatory_node = NULL;
-      jo_mandatory_key = json_object_array_get_idx(mandatory, j);
-      mandatory_key = (char*)json_object_get_string(jo_mandatory_key);
-      // check if the mandatory field exists
-      exists =
-          json_object_object_get_ex(content_object, mandatory_key, &jo_mandatory_node);
-      if (!exists) {
-        cmd->error = MANDATORY_NOT_PRESENT;
-        return cmd;
+    } else {
+      for (int j = 0; j < json_object_array_length(mandatory); j++) {
+        int exists = 0;
+        char* mandatory_key = NULL;
+        struct json_object* jo_mandatory_key = NULL;
+        struct json_object* jo_mandatory_node = NULL;
+        jo_mandatory_key = json_object_array_get_idx(mandatory, j);
+        mandatory_key = (char*)json_object_get_string(jo_mandatory_key);
+        // check if the mandatory field exists
+        exists = json_object_object_get_ex(content_object, mandatory_key,
+                                           &jo_mandatory_node);
+        if (!exists) {
+          cmd->error = MANDATORY_NOT_PRESENT;
+          return cmd;
+        }
       }
     }
   }
@@ -465,11 +487,15 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
   return cmd;
 }
 
-error yang_verify_output(struct json_object* content_object, struct json_object* output_child) {
-
+error yang_verify_output(struct json_object* content_object,
+                         struct json_object* output_child) {
   //
   int mandatory_exist = 1;
   struct json_object* yang = json_get_objects_from_map(output_child);
+  if (!yang) {
+    return YANG_SCHEMA_ERROR;
+  }
+
   error err;
 
   {
@@ -477,20 +503,20 @@ error yang_verify_output(struct json_object* content_object, struct json_object*
     struct json_object* mandatory = NULL;
     if (!(mandatory = json_get_array(output_child, YANG_MANDATORY))) {
       mandatory_exist = 0;
-    }
-    for (int j = 0; j < json_object_array_length(mandatory); j++) {
-      int exists = 0;
-      char* mandatory_key = NULL;
-      struct json_object* jo_mandatory_key = NULL;
-      struct json_object* jo_mandatory_node = NULL;
-      jo_mandatory_key = json_object_array_get_idx(mandatory, j);
-      mandatory_key = (char*)json_object_get_string(jo_mandatory_key);
-      // check if the mandatory field exists
-      exists =
-          json_object_object_get_ex(content_object, mandatory_key, &jo_mandatory_node);
-      if (!exists) {
-        cmd->error = MANDATORY_NOT_PRESENT;
-        return cmd;
+    } else {
+      for (int j = 0; j < json_object_array_length(mandatory); j++) {
+        int exists = 0;
+        char* mandatory_key = NULL;
+        struct json_object* jo_mandatory_key = NULL;
+        struct json_object* jo_mandatory_node = NULL;
+        jo_mandatory_key = json_object_array_get_idx(mandatory, j);
+        mandatory_key = (char*)json_object_get_string(jo_mandatory_key);
+        // check if the mandatory field exists
+        exists = json_object_object_get_ex(content_object, mandatory_key,
+                                           &jo_mandatory_node);
+        if (!exists) {
+          return MANDATORY_NOT_PRESENT;
+        }
       }
     }
   }
@@ -500,11 +526,11 @@ error yang_verify_output(struct json_object* content_object, struct json_object*
     struct json_object* yang_node;
 
     const char* yang_node_type = NULL;
-    char* flag_with_value = "";
     /*
      * TODO iterate through yang to check if there are any mandatory nodes and
      * check if they are present in content_json_value
      */
+    //    printf("key -> %s\n", key);
 
     exists = json_object_object_get_ex(yang, key, &yang_node);
     if (exists) {
@@ -512,19 +538,24 @@ error yang_verify_output(struct json_object* content_object, struct json_object*
 
       if (yang_is_leaf(yang_node_type)) {
         // leaf doesnt have any child so do a validation check
+        printf("--------------------- LEAF -> %s \n", key);
         if ((err = yang_verify_leaf(content_json_value, yang_node)) != RE_OK) {
           return err;
         }
       } else if (yang_is_leaf_list(yang_node_type)) {
         // leaf-list doesnt have any child so do a validation check
+        printf("--------------------- LEAF LIST -> %s \n", key);
         if ((err = yang_verify_leaf_list(content_json_value, yang_node)) !=
             RE_OK) {
           return err;
         }
       } else if (yang_is_container(yang_node_type)) {
         // container has children so further validation check
-        // printf("It is container\n");
+        printf("--------------------- CONTAINTER -> %s \n", key);
+        err = yang_verify_container(content_json_value, yang_node);
+
       } else if (yang_is_list(yang_node_type)) {
+        printf("--------------------- LIST -> %s \n", key);
         // list has children so further validation checks to its elements
         // printf("It is list\n");
       }

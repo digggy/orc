@@ -1092,10 +1092,10 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     command = top_level_name;
   }
   // check if it has input
-  struct json_object *input_child =
+  struct json_object *yang_input_child =
       json_get_object_from_map(top_level, YANG_INPUT);
   command_arguments *input_command = NULL;
-  if (!input_child) {
+  if (!yang_input_child) {
     if (content) {
       // doesnt take any input
       retval = restconf_badrequest();
@@ -1103,24 +1103,24 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     // TODO run operation without any input
     goto done;
   } else {
-    // TODO verify the content with the yang module.
-    input_command = yang_verify_input(content, input_child);
+    //  verify the content with the yang module.
+    input_command = yang_verify_input(content, yang_input_child);
     if (input_command->error != RE_OK) {
       retval = restconf_malformed();
       goto done;
     };
   }
-  printf("main command : %s \n", command);
+  // printf("main command : %s \n", command);
   //  run_command(command, input_command->command);
-
+  // ---------------------------------------- WIP ----------------------------
   char *test_output =
       "{\n"
       "  \"report\": {\n"
       "    \"mtr\": {\n"
-      "      \"src\": \"digggy\",\n"
-      "      \"dst\": \"192.168.56.3\",\n"
-      "      \"tos\": \"0x0\",\n"
-      "      \"psize\": \"64\",\n"
+      "      \"source\": \"digggy\",\n"
+      "      \"destination\": \"192.168.56.3\",\n"
+      "      \"type-of-service\": \"0x0\",\n"
+      "      \"packet-size\": \"64\",\n"
       "      \"bitpattern\": \"0x00\",\n"
       "      \"tests\": \"10\"\n"
       "    },\n"
@@ -1128,31 +1128,49 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
       "      {\n"
       "        \"count\": \"1\",\n"
       "        \"host\": \"kabelbox\",\n"
-      "        \"Loss%\": 0.00,\n"
-      "        \"Snt\": 10,\n"
-      "        \"Last\": 1.61,\n"
-      "        \"Avg\": 0.96,\n"
-      "        \"Best\": 0.59,\n"
-      "        \"Wrst\": 1.61,\n"
-      "        \"StDev\": 0.32\n"
+      "        \"loss_percent\": 0.00,\n"
+      "        \"sent\": 10,\n"
+      "        \"last\": 1.61,\n"
+      "        \"average_rtt\": 0.96,\n"
+      "        \"best_rtt\": 0.59,\n"
+      "        \"worst_rtt\": 1.61,\n"
+      "        \"standard_deviation\": 0.32\n"
       "      },\n"
       "      {\n"
       "        \"count\": \"2\",\n"
-      "        \"host\": \"83-169-183-13-isp.superkabel.de\",\n"
-      "        \"Loss%\": 0.00,\n"
-      "        \"Snt\": 10,\n"
-      "        \"Last\": 17.37,\n"
-      "        \"Avg\": 14.77,\n"
-      "        \"Best\": 3.78,\n"
-      "        \"Wrst\": 41.15,\n"
-      "        \"StDev\": 10.06\n"
-      "      }\n"
+      "        \"host\": \"random2\",\n"
+      "        \"loss_percent\": 1.00,\n"
+      "        \"sent\": 10,\n"
+      "        \"last\": 2.61,\n"
+      "        \"average_rtt\": 1.96,\n"
+      "        \"best_rtt\": 0.59,\n"
+      "        \"worst_rtt\": 2.21,\n"
+      "        \"standard_deviation\": 0.22\n"
+      "      }"
       "    ]\n"
       "  }\n"
       "}";
 
   struct json_object *parsed_json_result = json_tokener_parse(test_output);
 
+  // check if it has output
+  int output_error;
+  struct json_object *yang_output_child =
+      json_get_object_from_map(top_level, YANG_OUTPUT);
+  // check if the yang schema has output node
+
+  if (!yang_output_child) {
+    if (parsed_json_result) {
+      // doesnt take any input
+      retval = restconf_badrequest();
+    }
+  }
+
+  if ((output_error = yang_verify_output(parsed_json_result,
+                                         yang_output_child)) != RE_OK) {
+    retval = restconf_malformed();
+    goto done;
+  };
 
 done:
   return retval;
