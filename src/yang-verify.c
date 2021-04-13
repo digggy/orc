@@ -372,11 +372,10 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
   return 0;
 }
 
-struct command_arguments* yang_verify_input(struct json_object* object,
+struct command_arguments* yang_verify_input(struct json_object* content_object,
                                             struct json_object* input_child) {
   int mandatory_exist = 1;
   struct json_object* yang = json_get_objects_from_map(input_child);
-
   error err;
   // struct that we return to the program
   command_arguments* cmd = malloc(sizeof(command_arguments));
@@ -402,7 +401,7 @@ struct command_arguments* yang_verify_input(struct json_object* object,
       mandatory_key = (char*)json_object_get_string(jo_mandatory_key);
       // check if the mandatory field exists
       exists =
-          json_object_object_get_ex(object, mandatory_key, &jo_mandatory_node);
+          json_object_object_get_ex(content_object, mandatory_key, &jo_mandatory_node);
       if (!exists) {
         cmd->error = MANDATORY_NOT_PRESENT;
         return cmd;
@@ -410,7 +409,7 @@ struct command_arguments* yang_verify_input(struct json_object* object,
     }
   }
 
-  json_object_object_foreach(object, key, content_json_value) {
+  json_object_object_foreach(content_object, key, content_json_value) {
     int exists;
     struct json_object* yang_node;
 
@@ -464,4 +463,76 @@ struct command_arguments* yang_verify_input(struct json_object* object,
   }
   //  options = command_options;
   return cmd;
+}
+
+error yang_verify_output(struct json_object* content_object, struct json_object* output_child) {
+
+  //
+  int mandatory_exist = 1;
+  struct json_object* yang = json_get_objects_from_map(output_child);
+  error err;
+
+  {
+    // Check if the stdin has the mandatory items
+    struct json_object* mandatory = NULL;
+    if (!(mandatory = json_get_array(output_child, YANG_MANDATORY))) {
+      mandatory_exist = 0;
+    }
+    for (int j = 0; j < json_object_array_length(mandatory); j++) {
+      int exists = 0;
+      char* mandatory_key = NULL;
+      struct json_object* jo_mandatory_key = NULL;
+      struct json_object* jo_mandatory_node = NULL;
+      jo_mandatory_key = json_object_array_get_idx(mandatory, j);
+      mandatory_key = (char*)json_object_get_string(jo_mandatory_key);
+      // check if the mandatory field exists
+      exists =
+          json_object_object_get_ex(content_object, mandatory_key, &jo_mandatory_node);
+      if (!exists) {
+        cmd->error = MANDATORY_NOT_PRESENT;
+        return cmd;
+      }
+    }
+  }
+
+  json_object_object_foreach(content_object, key, content_json_value) {
+    int exists;
+    struct json_object* yang_node;
+
+    const char* yang_node_type = NULL;
+    char* flag_with_value = "";
+    /*
+     * TODO iterate through yang to check if there are any mandatory nodes and
+     * check if they are present in content_json_value
+     */
+
+    exists = json_object_object_get_ex(yang, key, &yang_node);
+    if (exists) {
+      yang_node_type = json_get_string(yang_node, YANG_TYPE);
+
+      if (yang_is_leaf(yang_node_type)) {
+        // leaf doesnt have any child so do a validation check
+        if ((err = yang_verify_leaf(content_json_value, yang_node)) != RE_OK) {
+          return err;
+        }
+      } else if (yang_is_leaf_list(yang_node_type)) {
+        // leaf-list doesnt have any child so do a validation check
+        if ((err = yang_verify_leaf_list(content_json_value, yang_node)) !=
+            RE_OK) {
+          return err;
+        }
+      } else if (yang_is_container(yang_node_type)) {
+        // container has children so further validation check
+        // printf("It is container\n");
+      } else if (yang_is_list(yang_node_type)) {
+        // list has children so further validation checks to its elements
+        // printf("It is list\n");
+      }
+    } else {
+      // key doesnt exists
+      return NO_SUCH_ELEMENT;
+    }
+  }
+
+  return RE_OK;
 }

@@ -18,5 +18,7 @@ int yang_verify_json_type(yang_type type, json_type val_type);
 int yang_mandatory(struct json_object* yang);
 struct command_arguments* yang_verify_input(struct json_object* object,
                                             struct json_object* yang);
+error yang_verify_output(struct json_object* object,
+                                            struct json_object* yang);
 
 #endif  // RESTCONF_YANG_VERIFY_H

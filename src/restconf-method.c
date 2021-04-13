@@ -999,17 +999,16 @@ int run_command(const char *command, char **command_arguments) {
     fprintf(stderr, "Command not found or exited with error status\n");
     return -1;
   }
-
   parsed_json_result = json_tokener_parse(output);
 
-  content_type_json();
-  headers_end();
-  json_pretty_print(parsed_json_result);
+  //  content_type_json();
+  //  headers_end();
+  //  json_pretty_print(parsed_json_result);
 
-//  printf("\n RESULT : This is parsed json \n\n \n %s\n",
-//         json_object_to_json_string_ext(
-//             parsed_json_result,
-//             JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
+  printf("\n RESULT : This is parsed json \n\n \n %s\n",
+         json_object_to_json_string_ext(
+             parsed_json_result,
+             JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
 
   return 0;
 }
@@ -1111,8 +1110,49 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
       goto done;
     };
   }
-//  printf("main command : %s \n", command);
-  run_command(command, input_command->command);
+  printf("main command : %s \n", command);
+  //  run_command(command, input_command->command);
+
+  char *test_output =
+      "{\n"
+      "  \"report\": {\n"
+      "    \"mtr\": {\n"
+      "      \"src\": \"digggy\",\n"
+      "      \"dst\": \"192.168.56.3\",\n"
+      "      \"tos\": \"0x0\",\n"
+      "      \"psize\": \"64\",\n"
+      "      \"bitpattern\": \"0x00\",\n"
+      "      \"tests\": \"10\"\n"
+      "    },\n"
+      "    \"hubs\": [\n"
+      "      {\n"
+      "        \"count\": \"1\",\n"
+      "        \"host\": \"kabelbox\",\n"
+      "        \"Loss%\": 0.00,\n"
+      "        \"Snt\": 10,\n"
+      "        \"Last\": 1.61,\n"
+      "        \"Avg\": 0.96,\n"
+      "        \"Best\": 0.59,\n"
+      "        \"Wrst\": 1.61,\n"
+      "        \"StDev\": 0.32\n"
+      "      },\n"
+      "      {\n"
+      "        \"count\": \"2\",\n"
+      "        \"host\": \"83-169-183-13-isp.superkabel.de\",\n"
+      "        \"Loss%\": 0.00,\n"
+      "        \"Snt\": 10,\n"
+      "        \"Last\": 17.37,\n"
+      "        \"Avg\": 14.77,\n"
+      "        \"Best\": 3.78,\n"
+      "        \"Wrst\": 41.15,\n"
+      "        \"StDev\": 10.06\n"
+      "      }\n"
+      "    ]\n"
+      "  }\n"
+      "}";
+
+  struct json_object *parsed_json_result = json_tokener_parse(test_output);
+
 
 done:
   return retval;
