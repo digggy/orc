@@ -375,28 +375,40 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
 error yang_verify_container(struct json_object* content_container,
                             struct json_object* yang) {
   int error;
-  const char* value = NULL;
   json_type value_type = json_object_get_type(content_container);
 
   if (value_type != json_type_object) {
     return INVALID_TYPE;
   }
   error = yang_verify_output(content_container, yang);
-  return RE_OK;
+  return error;
 };
 
 error yang_verify_list(struct json_object* content_list,
                        struct json_object* yang) {
+  int error;
+  json_type value_type = json_object_get_type(content_list);
+  if (value_type != json_type_array) {
+    return INVALID_TYPE;
+  }
+  //  json_pretty_print(yang);
+
+  for (int i = 0; i < json_object_array_length(content_list); i++) {
+    struct json_object* list_content = NULL;
+    struct json_object* content_item =
+        json_object_array_get_idx(content_list, i);
+    if (!(content_item)) {
+      return INVALID_TYPE;
+    }
+    return yang_verify_output(content_item, yang);
+  }
+
   return RE_OK;
 };
 
 struct command_arguments* yang_verify_input(struct json_object* content_object,
                                             struct json_object* input_child) {
   int mandatory_exist = 1;
-  struct json_object* yang = json_get_objects_from_map(input_child);
-  if (!yang) {
-    return YANG_SCHEMA_ERROR;
-  }
   error err;
   // struct that we return to the program
   command_arguments* cmd = malloc(sizeof(command_arguments));
@@ -406,6 +418,12 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
   }
   cmd->command = NULL;
   cmd->error = RE_OK;
+
+  struct json_object* yang = json_get_objects_from_map(input_child);
+  if (!yang) {
+    cmd->error = RE_OK;
+    return cmd;
+  }
 
   {
     // Check if the stdin has the mandatory items
@@ -551,13 +569,18 @@ error yang_verify_output(struct json_object* content_object,
         }
       } else if (yang_is_container(yang_node_type)) {
         // container has children so further validation check
-        printf("--------------------- CONTAINTER -> %s \n", key);
-        err = yang_verify_container(content_json_value, yang_node);
+        printf("-------------- CONTAINTER -> %s \n", key);
+        if ((err = yang_verify_container(content_json_value, yang_node)) !=
+            RE_OK) {
+          return err;
+        }
 
       } else if (yang_is_list(yang_node_type)) {
-        printf("--------------------- LIST -> %s \n", key);
+        printf("-------------- LIST -> %s \n", key);
         // list has children so further validation checks to its elements
-        // printf("It is list\n");
+        if ((err = yang_verify_list(content_json_value, yang_node)) != RE_OK) {
+          return err;
+        }
       }
     } else {
       // key doesnt exists
