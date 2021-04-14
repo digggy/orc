@@ -1128,7 +1128,7 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
       "      {\n"
       "        \"count\": \"1\",\n"
       "        \"host\": \"kabelbox\",\n"
-      "        \"loss_percent\": 0.00,\n"
+      "        \"loss_percent\": 20.00,\n"
       "        \"sent\": 10,\n"
       "        \"last\": 1.61,\n"
       "        \"average_rtt\": 0.96,\n"

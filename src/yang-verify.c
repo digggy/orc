@@ -361,6 +361,9 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
         }
         int fraction_digits = json_object_get_int64(jo_temp);
         split_pair_by_char(value, &before_decimal, &after_decimal, '.');
+        if(before_decimal == NULL){
+          return 1;
+        }
         if (strlen(after_decimal) != fraction_digits) {
           return 1;
         }
