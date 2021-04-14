@@ -183,7 +183,7 @@ module openwrt-operations {
         leaf destination {
         // should be a choice between ipv4/6 or string representation
             mandatory true;
-            type inet:ip-address;
+            type inet:host;
         }
         leaf interval {
             description

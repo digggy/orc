@@ -178,7 +178,7 @@
     <input>
       <leaf name="destination">
         <mandatory value="true"/>
-        <type name="inet:ip-address"/>
+        <type name="inet:host"/>
       </leaf>
       <leaf name="interval">
         <description>

@@ -330,7 +330,6 @@ def process_imported_types(args, imported):
                     for val in value:
                         if item["@name"] == val["type"]:
                             import_type = item["type"]["@name"]
-                            import_type_obj = item["type"]
                             if import_type not in ALLOWED_TYPES and import_type not in types:
                                 raise Exception("Unsupported type in imported type {}".format(import_type))
                             converted = {
@@ -338,41 +337,50 @@ def process_imported_types(args, imported):
                             }
 ##
                             if converted["leaf-type"] == "union":
-                                dependent_types = import_type_obj["type"]
-                                converted["types"] = {}
-                                if isinstance(dependent_types, list):
-                                    for type in dependent_types:
-                                        if ":" in type["@name"]:
-                                            # splitting to check for prefix
-                                            split = type["@name"].split(":", 1)
-                                            # TODO handle import from other modules for type with prefix
-                                            if split[0] not in imported.get_modules():
-                                                raise Exception("Using type from module that is not defined \"{}\"".format(split[0]))
-                                            # we handle the case when the type is in the module
-                                            type_without_prefix = split[1]
-                                            for x in typedef:
-                                                if x["@name"] == type_without_prefix:
-                                                    if x["type"]["@name"] == "string" and "pattern" in x["type"]:
-                                                        if 'pattern' not in converted["types"]:
-                                                            converted["types"]["pattern"] = []
-                                                        if isinstance(x["type"]["pattern"], list):
-                                                            for pattern in x["type"]["pattern"]:
-                                                                converted["types"]["pattern"].append("^" + pattern["@value"] + "$")
-                                                        else:
-                                                            converted["types"]["pattern"].append("^" + x["type"]["pattern"]["@value"] + "$")
-                            ##
+                                handle_union_type(item, converted, imported, typedef)
                             if converted["leaf-type"] == "string" and "pattern" in item["type"]:
-                                converted["pattern"] = []
-                                if isinstance(item["type"]["pattern"], list):
-                                    for pattern in item["type"]["pattern"]:
-                                        converted["pattern"].append("^" + pattern["@value"] + "$")
-                                else:
-                                    converted["pattern"].append("^" + item["type"]["pattern"]["@value"] + "$")
+                                handle_string_pattern(converted, item)
                             if range_allowed(converted["leaf-type"]) and "range" in item["type"]:
                                 range_split = get_range(item["type"]["range"]["@value"].split("..", 1), converted["leaf-type"])
                                 converted["from"] = range_split[0]
                                 converted["to"] = range_split[1]
+                            # print(converted)
                             types[val["type_name"]] = converted
+
+def handle_string_pattern(converted, item):
+    converted["pattern"] = []
+    if isinstance(item["type"]["pattern"], list):
+        for pattern in item["type"]["pattern"]:
+            converted["pattern"].append("^" + pattern["@value"] + "$")
+    else:
+        converted["pattern"].append("^" + item["type"]["pattern"]["@value"] + "$")
+
+def handle_union_type(item, converted, imported, typedef):
+    dependent_types = item["type"]["type"]
+    converted["types"] = {}
+    if isinstance(dependent_types, list):
+        for type in dependent_types:
+            if ":" in type["@name"]:
+                # splitting to check for prefix
+                split = type["@name"].split(":", 1)
+                # TODO handle import from other modules for type with prefix
+                if split[0] not in imported.get_modules():
+                    raise Exception("Using type from module that is not defined \"{}\"".format(split[0]))
+                # we handle the case when the type is in the module
+                type_without_prefix = split[1]
+                for x in typedef:
+                    if x["@name"] == type_without_prefix:
+                        if x["type"]["@name"] == "union":
+                            handle_union_type(x, converted, imported, typedef)
+                        if x["type"]["@name"] == "string" and "pattern" in x["type"]:
+                            if 'pattern' not in converted["types"]:
+                                converted["types"]["pattern"] = []
+                            if isinstance(x["type"]["pattern"], list):
+                                for pattern in x["type"]["pattern"]:
+                                    converted["types"]["pattern"].append("^" + pattern["@value"] + "$")
+                            else:
+                                converted["types"]["pattern"].append("^" + x["type"]["pattern"]["@value"] + "$")
+
 
 def label_depths(js, parent=None, depth=0):
     if js["type"] in ["module", "container", "list"]:
