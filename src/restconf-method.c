@@ -539,7 +539,7 @@ int data_post(struct CgiContext *cgi, char **pathvec, int root) {
   UciWritePair *container_create =
       initialize_uci_write_pair(&uci, NULL, container);
   if (!container_create) {
-    retval = restconf_operation_failed_internal();
+    retval = restconf_operation_failed_internal("operation-failed");
     goto done;
   }
   root_key_copy = str_dup(root_key);
@@ -975,7 +975,7 @@ done:
   return retval;
 }
 
-int run_command(const char *command, char **command_arguments) {
+struct json_object *run_command(const char *command, char **command_arguments, char* top_level_name) {
   char command_with_options[1024];
   strcpy(command_with_options, command);
   strcat(command_with_options, " ");
@@ -987,30 +987,29 @@ int run_command(const char *command, char **command_arguments) {
     strcat(command_with_options, command_arguments[i]);
     strcat(command_with_options, " ");
   }
-  //  printf("the command is %s : ", command_with_options);
-  if ((fp = popen(command_with_options, "r")) == NULL) {
-    fprintf(stderr, "Error opening pipe!\n");
-    return -1;
-  }
-  while (fgets(buf, BUFSIZE, fp) != NULL) {
-    output = concat(output, buf);
-  }
-  if (pclose(fp)) {
-    fprintf(stderr, "Command not found or exited with error status\n");
-    return -1;
-  }
-  parsed_json_result = json_tokener_parse(output);
 
-  //  content_type_json();
-  //  headers_end();
-  //  json_pretty_print(parsed_json_result);
-
-  printf("\n RESULT : This is parsed json \n\n \n %s\n",
-         json_object_to_json_string_ext(
-             parsed_json_result,
-             JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY));
-
-  return 0;
+  {
+    if ((fp = popen(command_with_options, "r")) == NULL) {
+      fprintf(stderr, "Error opening pipe!\n");
+      restconf_operation_failed_internal("operation failed");
+      return NULL;
+    }
+    while (fgets(buf, BUFSIZE, fp) != NULL) {
+      output = concat(output, buf);
+    }
+    if (pclose(fp)) {
+      fprintf(stderr, "Command not found or exited with error status\n");
+      restconf_operation_failed_internal("command not found");
+      return NULL;
+    }
+    parsed_json_result = json_tokener_parse(output);
+    if(!parsed_json_result){
+      restconf_operation_failed_internal("operation output not json parsable");
+      return NULL;
+    }
+  }
+  json_pretty_print(get_json_output2yang(top_level_name));
+  return NULL;
 }
 
 int invoke_operation(struct CgiContext *cgi, char **pathvec) {
@@ -1024,59 +1023,45 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
 
   char *module_name = NULL;
   char *top_level_name = NULL;
-
-  json_object *module = NULL;
-  json_object *top_level = NULL;
-  // The key and value of the object in stdin (ie CONTENT coming from post
-  // request)
-  char *root_key = NULL;
-  struct json_object *root_object = NULL;
-
-  if ((content_raw = get_content()) == NULL) {
-    retval = restconf_malformed();
-    goto done;
-  }
-  content = json_tokener_parse_verbose(content_raw, &parse_error);
-  if (parse_error != json_tokener_success) {
-    retval = restconf_malformed();
-    goto done;
-  }
-
-  //  if (json_object_object_length(content) != 1) {
-  //    // Only 1 child is allowed
-  //    retval = restconf_malformed();
-  //    goto done;
-  //  }
-
   // check if the module and top_level_names are rightly splitted
   if (split_pair_by_char(pathvec[1], &module_name, &top_level_name, ':')) {
     retval = restconf_badrequest();
     goto done;
   }
-  // * Iterate through all keys and values of an object.
-  // TODO  is root_key, root_object necessary ?
-  json_object_object_foreach(content, root_key_string, root_val) {
-    root_key = root_key_string;
-    root_object = root_val;
-  }
 
-  if (split_pair_by_char(pathvec[1], &module_name, &top_level_name, ':')) {
-    retval = restconf_badrequest();
-    goto done;
-  }
+  json_object *module = NULL;
+  json_object *top_level = NULL;
   // Make sure the yang module exists in yang.h header file
   if (!(module = yang_module_exists(module_name))) {
     retval = restconf_unknown_namespace();
     goto done;
   }
-  //  printf("Corresponding Module in JSON \n\n");
-  //  json_pretty_print(module);
 
   // Get the top level json
   top_level = json_get_object_from_map(module, top_level_name);
   if (!top_level) {
     retval = restconf_badrequest();
     goto done;
+  }
+
+  // The key and value of the object in stdin (ie CONTENT coming from post
+  // request)
+  char *root_key = NULL;
+  struct json_object *root_object = NULL;
+  content_raw = get_content();
+  if (content_raw != NULL) {
+    content = json_tokener_parse_verbose(content_raw, &parse_error);
+    if (parse_error != json_tokener_success) {
+      retval = restconf_malformed();
+      goto done;
+    }
+    // * Iterate through all keys and values of an object.
+    // TODO  is root_key, root_object necessary ?
+    json_object_object_foreach(content, root_key_string, root_val) {
+      root_key = root_key_string;
+      root_object = root_val;
+    }
+
   }
 
   // check if the content is an rpc
@@ -1110,67 +1095,31 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
       goto done;
     };
   }
-   printf("main command : %s \n", command);
-  //  run_command(command, input_command->command);
-  // ---------------------------------------- WIP ----------------------------
-//  char *test_output =
-//      "{\n"
-//      "  \"report\": {\n"
-//      "    \"mtr\": {\n"
-//      "      \"source\": \"digggy\",\n"
-//      "      \"destination\": \"192.168.56.3\",\n"
-//      "      \"type-of-service\": \"0x0\",\n"
-//      "      \"packet-size\": \"64\",\n"
-//      "      \"bitpattern\": \"0x00\",\n"
-//      "      \"tests\": \"10\"\n"
-//      "    },\n"
-//      "    \"hubs\": [\n"
-//      "      {\n"
-//      "        \"count\": \"1\",\n"
-//      "        \"host\": \"kabelbox\",\n"
-//      "        \"loss_percent\": 20.00,\n"
-//      "        \"sent\": 10,\n"
-//      "        \"last\": 1.61,\n"
-//      "        \"average_rtt\": 0.96,\n"
-//      "        \"best_rtt\": 0.59,\n"
-//      "        \"worst_rtt\": 1.61,\n"
-//      "        \"standard_deviation\": 0.32\n"
-//      "      },\n"
-//      "      {\n"
-//      "        \"count\": \"2\",\n"
-//      "        \"host\": \"random2\",\n"
-//      "        \"loss_percent\": 1.00,\n"
-//      "        \"sent\": 10,\n"
-//      "        \"last\": 2.61,\n"
-//      "        \"average_rtt\": 1.96,\n"
-//      "        \"best_rtt\": 0.59,\n"
-//      "        \"worst_rtt\": 2.21,\n"
-//      "        \"standard_deviation\": 0.22\n"
-//      "      }"
-//      "    ]\n"
-//      "  }\n"
-//      "}";
-//
-//  struct json_object *parsed_json_result = json_tokener_parse(test_output);
-//
-//  // check if it has output
-//  int output_error;
-//  struct json_object *yang_output_child =
-//      json_get_object_from_map(top_level, YANG_OUTPUT);
-//  // check if the yang schema has output node
-//
-//  if (!yang_output_child) {
-//    if (parsed_json_result) {
-//      // doesnt take any input
-//      retval = restconf_badrequest();
-//    }
-//  }
-//
-//  if ((output_error = yang_verify_output(parsed_json_result,
-//                                         yang_output_child)) != RE_OK) {
-//    retval = restconf_malformed();
-//    goto done;
-//  };
+
+  struct json_object *parsed_json_result = run_command(command, input_command->command, top_level_name);
+
+  // check if it has output
+  int output_error;
+  struct json_object *yang_output_child =
+      json_get_object_from_map(top_level, YANG_OUTPUT);
+  // check if the yang schema has output node
+
+  if (!yang_output_child) {
+    if (parsed_json_result) {
+      // doesnt have any output
+      retval = restconf_badrequest();
+    }
+  }else{
+    if(parsed_json_result == NULL){
+      retval = restconf_badrequest();
+    }
+  }
+
+  if ((output_error = yang_verify_output(parsed_json_result,
+                                         yang_output_child)) != RE_OK) {
+    retval = restconf_malformed();
+    goto done;
+  };
 
 done:
   return retval;

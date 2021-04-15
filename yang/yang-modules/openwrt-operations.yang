@@ -22,6 +22,12 @@ module openwrt-operations {
            description "Percentage";
    }
 
+    typedef openwrt-bool {
+       type string {
+         pattern "(0|1)";
+       }
+    }
+
     extension flag {
         argument name;
     }
@@ -73,6 +79,24 @@ module openwrt-operations {
     output {
       uses openwrt-operations-output;
     }
+  }
+
+  rpc reboot{
+      description
+        "Delete a file";
+        input{
+            leaf delay {
+                oo:flag "d";
+                type int32;
+            }
+            leaf force {
+                oo:flag "f";
+                type openwrt-bool;
+            }
+        }
+        output {
+              uses openwrt-operations-output;
+            }
   }
 
   rpc ping {
@@ -241,7 +265,7 @@ module openwrt-operations {
                     type string;
                 }
 
-                leaf loss_percent{
+                leaf loss-percent{
                     type decimal64 {
                         fraction-digits 2;
                     }
@@ -256,22 +280,22 @@ module openwrt-operations {
                         fraction-digits 2;
                     }
                 }
-                leaf average_rtt{
+                leaf average-rtt{
                     type decimal64 {
                         fraction-digits 2;
                     }
                 }
-                leaf best_rtt{
+                leaf best-rtt{
                     type decimal64 {
                         fraction-digits 2;
                     }
                 }
-                leaf worst_rtt{
+                leaf worst-rtt{
                     type decimal64 {
                         fraction-digits 2;
                     }
                 }
-                leaf standard_deviation{
+                leaf standard-deviation{
                     type decimal64 {
                         fraction-digits 2;
                     }

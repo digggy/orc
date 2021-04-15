@@ -482,7 +482,10 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       }
     }
   }
-
+  // If nothing is mandatory and content obj is empty then we return without any checks
+  if (content_object == NULL) {
+    return cmd;
+  }
   json_object_object_foreach(content_object, key, content_json_value) {
     int exists;
     struct json_object* yang_node;
@@ -521,7 +524,6 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
           cmd->error = err;
           return cmd;
         }
-        // printf("leaf-list verified\n");
       } else if (yang_is_container(yang_node_type)) {
         // container has children so further validation check
         // printf("It is container\n");
@@ -582,7 +584,6 @@ error yang_verify_output(struct json_object* content_object,
      * TODO iterate through yang to check if there are any mandatory nodes and
      * check if they are present in content_json_value
      */
-    //    printf("key -> %s\n", key);
 
     exists = json_object_object_get_ex(yang, key, &yang_node);
     if (exists) {
@@ -590,27 +591,23 @@ error yang_verify_output(struct json_object* content_object,
 
       if (yang_is_leaf(yang_node_type)) {
         // leaf doesnt have any child so do a validation check
-        printf("--------------------- LEAF -> %s \n", key);
         if ((err = yang_verify_leaf(content_json_value, yang_node)) != RE_OK) {
           return err;
         }
       } else if (yang_is_leaf_list(yang_node_type)) {
         // leaf-list doesnt have any child so do a validation check
-        printf("--------------------- LEAF LIST -> %s \n", key);
         if ((err = yang_verify_leaf_list(content_json_value, yang_node)) !=
             RE_OK) {
           return err;
         }
       } else if (yang_is_container(yang_node_type)) {
         // container has children so further validation check
-        printf("-------------- CONTAINTER -> %s \n", key);
         if ((err = yang_verify_container(content_json_value, yang_node)) !=
             RE_OK) {
           return err;
         }
 
       } else if (yang_is_list(yang_node_type)) {
-        printf("-------------- LIST -> %s \n", key);
         // list has children so further validation checks to its elements
         if ((err = yang_verify_list(content_json_value, yang_node)) != RE_OK) {
           return err;

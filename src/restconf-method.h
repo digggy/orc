@@ -4,6 +4,7 @@
 #include "cgi.h"
 #include "error.h"
 #include "uci/methods.h"
+#include "restconf-operations.h"
 
 typedef char** rvec;
 

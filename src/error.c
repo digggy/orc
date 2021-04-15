@@ -132,11 +132,11 @@ int restconf_operation_failed() {
 /**
  * Internal Server Error - operation-failed
  */
-int restconf_operation_failed_internal() {
+int restconf_operation_failed_internal(char* msg ) {
   printf("Status: 500 Internal Server Error\r\n");
   content_type_json();
   headers_end();
-  restconf_error("operation-failed");
+  restconf_error(msg);
   return 0;
 }
 
@@ -160,7 +160,7 @@ int print_error(error err) {
     case LEAF_NO_OPTION:
     case YANG_SCHEMA_ERROR:
     case INTERNAL:
-      restconf_operation_failed_internal();
+      restconf_operation_failed_internal("operation-failed");
       break;
     case NO_SUCH_ELEMENT:
       restconf_invalid_value();

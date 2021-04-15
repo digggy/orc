@@ -28,6 +28,11 @@
       <text>Percentage</text>
     </description>
   </typedef>
+  <typedef name="openwrt-bool">
+    <type name="string">
+      <pattern value="(0|1)"/>
+    </type>
+  </typedef>
   <extension name="flag">
     <argument name="name"/>
   </extension>
@@ -71,6 +76,24 @@
       <leaf name="_filename">
         <mandatory value="true"/>
         <type name="string"/>
+      </leaf>
+    </input>
+    <output>
+      <uses name="openwrt-operations-output"/>
+    </output>
+  </rpc>
+  <rpc name="reboot">
+    <description>
+      <text>Delete a file</text>
+    </description>
+    <input>
+      <leaf name="delay">
+        <oo:flag name="d"/>
+        <type name="int32"/>
+      </leaf>
+      <leaf name="force">
+        <oo:flag name="f"/>
+        <type name="openwrt-bool"/>
       </leaf>
     </input>
     <output>
@@ -233,7 +256,7 @@
           <leaf name="host">
             <type name="string"/>
           </leaf>
-          <leaf name="loss_percent">
+          <leaf name="loss-percent">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
@@ -246,22 +269,22 @@
               <fraction-digits value="2"/>
             </type>
           </leaf>
-          <leaf name="average_rtt">
+          <leaf name="average-rtt">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
           </leaf>
-          <leaf name="best_rtt">
+          <leaf name="best-rtt">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
           </leaf>
-          <leaf name="worst_rtt">
+          <leaf name="worst-rtt">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
           </leaf>
-          <leaf name="standard_deviation">
+          <leaf name="standard-deviation">
             <type name="decimal64">
               <fraction-digits value="2"/>
             </type>
