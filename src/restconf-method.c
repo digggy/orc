@@ -987,7 +987,7 @@ struct json_object *run_command(const char *command, char **command_arguments, c
     strcat(command_with_options, command_arguments[i]);
     strcat(command_with_options, " ");
   }
-
+//  printf("COMMAND: %s\n", command_with_options);
   {
     if ((fp = popen(command_with_options, "r")) == NULL) {
       fprintf(stderr, "Error opening pipe!\n");
@@ -1002,14 +1002,23 @@ struct json_object *run_command(const char *command, char **command_arguments, c
       restconf_operation_failed_internal("command not found");
       return NULL;
     }
+    struct json_object *output2yang = NULL;
+    output2yang = get_json_output2yang(top_level_name);
+    if(output2yang){
+      // pre process the command output for yang validation
+      // special cases such as mtr
+      json_object_object_foreach(output2yang, key, value){
+        output = strrep(output, key, json_object_get_string(value));
+      }
+    }
+
     parsed_json_result = json_tokener_parse(output);
     if(!parsed_json_result){
       restconf_operation_failed_internal("operation output not json parsable");
       return NULL;
     }
   }
-  json_pretty_print(get_json_output2yang(top_level_name));
-  return NULL;
+  return parsed_json_result;
 }
 
 int invoke_operation(struct CgiContext *cgi, char **pathvec) {
@@ -1108,10 +1117,12 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     if (parsed_json_result) {
       // doesnt have any output
       retval = restconf_badrequest();
+      goto done;
     }
   }else{
     if(parsed_json_result == NULL){
       retval = restconf_badrequest();
+      goto done;
     }
   }
 
@@ -1121,6 +1132,10 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     goto done;
   };
 
+  // print the output
+  content_type_json();
+  headers_end();
+  json_pretty_print(parsed_json_result);
 done:
   return retval;
 }

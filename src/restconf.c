@@ -98,8 +98,13 @@ static int operations_root(struct CgiContext *cgi, char **pathvec) {
       // TODO
       retval = not_implemented(cgi);
     } else if (is_GET(cgi->method)) {
-      // TODO
-      retval = not_implemented(cgi);
+      // TODO send back all the rpc supported
+      struct json_object *operations = get_all_operations();
+      content_type_json();
+      allowed_methods(pathvec);
+      headers_end();
+      json_pretty_print(operations);
+
     } else if (is_PUT(cgi->method) || is_POST(cgi->method)) {
       retval = method_not_allowed(cgi);
     }

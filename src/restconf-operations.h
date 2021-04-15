@@ -9,6 +9,7 @@
 #include <json-c/json.h>
 #include <string.h>
 #include "./generated/yang.h"
+#include "yang-util.h"
 
 static const map_str2str json_output2yang[] = {
     {"mtr", "{\n"
@@ -27,5 +28,6 @@ static const map_str2str json_output2yang[] = {
 };
 
 struct json_object *get_json_output2yang(char *operation);
+struct json_object *get_all_operations();
 
 #endif  // RESTCONF_RESTCONF_OPERATIONS_H
