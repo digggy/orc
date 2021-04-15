@@ -357,7 +357,7 @@ def handle_string_pattern(converted, item):
 
 def handle_union_type(item, converted, imported, typedef):
     dependent_types = item["type"]["type"]
-    converted["types"] = {}
+    converted["subtypes"] = {}
     if isinstance(dependent_types, list):
         for type in dependent_types:
             if ":" in type["@name"]:
@@ -373,14 +373,15 @@ def handle_union_type(item, converted, imported, typedef):
                         if x["type"]["@name"] == "union":
                             handle_union_type(x, converted, imported, typedef)
                         if x["type"]["@name"] == "string" and "pattern" in x["type"]:
-                            if 'pattern' not in converted["types"]:
-                                converted["types"]["pattern"] = []
+                            if len(converted["subtypes"]) == 0:
+                                converted["subtypes"] = []
                             if isinstance(x["type"]["pattern"], list):
                                 for pattern in x["type"]["pattern"]:
-                                    converted["types"]["pattern"].append("^" + pattern["@value"] + "$")
+                                    individual_type = {"pattern": "^" + pattern["@value"] + "$", "leaf-type": x["type"]["@name"] }
+                                    converted["subtypes"].append(individual_type)
                             else:
-                                converted["types"]["pattern"].append("^" + x["type"]["pattern"]["@value"] + "$")
-
+                                individual_type = {"pattern": "^" + x["type"]["pattern"]["@value"] + "$", "leaf-type": x["type"]["@name"] }
+                                converted["subtypes"].append(individual_type)
 
 def label_depths(js, parent=None, depth=0):
     if js["type"] in ["module", "container", "list"]:
