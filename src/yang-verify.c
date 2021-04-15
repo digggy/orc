@@ -205,6 +205,7 @@ int has_decimal(const char* str) {
 }
 static int yang_verify_value_type(struct json_object* type, const char* value) {
   const char* leaf_type = NULL;
+  struct json_object* extracted_type = NULL;
   int is_object = 0;
 
   enum other_check { NONE, RANGE, PATTERN, FRACTION_DIGITS } verify_type = NONE;
@@ -215,6 +216,11 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
     leaf_type = json_object_get_string(type);
   }
   yang_type converted = str_to_yang_type(leaf_type);
+  // check in the yang.h for types
+  const char* extracted_string = yang_for_type(json_object_get_string(type));
+  if (extracted_string) {
+    extracted_type = json_tokener_parse(extracted_string);
+  }
   switch (converted) {
     case BOOLEAN:
       if (strcmp(value, "true") != 0 && strcmp(value, "false") != 0) return 1;
@@ -302,6 +308,32 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       verify_type = PATTERN;
       break;
     case UNION:
+      if (extracted_type) {
+        struct json_object* subtypes_array = NULL;
+        int exists = json_object_object_get_ex(extracted_type, "subtypes",
+                                               &subtypes_array);
+        if (!exists) {
+          return 1;
+        }
+        json_type value_type = json_object_get_type(subtypes_array);
+        if (value_type != json_type_array) {
+          return INVALID_TYPE;
+        }
+        int no_match = 1;
+        for (int i = 0; i < json_object_array_length(subtypes_array); i++) {
+          struct json_object* content_item = NULL;
+          content_item = json_object_array_get_idx(subtypes_array, i);
+          if (!(content_item)) {
+            return INVALID_TYPE;
+          }
+          if((no_match = yang_verify_value_type(content_item, value)) == 0){
+            // One of the value matches so we exit the check for union
+            return 0;
+          }
+        }
+        // we have no match so we return 1
+        return no_match;
+      }
       break;
     default:
       return verify_value_from_imported(leaf_type, value);
@@ -361,7 +393,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
         }
         int fraction_digits = json_object_get_int64(jo_temp);
         split_pair_by_char(value, &before_decimal, &after_decimal, '.');
-        if(before_decimal == NULL){
+        if (before_decimal == NULL) {
           return 1;
         }
         if (strlen(after_decimal) != fraction_digits) {
@@ -397,7 +429,6 @@ error yang_verify_list(struct json_object* content_list,
   //  json_pretty_print(yang);
 
   for (int i = 0; i < json_object_array_length(content_list); i++) {
-    struct json_object* list_content = NULL;
     struct json_object* content_item =
         json_object_array_get_idx(content_list, i);
     if (!(content_item)) {

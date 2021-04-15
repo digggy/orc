@@ -1110,67 +1110,67 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
       goto done;
     };
   }
-  // printf("main command : %s \n", command);
+   printf("main command : %s \n", command);
   //  run_command(command, input_command->command);
   // ---------------------------------------- WIP ----------------------------
-  char *test_output =
-      "{\n"
-      "  \"report\": {\n"
-      "    \"mtr\": {\n"
-      "      \"source\": \"digggy\",\n"
-      "      \"destination\": \"192.168.56.3\",\n"
-      "      \"type-of-service\": \"0x0\",\n"
-      "      \"packet-size\": \"64\",\n"
-      "      \"bitpattern\": \"0x00\",\n"
-      "      \"tests\": \"10\"\n"
-      "    },\n"
-      "    \"hubs\": [\n"
-      "      {\n"
-      "        \"count\": \"1\",\n"
-      "        \"host\": \"kabelbox\",\n"
-      "        \"loss_percent\": 20.00,\n"
-      "        \"sent\": 10,\n"
-      "        \"last\": 1.61,\n"
-      "        \"average_rtt\": 0.96,\n"
-      "        \"best_rtt\": 0.59,\n"
-      "        \"worst_rtt\": 1.61,\n"
-      "        \"standard_deviation\": 0.32\n"
-      "      },\n"
-      "      {\n"
-      "        \"count\": \"2\",\n"
-      "        \"host\": \"random2\",\n"
-      "        \"loss_percent\": 1.00,\n"
-      "        \"sent\": 10,\n"
-      "        \"last\": 2.61,\n"
-      "        \"average_rtt\": 1.96,\n"
-      "        \"best_rtt\": 0.59,\n"
-      "        \"worst_rtt\": 2.21,\n"
-      "        \"standard_deviation\": 0.22\n"
-      "      }"
-      "    ]\n"
-      "  }\n"
-      "}";
-
-  struct json_object *parsed_json_result = json_tokener_parse(test_output);
-
-  // check if it has output
-  int output_error;
-  struct json_object *yang_output_child =
-      json_get_object_from_map(top_level, YANG_OUTPUT);
-  // check if the yang schema has output node
-
-  if (!yang_output_child) {
-    if (parsed_json_result) {
-      // doesnt take any input
-      retval = restconf_badrequest();
-    }
-  }
-
-  if ((output_error = yang_verify_output(parsed_json_result,
-                                         yang_output_child)) != RE_OK) {
-    retval = restconf_malformed();
-    goto done;
-  };
+//  char *test_output =
+//      "{\n"
+//      "  \"report\": {\n"
+//      "    \"mtr\": {\n"
+//      "      \"source\": \"digggy\",\n"
+//      "      \"destination\": \"192.168.56.3\",\n"
+//      "      \"type-of-service\": \"0x0\",\n"
+//      "      \"packet-size\": \"64\",\n"
+//      "      \"bitpattern\": \"0x00\",\n"
+//      "      \"tests\": \"10\"\n"
+//      "    },\n"
+//      "    \"hubs\": [\n"
+//      "      {\n"
+//      "        \"count\": \"1\",\n"
+//      "        \"host\": \"kabelbox\",\n"
+//      "        \"loss_percent\": 20.00,\n"
+//      "        \"sent\": 10,\n"
+//      "        \"last\": 1.61,\n"
+//      "        \"average_rtt\": 0.96,\n"
+//      "        \"best_rtt\": 0.59,\n"
+//      "        \"worst_rtt\": 1.61,\n"
+//      "        \"standard_deviation\": 0.32\n"
+//      "      },\n"
+//      "      {\n"
+//      "        \"count\": \"2\",\n"
+//      "        \"host\": \"random2\",\n"
+//      "        \"loss_percent\": 1.00,\n"
+//      "        \"sent\": 10,\n"
+//      "        \"last\": 2.61,\n"
+//      "        \"average_rtt\": 1.96,\n"
+//      "        \"best_rtt\": 0.59,\n"
+//      "        \"worst_rtt\": 2.21,\n"
+//      "        \"standard_deviation\": 0.22\n"
+//      "      }"
+//      "    ]\n"
+//      "  }\n"
+//      "}";
+//
+//  struct json_object *parsed_json_result = json_tokener_parse(test_output);
+//
+//  // check if it has output
+//  int output_error;
+//  struct json_object *yang_output_child =
+//      json_get_object_from_map(top_level, YANG_OUTPUT);
+//  // check if the yang schema has output node
+//
+//  if (!yang_output_child) {
+//    if (parsed_json_result) {
+//      // doesnt take any input
+//      retval = restconf_badrequest();
+//    }
+//  }
+//
+//  if ((output_error = yang_verify_output(parsed_json_result,
+//                                         yang_output_child)) != RE_OK) {
+//    retval = restconf_malformed();
+//    goto done;
+//  };
 
 done:
   return retval;
