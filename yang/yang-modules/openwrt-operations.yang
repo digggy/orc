@@ -46,6 +46,7 @@ module openwrt-operations {
   }
 
   rpc copy {
+    oo:command-name "cp";
     description
       "Copy from one file to another";
     
@@ -66,6 +67,7 @@ module openwrt-operations {
   }
 
   rpc delete {
+    oo:command-name "rm";
     description
       "Delete a file";
   
@@ -82,6 +84,7 @@ module openwrt-operations {
   }
 
   rpc reboot{
+    oo:command-name "reboot";
       description
         "Delete a file";
         input{
@@ -100,6 +103,7 @@ module openwrt-operations {
   }
 
   rpc ping {
+    oo:command-name "ping";
     description
         "send ICMP ECHO_REQUEST to network hosts";
     input {
@@ -302,6 +306,20 @@ module openwrt-operations {
                 }
             }
         }
+    }
+  }
+
+  rpc opkg{
+    oo:command-name "opkg";
+    input {
+        choice manipulation-type {
+               leaf upgrade { type string; }
+               leaf install { type string; }
+               leaf remove {  type string;}
+             }
+    }
+    output{
+        uses openwrt-operations-output;
     }
   }
 }
