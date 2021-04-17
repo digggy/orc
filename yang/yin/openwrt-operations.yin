@@ -2,15 +2,11 @@
 <module name="openwrt-operations"
         xmlns="urn:ietf:params:xml:ns:yang:yin:1"
         xmlns:oo="urn:jacobs:yang:openwrt-operations"
-        xmlns:inet="urn:ietf:params:xml:ns:yang:ietf-inet-types"
-        xmlns:uci="urn:jacobs:yang:openwrt-uci">
+        xmlns:inet="urn:ietf:params:xml:ns:yang:ietf-inet-types">
   <namespace uri="urn:jacobs:yang:openwrt-operations"/>
   <prefix value="oo"/>
   <import module="ietf-inet-types">
     <prefix value="inet"/>
-  </import>
-  <import module="openwrt-uci-extension">
-    <prefix value="uci"/>
   </import>
   <contact>
     <text>username &lt;username@jacobs-university.de&gt;</text>
@@ -36,7 +32,7 @@
   <extension name="command-flag">
     <argument name="name"/>
   </extension>
-  <extension name="option">
+  <extension name="command-option">
     <argument name="name"/>
   </extension>
   <extension name="command-name">
@@ -204,7 +200,7 @@
     </output>
   </rpc>
   <rpc name="mtr">
-    <oo:command-name name="mtr -r -j"/>
+    <oo:command-name name="mtr"/>
     <input>
       <leaf name="report">
         <type name="string">
@@ -239,12 +235,6 @@
         <type name="int32"/>
         <oo:command-option name="c"/>
         <default value="4"/>
-      </leaf>
-      <leaf name="test_decimal">
-        <type name="decimal64">
-          <fraction-digits value="2"/>
-        </type>
-        <default value="4.0"/>
       </leaf>
     </input>
     <output>

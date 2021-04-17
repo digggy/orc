@@ -6,19 +6,15 @@ module openwrt-operations {
     prefix inet;
   }
 
-  import openwrt-uci-extension {
-    prefix uci;
-  }
-
   contact "username <username@jacobs-university.de>";
     revision 2021-03-20 {
       description "Inital set of operations";
   }
 
    typedef percent {
-           type uint8 {
-               range "0 .. 100";
-           }
+      type uint8 {
+           range "0 .. 100";
+      }
            description "Percentage";
    }
 
@@ -207,7 +203,7 @@ module openwrt-operations {
   }
 
   rpc mtr {
-    oo:command-name "mtr -r -j";
+    oo:command-name "mtr";
     input {
         leaf report {
             type string {
@@ -243,12 +239,6 @@ module openwrt-operations {
             type int32;
             oo:command-option "c";
             default 4;
-        }
-        leaf test_decimal {
-            type decimal64 {
-                fraction-digits 2;
-            }
-            default 4.0;
         }
     }
     output {

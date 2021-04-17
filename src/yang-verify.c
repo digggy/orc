@@ -326,7 +326,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
           if (!(content_item)) {
             return INVALID_TYPE;
           }
-          if((no_match = yang_verify_value_type(content_item, value)) == 0){
+          if ((no_match = yang_verify_value_type(content_item, value)) == 0) {
             // One of the value matches so we exit the check for union
             return 0;
           }
@@ -437,7 +437,6 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
     cmd->error = RE_OK;
     return cmd;
   }
-
   {
     // Check if the stdin has the mandatory items
     struct json_object* mandatory = NULL;
@@ -461,7 +460,33 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       }
     }
   }
-  // If nothing is mandatory and content obj is empty then we return without any checks
+  {
+    // Check for defaults in leaf and leaf-lists
+    json_object_object_foreach(yang, key, yang_node) {
+      const char* yang_node_type = NULL;
+      const char* default_value = NULL;
+      struct json_object* content_node = NULL;
+      yang_node_type = json_get_string(yang_node, YANG_TYPE);
+      if (yang_is_leaf(yang_node_type)) {
+        default_value = json_get_string(yang_node, YANG_DEFAULT);
+        if (default_value) {
+          // check if the value is already set in the content_object
+          int node_exists = 0;
+          node_exists =
+              json_object_object_get_ex(content_object, key, &content_node);
+          if (!node_exists) {
+            json_object_object_add(content_object, key,
+                                   json_object_new_string(default_value));
+          }
+        }
+      }
+      if (yang_is_leaf_list(yang_node_type)) {
+        // TODO
+      }
+    }
+  }
+  // If nothing is mandatory and content obj is empty then we return without any
+  // checks
   if (content_object == NULL) {
     return cmd;
   }
@@ -470,7 +495,7 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
     struct json_object* yang_node;
 
     const char* yang_node_type = NULL;
-    char* flag_with_value = "";
+    char* arg = "";
     /*
      * TODO iterate through yang to check if there are any mandatory nodes and
      * check if they are present in content_json_value
@@ -481,20 +506,27 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       yang_node_type = json_get_string(yang_node, YANG_TYPE);
       if (yang_is_leaf(yang_node_type)) {
         // leaf doesnt have any child so do a validation check
-        struct json_object* flag_name;
+        struct json_object* option_or_flag;
         if ((err = yang_verify_leaf(content_json_value, yang_node)) != RE_OK) {
           cmd->error = err;
           return cmd;
         }
         if (json_object_object_get_ex(yang_node, YANG_OPERATION_OPTION,
-                                      &flag_name)) {
-          flag_with_value = concat("-", json_object_get_string(flag_name));
-          strcat(flag_with_value, " ");
+                                      &option_or_flag)) {
+          arg = concat("-", json_object_get_string(option_or_flag));
+          strcat(arg, " ");
+          // adding the actuall value that comes from the input
+          arg =
+              concat(arg, json_object_get_string(content_json_value));
         }
-        // adding the actuall value that comes from the input
-        flag_with_value =
-            concat(flag_with_value, json_object_get_string(content_json_value));
-        vector_push_back(cmd->command, flag_with_value);
+        else if (json_object_object_get_ex(yang_node, YANG_OPERATION_FLAG,
+                                      &option_or_flag)) {
+          arg = concat("-", json_object_get_string(option_or_flag));
+
+        } else {
+          arg = (char*) json_object_get_string(content_json_value);
+        }
+        vector_push_back(cmd->command, arg);
 
       } else if (yang_is_leaf_list(yang_node_type)) {
         // leaf-list doesnt have any child so do a validation check
@@ -516,7 +548,7 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       return cmd;
     }
   }
-  //  options = command_options;
+  //  options = option_or_flags;
   return cmd;
 }
 
@@ -588,7 +620,8 @@ error yang_verify_output(struct json_object* content_object,
 
       } else if (yang_is_list(yang_node_type)) {
         // list has children so further validation checks to its elements
-        if ((err = json_yang_verify_list(content_json_value, yang_node)) != RE_OK) {
+        if ((err = json_yang_verify_list(content_json_value, yang_node)) !=
+            RE_OK) {
           return err;
         }
       }
