@@ -208,17 +208,17 @@
     <input>
       <leaf name="report">
         <type name="string">
-          <pattern value="(r)"/>
+          <pattern value="(true)"/>
         </type>
         <oo:flag name="r"/>
-        <default value="r"/>
+        <default value="true"/>
       </leaf>
       <leaf name="json">
         <type name="string">
-          <pattern value="(j)"/>
+          <pattern value="(true)"/>
         </type>
         <oo:flag name="j"/>
-        <default value="j"/>
+        <default value="true"/>
       </leaf>
       <leaf name="destination">
         <mandatory value="true"/>

@@ -211,18 +211,18 @@ module openwrt-operations {
     input {
         leaf report {
             type string {
-                pattern "(r)";
+                pattern "(true)";
            }
            oo:flag "r";
-           default "r";
+           default "true";
         }
 
         leaf json {
             type string {
-                pattern "(j)";
+                pattern "(true)";
            }
         oo:flag "j";
-        default "j";
+        default "true";
         }
 
         leaf destination {
