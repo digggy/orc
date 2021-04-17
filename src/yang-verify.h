@@ -16,7 +16,6 @@ error yang_verify_leaf(struct json_object* leaf, struct json_object* yang);
 error yang_verify_leaf_list(struct json_object* list, struct json_object* yang);
 
 error yang_verify_container(struct json_object* content_container, struct json_object* yang);
-error yang_verify_list(struct json_object* content_list, struct json_object* yang);
 
 error yang_verify_output(struct json_object* object,
                          struct json_object* yang);

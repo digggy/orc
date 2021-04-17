@@ -27,6 +27,8 @@ static const map_str2str json_output2yang[] = {
      "}"}
 };
 
+static const char system_commands [3][50] = {"copy", "delete", "reboot"};
+
 struct json_object *get_json_output2yang(char *operation);
 struct json_object *get_all_operations();
 

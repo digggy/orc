@@ -419,27 +419,6 @@ error yang_verify_container(struct json_object* content_container,
   return error;
 };
 
-error yang_verify_list(struct json_object* content_list,
-                       struct json_object* yang) {
-  int error;
-  json_type value_type = json_object_get_type(content_list);
-  if (value_type != json_type_array) {
-    return INVALID_TYPE;
-  }
-  //  json_pretty_print(yang);
-
-  for (int i = 0; i < json_object_array_length(content_list); i++) {
-    struct json_object* content_item =
-        json_object_array_get_idx(content_list, i);
-    if (!(content_item)) {
-      return INVALID_TYPE;
-    }
-    return yang_verify_output(content_item, yang);
-  }
-
-  return RE_OK;
-};
-
 struct command_arguments* yang_verify_input(struct json_object* content_object,
                                             struct json_object* input_child) {
   int mandatory_exist = 1;
@@ -609,7 +588,7 @@ error yang_verify_output(struct json_object* content_object,
 
       } else if (yang_is_list(yang_node_type)) {
         // list has children so further validation checks to its elements
-        if ((err = yang_verify_list(content_json_value, yang_node)) != RE_OK) {
+        if ((err = json_yang_verify_list(content_json_value, yang_node)) != RE_OK) {
           return err;
         }
       }

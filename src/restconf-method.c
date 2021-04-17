@@ -987,11 +987,11 @@ struct json_object *run_command(const char *command, char **command_arguments, c
     strcat(command_with_options, command_arguments[i]);
     strcat(command_with_options, " ");
   }
-//  printf("COMMAND: %s\n", command_with_options);
   {
     if ((fp = popen(command_with_options, "r")) == NULL) {
       fprintf(stderr, "Error opening pipe!\n");
       restconf_operation_failed_internal("operation failed");
+      exit(1);
       return NULL;
     }
     while (fgets(buf, BUFSIZE, fp) != NULL) {
@@ -1000,6 +1000,7 @@ struct json_object *run_command(const char *command, char **command_arguments, c
     if (pclose(fp)) {
       fprintf(stderr, "Command not found or exited with error status\n");
       restconf_operation_failed_internal("command not found");
+      exit(1);
       return NULL;
     }
     struct json_object *output2yang = NULL;
