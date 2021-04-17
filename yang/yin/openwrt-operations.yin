@@ -33,6 +33,9 @@
       <pattern value="(0|1)"/>
     </type>
   </typedef>
+  <extension name="flag">
+    <argument name="name"/>
+  </extension>
   <extension name="option">
     <argument name="name"/>
   </extension>
@@ -51,6 +54,7 @@
     </leaf>
   </grouping>
   <rpc name="copy">
+    <oo:command-name name="cp"/>
     <description>
       <text>Copy from one file to another</text>
     </description>
@@ -69,6 +73,7 @@
     </output>
   </rpc>
   <rpc name="delete">
+    <oo:command-name name="rm"/>
     <description>
       <text>Delete a file</text>
     </description>
@@ -83,6 +88,7 @@
     </output>
   </rpc>
   <rpc name="reboot">
+    <oo:command-name name="reboot"/>
     <description>
       <text>Delete a file</text>
     </description>
@@ -101,6 +107,7 @@
     </output>
   </rpc>
   <rpc name="ping">
+    <oo:command-name name="ping"/>
     <description>
       <text>send ICMP ECHO_REQUEST to network hosts</text>
     </description>
@@ -199,6 +206,20 @@
   <rpc name="mtr">
     <oo:command-name name="mtr -r -j"/>
     <input>
+      <leaf name="report">
+        <type name="string">
+          <pattern value="(r)"/>
+        </type>
+        <oo:flag name="r"/>
+        <default value="r"/>
+      </leaf>
+      <leaf name="json">
+        <type name="string">
+          <pattern value="(j)"/>
+        </type>
+        <oo:flag name="j"/>
+        <default value="j"/>
+      </leaf>
       <leaf name="destination">
         <mandatory value="true"/>
         <type name="inet:host"/>
@@ -291,6 +312,25 @@
           </leaf>
         </list>
       </container>
+    </output>
+  </rpc>
+  <rpc name="opkg">
+    <oo:command-name name="opkg"/>
+    <input>
+      <choice name="manipulation-type">
+        <leaf name="upgrade">
+          <type name="string"/>
+        </leaf>
+        <leaf name="install">
+          <type name="string"/>
+        </leaf>
+        <leaf name="remove">
+          <type name="string"/>
+        </leaf>
+      </choice>
+    </input>
+    <output>
+      <uses name="openwrt-operations-output"/>
     </output>
   </rpc>
 </module>

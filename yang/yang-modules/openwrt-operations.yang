@@ -27,7 +27,9 @@ module openwrt-operations {
          pattern "(0|1)";
        }
     }
-
+    extension flag {
+        argument name;
+    }
     extension option {
         argument name;
     }
@@ -126,7 +128,6 @@ module openwrt-operations {
     }
     output {
         container result {
-
             container summary {
                 leaf packets_transmitted {
                     type int32;
@@ -208,6 +209,22 @@ module openwrt-operations {
   rpc mtr {
     oo:command-name "mtr -r -j";
     input {
+        leaf report {
+            type string {
+                pattern "(r)";
+           }
+           oo:flag "r";
+           default "r";
+        }
+
+        leaf json {
+            type string {
+                pattern "(j)";
+           }
+        oo:flag "j";
+        default "j";
+        }
+
         leaf destination {
         // should be a choice between ipv4/6 or string representation
             mandatory true;

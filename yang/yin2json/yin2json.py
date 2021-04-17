@@ -120,9 +120,11 @@ def extract_uci_statements(generated, key, value, imported):
     if key == imported.openwrt_prefix + ":leaf-as-type":
         generated["leaf-as-type"] = value["@name"]
 
-def handle_flags(generated, key, value, imported):
+def handle_operation_annotation(generated, key, value, imported):
     if key == "oo:option":
         generated["option"] = value["@name"]
+    if key == "oo:flag":
+        generated["flag"] = value["@name"]
     if key == "oo:command-name":
         generated["command-name"] = value["@name"]
 
@@ -291,12 +293,12 @@ def convert(level, imported, groupings, object_type=None):
             handle_typedef(changed_level["typedef"])
     if object_type is not None:
         generated["type"] = object_type
-    # TODO remove the maps if the objet_type is a leaf or leaf-list
+    # remove the maps if the objet_type is a leaf or leaf-list
     if(object_type not in ["leaf", "leaf-list"]):
         generated["map"] = {}
     for key, value in changed_level.items():
         extract_uci_statements(generated, key, value, imported)
-        handle_flags(generated, key, value, imported)
+        handle_operation_annotation(generated, key, value, imported)
         if key == "grouping":
             handle_grouping(value, imported, groupings)
         if key == "type":
@@ -313,6 +315,8 @@ def convert(level, imported, groupings, object_type=None):
             process_node(generated, key, value, imported, groupings)
         if key == "uses":
             extract_uses(generated, value, imported, groupings)
+        if key == "default":
+            generated["default"] = value["@value"]
     return generated
 
 
