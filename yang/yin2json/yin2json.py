@@ -121,8 +121,8 @@ def extract_uci_statements(generated, key, value, imported):
         generated["leaf-as-type"] = value["@name"]
 
 def handle_flags(generated, key, value, imported):
-    if key == "oo:flag":
-        generated["flag"] = value["@name"]
+    if key == "oo:option":
+        generated["option"] = value["@name"]
     if key == "oo:command-name":
         generated["command-name"] = value["@name"]
 

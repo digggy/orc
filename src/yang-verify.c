@@ -486,7 +486,7 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
           cmd->error = err;
           return cmd;
         }
-        if (json_object_object_get_ex(yang_node, YANG_OPERATION_FLAG,
+        if (json_object_object_get_ex(yang_node, YANG_OPERATION_OPTION,
                                       &flag_name)) {
           flag_with_value = concat("-", json_object_get_string(flag_name));
           strcat(flag_with_value, " ");

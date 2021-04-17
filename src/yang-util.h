@@ -11,7 +11,7 @@
 #define YANG_UCI_SECTION "section"
 #define YANG_UCI_LEAF_AS_NAME "leaf-as-name"
 #define YANG_OPERATION_COMMAND "command-name"
-#define YANG_OPERATION_FLAG "flag"
+#define YANG_OPERATION_OPTION "option"
 #define YANG_KEYS "keys"
 #define YANG_UNIQUE "unique"
 #define YANG_MANDATORY "mandatory"

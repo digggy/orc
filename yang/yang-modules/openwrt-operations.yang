@@ -28,7 +28,7 @@ module openwrt-operations {
        }
     }
 
-    extension flag {
+    extension option {
         argument name;
     }
     extension command-name {
@@ -89,11 +89,11 @@ module openwrt-operations {
         "Delete a file";
         input{
             leaf delay {
-                oo:flag "d";
+                oo:option "d";
                 type int32;
             }
             leaf force {
-                oo:flag "f";
+                oo:option "f";
                 type openwrt-bool;
             }
         }
@@ -217,14 +217,14 @@ module openwrt-operations {
             description
                 "Wait interval seconds between sending each packet";
             type int32;
-            oo:flag "i";
+            oo:option "i";
             default 1;
         }
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
             type int32;
-            oo:flag "c";
+            oo:option "c";
             default 4;
         }
         leaf test_decimal {
