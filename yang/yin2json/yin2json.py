@@ -121,10 +121,10 @@ def extract_uci_statements(generated, key, value, imported):
         generated["leaf-as-type"] = value["@name"]
 
 def handle_operation_annotation(generated, key, value, imported):
-    if key == "oo:option":
-        generated["option"] = value["@name"]
-    if key == "oo:flag":
-        generated["flag"] = value["@name"]
+    if key == "oo:command-option":
+        generated["command-option"] = value["@name"]
+    if key == "oo:command-flag":
+        generated["command-flag"] = value["@name"]
     if key == "oo:command-name":
         generated["command-name"] = value["@name"]
 

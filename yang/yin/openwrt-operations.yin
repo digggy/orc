@@ -33,7 +33,7 @@
       <pattern value="(0|1)"/>
     </type>
   </typedef>
-  <extension name="flag">
+  <extension name="command-flag">
     <argument name="name"/>
   </extension>
   <extension name="option">
@@ -94,11 +94,11 @@
     </description>
     <input>
       <leaf name="delay">
-        <oo:option name="d"/>
+        <oo:command-option name="d"/>
         <type name="int32"/>
       </leaf>
       <leaf name="force">
-        <oo:option name="f"/>
+        <oo:command-option name="f"/>
         <type name="openwrt-bool"/>
       </leaf>
     </input>
@@ -210,14 +210,14 @@
         <type name="string">
           <pattern value="(true)"/>
         </type>
-        <oo:flag name="r"/>
+        <oo:command-flag name="r"/>
         <default value="true"/>
       </leaf>
       <leaf name="json">
         <type name="string">
           <pattern value="(true)"/>
         </type>
-        <oo:flag name="j"/>
+        <oo:command-flag name="j"/>
         <default value="true"/>
       </leaf>
       <leaf name="destination">
@@ -229,7 +229,7 @@
           <text>Wait interval seconds between sending each packet</text>
         </description>
         <type name="int32"/>
-        <oo:option name="i"/>
+        <oo:command-option name="i"/>
         <default value="1"/>
       </leaf>
       <leaf name="count">
@@ -237,7 +237,7 @@
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
         <type name="int32"/>
-        <oo:option name="c"/>
+        <oo:command-option name="c"/>
         <default value="4"/>
       </leaf>
       <leaf name="test_decimal">
