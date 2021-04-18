@@ -528,21 +528,25 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       yang_node_type = json_get_string(yang_node, YANG_TYPE);
       if (yang_is_leaf(yang_node_type)) {
         // leaf doesnt have any child so do a validation check
-        struct json_object* option_or_flag;
+        struct json_object* command_arguments;
         if ((err = yang_verify_leaf(content_json_value, yang_node)) != RE_OK) {
           cmd->error = err;
           return cmd;
         }
         if (json_object_object_get_ex(yang_node, YANG_OPERATION_OPTION,
-                                      &option_or_flag)) {
-          arg = concat("-", json_object_get_string(option_or_flag));
+                                      &command_arguments)) {
+          arg = concat("-", json_object_get_string(command_arguments));
           strcat(arg, " ");
           // adding the actuall value that comes from the input
           arg = concat(arg, json_object_get_string(content_json_value));
         } else if (json_object_object_get_ex(yang_node, YANG_OPERATION_FLAG,
-                                             &option_or_flag)) {
-          arg = concat("-", json_object_get_string(option_or_flag));
+                                             &command_arguments)) {
+          arg = concat("-", json_object_get_string(command_arguments));
 
+        } else if (json_object_object_get_ex(
+                       yang_node, YANG_OPERATION_SUBCOMMAND, &command_arguments)) {
+          arg = concat(json_object_get_string(command_arguments), " ");
+          arg = concat(arg, json_object_get_string(content_json_value));
         } else {
           arg = (char*)json_object_get_string(content_json_value);
         }
@@ -570,7 +574,7 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       return cmd;
     }
   }
-  //  options = option_or_flags;
+  //  options = command_argumentss;
   return cmd;
 }
 

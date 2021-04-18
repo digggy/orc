@@ -32,6 +32,9 @@ module openwrt-operations {
     extension command-name {
             argument name;
     }
+    extension sub-command {
+            argument name;
+    }
 
   grouping openwrt-operations-output {
     description
@@ -320,9 +323,18 @@ module openwrt-operations {
     oo:command-name "opkg";
     input {
         choice usage-type {
-               leaf upgrade { type string; }
-               leaf install { type string; }
-               leaf remove {  type string; }
+               leaf upgrade {
+                    oo:sub-command "upgrade";
+                    type string;
+                }
+               leaf install {
+                    oo:sub-command "install";
+                    type string;
+                }
+               leaf remove {
+                    oo:sub-command "remove";
+                    type string;
+                 }
              }
     }
     output{

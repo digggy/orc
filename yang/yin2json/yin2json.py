@@ -127,6 +127,8 @@ def handle_operation_annotation(generated, key, value, imported):
         generated["command-flag"] = value["@name"]
     if key == "oo:command-name":
         generated["command-name"] = value["@name"]
+    if key == "oo:sub-command":
+        generated["sub-command"] = value["@name"]
 
 
 def extract_type_statements(generated, key, value, imported):

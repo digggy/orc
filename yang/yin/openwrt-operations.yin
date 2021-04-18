@@ -38,6 +38,9 @@
   <extension name="command-name">
     <argument name="name"/>
   </extension>
+  <extension name="sub-command">
+    <argument name="name"/>
+  </extension>
   <grouping name="openwrt-operations-output">
     <description>
       <text>Used to return output from RPCs</text>
@@ -309,12 +312,15 @@
     <input>
       <choice name="usage-type">
         <leaf name="upgrade">
+          <oo:sub-command name="upgrade"/>
           <type name="string"/>
         </leaf>
         <leaf name="install">
+          <oo:sub-command name="install"/>
           <type name="string"/>
         </leaf>
         <leaf name="remove">
+          <oo:sub-command name="remove"/>
           <type name="string"/>
         </leaf>
       </choice>
