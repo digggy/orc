@@ -32,3 +32,7 @@ int yang_is_input(const char* type_string) {
 int yang_is_output(const char* type_string) {
   return strcmp(type_string, YANG_OUTPUT) == 0;
 }
+
+int yang_is_choice(const char* type_string) {
+    return strcmp(type_string, YANG_CHOICE) == 0;
+}

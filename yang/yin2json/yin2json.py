@@ -311,7 +311,7 @@ def convert(level, imported, groupings, object_type=None):
         if key == "unique":
             to_be_split = value["@value"]
             generated["unique"] = to_be_split.split()
-        if key in ["container", "leaf", "leaf-list", "list", "rpc","input","output"]:
+        if key in ["container", "leaf", "leaf-list", "list", "rpc","input","output", "choice"]:
             process_node(generated, key, value, imported, groupings)
         if key == "uses":
             extract_uses(generated, value, imported, groupings)

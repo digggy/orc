@@ -433,6 +433,7 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
   cmd->error = RE_OK;
 
   struct json_object* yang = json_get_objects_from_map(input_child);
+  struct json_object* yang_choice_objs = NULL;
   if (!yang) {
     cmd->error = RE_OK;
     return cmd;
@@ -462,11 +463,15 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
   }
   {
     // Check for defaults in leaf and leaf-lists
+    // Check for if it is choice type anc check if content has more than one
+    // choice
     json_object_object_foreach(yang, key, yang_node) {
       const char* yang_node_type = NULL;
       const char* default_value = NULL;
       struct json_object* content_node = NULL;
+
       yang_node_type = json_get_string(yang_node, YANG_TYPE);
+      int choice_cases_in_content = 0;
       if (yang_is_leaf(yang_node_type)) {
         default_value = json_get_string(yang_node, YANG_DEFAULT);
         if (default_value) {
@@ -483,8 +488,27 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       if (yang_is_leaf_list(yang_node_type)) {
         // TODO
       }
+
+      if (yang_is_choice(yang_node_type)) {
+        yang_choice_objs = json_get_objects_from_map(yang_node);
+        if (yang_choice_objs) {
+          int num_existing_nodes = 0;
+          json_object_object_foreach(yang_choice_objs, inner_key,
+                                     inner_yang_node) {
+            if (json_object_object_get_ex(content_object, inner_key,
+                                          &content_node)) {
+              num_existing_nodes++;
+            }
+          }
+          if (num_existing_nodes > 1) {
+            // only one choice should be fulfilled
+            cmd->error = MULTIPLE_CHOICE;
+          }
+        }
+      }
     }
   }
+
   // If nothing is mandatory and content obj is empty then we return without any
   // checks
   if (content_object == NULL) {
@@ -496,12 +520,10 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
 
     const char* yang_node_type = NULL;
     char* arg = "";
-    /*
-     * TODO iterate through yang to check if there are any mandatory nodes and
-     * check if they are present in content_json_value
-     */
-
     exists = json_object_object_get_ex(yang, key, &yang_node);
+    if (!exists && yang_choice_objs) {
+      exists = json_object_object_get_ex(yang_choice_objs, key, &yang_node);
+    }
     if (exists) {
       yang_node_type = json_get_string(yang_node, YANG_TYPE);
       if (yang_is_leaf(yang_node_type)) {
@@ -516,15 +538,13 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
           arg = concat("-", json_object_get_string(option_or_flag));
           strcat(arg, " ");
           // adding the actuall value that comes from the input
-          arg =
-              concat(arg, json_object_get_string(content_json_value));
-        }
-        else if (json_object_object_get_ex(yang_node, YANG_OPERATION_FLAG,
-                                      &option_or_flag)) {
+          arg = concat(arg, json_object_get_string(content_json_value));
+        } else if (json_object_object_get_ex(yang_node, YANG_OPERATION_FLAG,
+                                             &option_or_flag)) {
           arg = concat("-", json_object_get_string(option_or_flag));
 
         } else {
-          arg = (char*) json_object_get_string(content_json_value);
+          arg = (char*)json_object_get_string(content_json_value);
         }
         vector_push_back(cmd->command, arg);
 
@@ -541,6 +561,8 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       } else if (yang_is_list(yang_node_type)) {
         // list has children so further validation checks to its elements
         // printf("It is list\n");
+      } else if (yang_is_choice(yang_node_type)) {
+        printf("--> It is choice\n");
       }
     } else {
       // doesnt key doesnt exists

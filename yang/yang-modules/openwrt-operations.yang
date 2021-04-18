@@ -319,10 +319,10 @@ module openwrt-operations {
   rpc opkg{
     oo:command-name "opkg";
     input {
-        choice manipulation-type {
+        choice usage-type {
                leaf upgrade { type string; }
                leaf install { type string; }
-               leaf remove {  type string;}
+               leaf remove {  type string; }
              }
     }
     output{

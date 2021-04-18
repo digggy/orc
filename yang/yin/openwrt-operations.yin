@@ -307,7 +307,7 @@
   <rpc name="opkg">
     <oo:command-name name="opkg"/>
     <input>
-      <choice name="manipulation-type">
+      <choice name="usage-type">
         <leaf name="upgrade">
           <type name="string"/>
         </leaf>
