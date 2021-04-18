@@ -975,7 +975,8 @@ done:
   return retval;
 }
 
-struct json_object *run_command(const char *command, char **command_arguments, char* top_level_name) {
+struct json_object *run_command(const char *command, char **command_arguments,
+                                char *top_level_name) {
   char command_with_options[1024];
   strcpy(command_with_options, command);
   strcat(command_with_options, " ");
@@ -988,39 +989,39 @@ struct json_object *run_command(const char *command, char **command_arguments, c
     strcat(command_with_options, " ");
   }
   printf("COMMAND %s \n", command_with_options);
-//  {
-//    if ((fp = popen(command_with_options, "r")) == NULL) {
-//      fprintf(stderr, "Error opening pipe!\n");
-//      restconf_operation_failed_internal("operation failed");
-//      exit(1);
-//      return NULL;
-//    }
-//    while (fgets(buf, BUFSIZE, fp) != NULL) {
-//      output = concat(output, buf);
-//    }
-//    if (pclose(fp)) {
-//      fprintf(stderr, "Command not found or exited with error status\n");
-//      restconf_operation_failed_internal("command not found");
-//      exit(1);
-//      return NULL;
-//    }
-//    struct json_object *output2yang = NULL;
-//    output2yang = get_json_output2yang(top_level_name);
-//    if(output2yang){
-//      // pre process the command output for yang validation
-//      // special cases such as mtr
-//      json_object_object_foreach(output2yang, key, value){
-//        output = strrep(output, key, json_object_get_string(value));
-//      }
-//    }
-//
-//    parsed_json_result = json_tokener_parse(output);
-//    if(!parsed_json_result){
-//      restconf_operation_failed_internal("operation output not json parsable");
-//      return NULL;
-//    }
-//  }
-//  return parsed_json_result;
+  //  {
+  //    if ((fp = popen(command_with_options, "r")) == NULL) {
+  //      fprintf(stderr, "Error opening pipe!\n");
+  //      restconf_operation_failed_internal("operation failed");
+  //      exit(1);
+  //      return NULL;
+  //    }
+  //    while (fgets(buf, BUFSIZE, fp) != NULL) {
+  //      output = concat(output, buf);
+  //    }
+  //    if (pclose(fp)) {
+  //      fprintf(stderr, "Command not found or exited with error status\n");
+  //      restconf_operation_failed_internal("command not found");
+  //      exit(1);
+  //      return NULL;
+  //    }
+  //    struct json_object *output2yang = NULL;
+  //    output2yang = get_json_output2yang(top_level_name);
+  //    if(output2yang){
+  //      // pre process the command output for yang validation
+  //      // special cases such as mtr
+  //      json_object_object_foreach(output2yang, key, value){
+  //        output = strrep(output, key, json_object_get_string(value));
+  //      }
+  //    }
+  //
+  //    parsed_json_result = json_tokener_parse(output);
+  //    if(!parsed_json_result){
+  //      restconf_operation_failed_internal("operation output not json
+  //      parsable"); return NULL;
+  //    }
+  //  }
+  //  return parsed_json_result;
   return NULL;
 }
 
@@ -1073,7 +1074,6 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
       root_key = root_key_string;
       root_object = root_val;
     }
-
   }
 
   // check if the content is an rpc
@@ -1108,7 +1108,10 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     };
   }
 
-  struct json_object *parsed_json_result = run_command(command, input_command->command, top_level_name);
+  json_pretty_print(input_command->command_args_json);
+
+//  struct json_object *parsed_json_result = run_command(command,
+//  input_command->command, top_level_name);
 //
 //  // check if it has output
 //  int output_error;

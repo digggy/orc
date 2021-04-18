@@ -6,10 +6,18 @@
 #include <stdio.h>
 #include "error.h"
 
+static char* command_args = "{\n"
+    "  \"sub-command\": {},\n"
+    "  \"command-flag\": [],\n"
+    "  \"command-option\": {},\n"
+    "  \"arguments\": []\n"
+    "}";
+
 struct command_arguments {
-  char** command;
+  struct json_object *command_args_json;
   error error;
 };
+
 typedef struct command_arguments command_arguments;
 
 error yang_verify_leaf(struct json_object* leaf, struct json_object* yang);

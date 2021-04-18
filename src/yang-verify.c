@@ -429,7 +429,7 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
     fprintf(stderr, "Memory allocation failed");
     return NULL;
   }
-  cmd->command = NULL;
+  cmd->command_args_json = json_tokener_parse(command_args);
   cmd->error = RE_OK;
 
   struct json_object* yang = json_get_objects_from_map(input_child);
@@ -535,22 +535,43 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
         }
         if (json_object_object_get_ex(yang_node, YANG_OPERATION_OPTION,
                                       &command_arguments)) {
-          arg = concat("-", json_object_get_string(command_arguments));
-          strcat(arg, " ");
-          // adding the actuall value that comes from the input
-          arg = concat(arg, json_object_get_string(content_json_value));
+          struct json_object* option_root = NULL;
+          json_object_object_get_ex(cmd->command_args_json,
+                                    YANG_OPERATION_OPTION, &option_root);
+          if (option_root) {
+            json_object_object_add(option_root,
+                                   json_object_get_string(command_arguments),
+                                   content_json_value);
+          }
+
         } else if (json_object_object_get_ex(yang_node, YANG_OPERATION_FLAG,
                                              &command_arguments)) {
-          arg = concat("-", json_object_get_string(command_arguments));
+          struct json_object* flag_root = NULL;
+          json_object_object_get_ex(cmd->command_args_json,
+                                    YANG_OPERATION_FLAG, &flag_root);
+          if (flag_root) {
+            json_object_array_add(flag_root, command_arguments);
+          }
 
-        } else if (json_object_object_get_ex(
-                       yang_node, YANG_OPERATION_SUBCOMMAND, &command_arguments)) {
-          arg = concat(json_object_get_string(command_arguments), " ");
-          arg = concat(arg, json_object_get_string(content_json_value));
+        } else if (json_object_object_get_ex(yang_node,
+                                             YANG_OPERATION_SUBCOMMAND,
+                                             &command_arguments)) {
+          struct json_object* sub_command = NULL;
+          json_object_object_get_ex(cmd->command_args_json,
+                                    YANG_OPERATION_SUBCOMMAND, &sub_command);
+          if (sub_command) {
+            json_object_object_add(sub_command,
+                                   json_object_get_string(command_arguments),
+                                   content_json_value);
+          }
+
         } else {
-          arg = (char*)json_object_get_string(content_json_value);
+          // not annotated so add to last
+          struct json_object* last_arg = NULL;
+          json_object_object_get_ex(cmd->command_args_json,
+                                    "arguments", &last_arg);
+          json_object_array_add(last_arg,content_json_value);
         }
-        vector_push_back(cmd->command, arg);
 
       } else if (yang_is_leaf_list(yang_node_type)) {
         // leaf-list doesnt have any child so do a validation check
