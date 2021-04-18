@@ -975,54 +975,51 @@ done:
   return retval;
 }
 
-struct json_object *run_command(const char *command, char **command_arguments,
+struct json_object *run_command(struct json_object *command_json,
                                 char *top_level_name) {
   char command_with_options[1024];
-  strcpy(command_with_options, command);
-  strcat(command_with_options, " ");
   char *output = "";
   char buf[BUFSIZE];
   FILE *fp;
   struct json_object *parsed_json_result;
-  for (int i = 0; i < vector_size(command_arguments); i++) {
-    strcat(command_with_options, command_arguments[i]);
-    strcat(command_with_options, " ");
+
+  // Construct the command accordingly
+  strcpy(command_with_options,
+         json_to_command(command_with_options, command_json));
+
+  {
+    if ((fp = popen(command_with_options, "r")) == NULL) {
+      fprintf(stderr, "Error opening pipe!\n");
+      restconf_operation_failed_internal("operation failed");
+      exit(1);
+      return NULL;
+    }
+    while (fgets(buf, BUFSIZE, fp) != NULL) {
+      output = concat(output, buf);
+    }
+    if (pclose(fp)) {
+      fprintf(stderr, "Command not found or exited with error status\n");
+      restconf_operation_failed_internal("command not found");
+      exit(1);
+      return NULL;
+    }
+    struct json_object *output2yang = NULL;
+    output2yang = get_json_output2yang(top_level_name);
+    if (output2yang) {
+      // pre process the command output for yang validation
+      // special cases such as mtr
+      json_object_object_foreach(output2yang, key, value) {
+        output = strrep(output, key, json_object_get_string(value));
+      }
+    }
+
+    parsed_json_result = json_tokener_parse(output);
+    if (!parsed_json_result) {
+      restconf_operation_failed_internal("operation output not json parsable");
+      return NULL;
+    }
   }
-  printf("COMMAND %s \n", command_with_options);
-  //  {
-  //    if ((fp = popen(command_with_options, "r")) == NULL) {
-  //      fprintf(stderr, "Error opening pipe!\n");
-  //      restconf_operation_failed_internal("operation failed");
-  //      exit(1);
-  //      return NULL;
-  //    }
-  //    while (fgets(buf, BUFSIZE, fp) != NULL) {
-  //      output = concat(output, buf);
-  //    }
-  //    if (pclose(fp)) {
-  //      fprintf(stderr, "Command not found or exited with error status\n");
-  //      restconf_operation_failed_internal("command not found");
-  //      exit(1);
-  //      return NULL;
-  //    }
-  //    struct json_object *output2yang = NULL;
-  //    output2yang = get_json_output2yang(top_level_name);
-  //    if(output2yang){
-  //      // pre process the command output for yang validation
-  //      // special cases such as mtr
-  //      json_object_object_foreach(output2yang, key, value){
-  //        output = strrep(output, key, json_object_get_string(value));
-  //      }
-  //    }
-  //
-  //    parsed_json_result = json_tokener_parse(output);
-  //    if(!parsed_json_result){
-  //      restconf_operation_failed_internal("operation output not json
-  //      parsable"); return NULL;
-  //    }
-  //  }
-  //  return parsed_json_result;
-  return NULL;
+  return parsed_json_result;
 }
 
 int invoke_operation(struct CgiContext *cgi, char **pathvec) {
@@ -1082,11 +1079,12 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     retval = restconf_badrequest();
     goto done;
   }
-  const char *command = json_get_string(top_level, YANG_OPERATION_COMMAND);
+  struct json_object *command = NULL;
+  json_object_object_get_ex(top_level, YANG_OPERATION_COMMAND, &command);
   if (!command) {
     // if there is no oo:command-name in the yang we assume that the the
     // toplevel name is the command
-    command = top_level_name;
+    command = json_object_new_string(top_level_name);
   }
   // check if it has input
   struct json_object *yang_input_child =
@@ -1108,40 +1106,43 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     };
   }
 
-  json_pretty_print(input_command->command_args_json);
+  // add command-name to input_command
+  json_object_object_add(input_command->command_args_json,
+                         YANG_OPERATION_COMMAND, command);
 
-//  struct json_object *parsed_json_result = run_command(command,
-//  input_command->command, top_level_name);
-//
-//  // check if it has output
-//  int output_error;
-//  struct json_object *yang_output_child =
-//      json_get_object_from_map(top_level, YANG_OUTPUT);
-//  // check if the yang schema has output node
-//
-//  if (!yang_output_child) {
-//    if (parsed_json_result) {
-//      // doesnt have any output
-//      retval = restconf_badrequest();
-//      goto done;
-//    }
-//  }else{
-//    if(parsed_json_result == NULL){
-//      retval = restconf_badrequest();
-//      goto done;
-//    }
-//  }
-//
-//  if ((output_error = yang_verify_output(parsed_json_result,
-//                                         yang_output_child)) != RE_OK) {
-//    retval = restconf_malformed();
-//    goto done;
-//  };
-//
-//  // print the output
-//  content_type_json();
-//  headers_end();
-//  json_pretty_print(parsed_json_result);
+  struct json_object *parsed_json_result =
+      run_command(input_command->command_args_json, top_level_name);
+
+  // check if it has output
+  int output_error;
+  struct json_object *yang_output_child =
+      json_get_object_from_map(top_level, YANG_OUTPUT);
+  // check if the yang schema has output node
+
+  if (!yang_output_child) {
+    if (parsed_json_result) {
+      // doesnt have any output
+      retval = restconf_badrequest();
+      goto done;
+    }
+  } else {
+    if (parsed_json_result == NULL) {
+      retval = restconf_badrequest();
+      goto done;
+    }
+  }
+
+  if ((output_error = yang_verify_output(parsed_json_result,
+                                         yang_output_child)) != RE_OK) {
+    retval = restconf_malformed();
+    goto done;
+  };
+
+  // print the output
+  content_type_json();
+  headers_end();
+  json_pretty_print(parsed_json_result);
+
 done:
   return retval;
 }

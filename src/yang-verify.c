@@ -547,8 +547,8 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
         } else if (json_object_object_get_ex(yang_node, YANG_OPERATION_FLAG,
                                              &command_arguments)) {
           struct json_object* flag_root = NULL;
-          json_object_object_get_ex(cmd->command_args_json,
-                                    YANG_OPERATION_FLAG, &flag_root);
+          json_object_object_get_ex(cmd->command_args_json, YANG_OPERATION_FLAG,
+                                    &flag_root);
           if (flag_root) {
             json_object_array_add(flag_root, command_arguments);
           }
@@ -568,9 +568,9 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
         } else {
           // not annotated so add to last
           struct json_object* last_arg = NULL;
-          json_object_object_get_ex(cmd->command_args_json,
-                                    "arguments", &last_arg);
-          json_object_array_add(last_arg,content_json_value);
+          json_object_object_get_ex(cmd->command_args_json, YANG_OPERATION_ARGS,
+                                    &last_arg);
+          json_object_array_add(last_arg, content_json_value);
         }
 
       } else if (yang_is_leaf_list(yang_node_type)) {

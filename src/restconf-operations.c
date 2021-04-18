@@ -59,6 +59,45 @@ struct json_object *get_all_operations() {
     }
     iter++;
   }
-  return  supported_operations;
-
+  return supported_operations;
 };
+
+char *add_to_command(char *command, char *string) {
+  strcat(command, " ");
+  strcat(command, string);
+  return command;
+}
+
+char *json_to_command(char *command_with_options,
+                      struct json_object *command_json) {
+  strcpy(command_with_options,
+         json_get_string(command_json, YANG_OPERATION_COMMAND));
+  struct json_object *subcommand =
+      json_object_object_get(command_json, YANG_OPERATION_SUBCOMMAND);
+  json_object_object_foreach(subcommand, key, value) {
+    add_to_command(command_with_options,
+                   add_to_command(key, (char *)json_object_get_string(value)));
+  }
+  struct json_object *flags = json_get_array(command_json, YANG_OPERATION_FLAG);
+  for (int i = 0; i < json_object_array_length(flags); i++) {
+    char *flag = "-";
+    add_to_command(command_with_options,
+                   concat(flag, json_object_get_string(
+                                    json_object_array_get_idx(flags, i))));
+  }
+  struct json_object *options =
+      json_object_object_get(command_json, YANG_OPERATION_OPTION);
+  json_object_object_foreach(options, flag, flag_value) {
+    char *flag_with_value = "-";
+    add_to_command(command_with_options, concat(flag_with_value, flag));
+    add_to_command(command_with_options,
+                   (char *)json_object_get_string(flag_value));
+  }
+  struct json_object *args = json_get_array(command_json, YANG_OPERATION_ARGS);
+  for (int i = 0; i < json_object_array_length(args); i++) {
+    add_to_command(
+        command_with_options,
+        (char *)json_object_get_string(json_object_array_get_idx(args, i)));
+  }
+  return command_with_options;
+}

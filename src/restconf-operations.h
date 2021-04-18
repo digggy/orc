@@ -31,5 +31,8 @@ static const char system_commands [3][50] = {"copy", "delete", "reboot"};
 
 struct json_object *get_json_output2yang(char *operation);
 struct json_object *get_all_operations();
+char* add_to_command(char* command, char* string);
+char *json_to_command(char *command_with_options,
+                      struct json_object *command_json);
 
 #endif  // RESTCONF_RESTCONF_OPERATIONS_H

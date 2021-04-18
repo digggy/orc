@@ -14,6 +14,7 @@
 #define YANG_OPERATION_OPTION "command-option"
 #define YANG_OPERATION_SUBCOMMAND "sub-command"
 #define YANG_OPERATION_FLAG "command-flag"
+#define YANG_OPERATION_ARGS "arguments"
 #define YANG_KEYS "keys"
 #define YANG_UNIQUE "unique"
 #define YANG_MANDATORY "mandatory"
