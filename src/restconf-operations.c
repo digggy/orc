@@ -51,10 +51,16 @@ struct json_object *get_all_operations() {
     json_object_object_foreach(module_contents, key, value) {
       const char *type = json_get_string(value, YANG_TYPE);
       if (strlen(YANG_RPC) == strlen(type) && strcmp(YANG_RPC, type) == 0) {
-        char *unique_name = concat(iter->key, concat(":", key));
+        char *with_semicolon = concat(":", key);
+        char *unique_name = concat(iter->key, with_semicolon);
+        char *rpc_unique_name = concat(operation_root, unique_name);
         json_object_object_add(
             all_operation, unique_name,
-            json_object_new_string(concat(operation_root, unique_name)));
+            json_object_new_string(rpc_unique_name));
+
+        free(unique_name);
+        free(rpc_unique_name);
+        free(with_semicolon);
       }
     }
     iter++;
