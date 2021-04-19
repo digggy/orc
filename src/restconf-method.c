@@ -1012,11 +1012,13 @@ struct json_object *run_command(struct json_object *command_json,
         output = strrep(output, key, json_object_get_string(value));
       }
     }
-
     parsed_json_result = json_tokener_parse(output);
     if (!parsed_json_result) {
-      restconf_operation_failed_internal("operation output not json parsable");
-      return NULL;
+      // this is to maintain the generic cases of output directly from the
+      // commands to the user
+      parsed_json_result = json_object_new_object();
+      json_object_object_add(parsed_json_result, "result",
+                             json_object_new_string(output));
     }
   }
   return parsed_json_result;
