@@ -35,6 +35,9 @@ module openwrt-operations {
     extension sub-command {
             argument name;
     }
+    extension script {
+        argument name;
+    }
 
   grouping openwrt-operations-output {
     description
@@ -134,46 +137,30 @@ module openwrt-operations {
                 leaf packets_received {
                     type int32;
                 }
-                leaf packets_lost {
+                leaf packets_lost_percent {
                     type percent;
                 }
-                leaf time {
-                    type decimal64 {
-                         fraction-digits 2;
-                    }
                 }
-            }
-
             container statistics {
                 leaf min {
                     type decimal64 {
-                         fraction-digits 2;
+                         fraction-digits 3;
                     }
                 }
                 leaf avg {
                     type decimal64 {
-                         fraction-digits 2;
+                         fraction-digits 3;
                     }
                 }
                 leaf max {
                     type decimal64 {
-                         fraction-digits 2;
-                    }
-                }
-                leaf mdev {
-                    type decimal64 {
-                         fraction-digits 2;
+                         fraction-digits 3;
                     }
                 }
             }
 
             list icmp_sequences {
-              key "id";
-
-              leaf id {
-                description "packet id";
-                type uint8;
-              }
+              key "seq";
 
               leaf bytes {
                 type uint8;
@@ -187,7 +174,7 @@ module openwrt-operations {
                 type string;
               }
 
-              leaf icmp_seq {
+              leaf seq {
                 type uint8;
               }
 
@@ -195,9 +182,9 @@ module openwrt-operations {
                 type uint8;
               }
 
-              leaf time_taken {
+              leaf time {
                 type decimal64 {
-                    fraction-digits 2;
+                    fraction-digits 3;
                 }
               }
             }
