@@ -7,6 +7,7 @@
 #include "error.h"
 
 static char* command_args = "{\n"
+    "  \"script\": null,\n"
     "  \"command-name\": null,\n"
     "  \"sub-command\": {},\n"
     "  \"command-flag\": [],\n"

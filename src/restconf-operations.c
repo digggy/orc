@@ -54,9 +54,8 @@ struct json_object *get_all_operations() {
         char *with_semicolon = concat(":", key);
         char *unique_name = concat(iter->key, with_semicolon);
         char *rpc_unique_name = concat(operation_root, unique_name);
-        json_object_object_add(
-            all_operation, unique_name,
-            json_object_new_string(rpc_unique_name));
+        json_object_object_add(all_operation, unique_name,
+                               json_object_new_string(rpc_unique_name));
 
         free(unique_name);
         free(rpc_unique_name);
@@ -76,14 +75,18 @@ char *add_to_command(char *command, char *string) {
 
 char *json_to_command(char *command_with_options,
                       struct json_object *command_json) {
+  // check if the operation has a script
+  char *script = json_get_string(command_json, YANG_OPERATION_SCRIPT);
   strcpy(command_with_options,
          json_get_string(command_json, YANG_OPERATION_COMMAND));
+  // handle the subcommand
   struct json_object *subcommand =
       json_object_object_get(command_json, YANG_OPERATION_SUBCOMMAND);
   json_object_object_foreach(subcommand, key, value) {
     add_to_command(command_with_options,
                    add_to_command(key, (char *)json_object_get_string(value)));
   }
+  // handle the flags
   struct json_object *flags = json_get_array(command_json, YANG_OPERATION_FLAG);
   for (int i = 0; i < json_object_array_length(flags); i++) {
     char *flag = "-";
@@ -91,6 +94,7 @@ char *json_to_command(char *command_with_options,
                    concat(flag, json_object_get_string(
                                     json_object_array_get_idx(flags, i))));
   }
+  // handle the options
   struct json_object *options =
       json_object_object_get(command_json, YANG_OPERATION_OPTION);
   json_object_object_foreach(options, flag, flag_value) {
@@ -99,11 +103,22 @@ char *json_to_command(char *command_with_options,
     add_to_command(command_with_options,
                    (char *)json_object_get_string(flag_value));
   }
+  // handle other arguments
   struct json_object *args = json_get_array(command_json, YANG_OPERATION_ARGS);
   for (int i = 0; i < json_object_array_length(args); i++) {
     add_to_command(
         command_with_options,
         (char *)json_object_get_string(json_object_array_get_idx(args, i)));
+  }
+
+  // If there is script then the script is doing the parsing of the json
+  if (script) {
+    char *restconf_tmp = "> /tmp/restconf_tmp &&";
+    // Format ping -4 -c 5 google.com > /tmp/restconf_tmp &&
+    // /root/.restconf/ping_to_json_test.sh
+    add_to_command(command_with_options, restconf_tmp);
+    add_to_command(command_with_options, script_path);
+    command_with_options = concat(command_with_options, script);
   }
   return command_with_options;
 }

@@ -120,6 +120,7 @@ module openwrt-operations {
   }
 
   rpc ping {
+    oo:script "ping_to_json.sh";
     oo:command-name "ping";
     description
         "send ICMP ECHO_REQUEST to network hosts";
@@ -134,7 +135,7 @@ module openwrt-operations {
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
-                oo:command-option "i";
+                oo:command-option "c";
             type int32;
             default 4;
         }
@@ -143,21 +144,28 @@ module openwrt-operations {
             mandatory true;
             type inet:host;
         }
+        leaf ipv4 {
+            type string {
+                pattern "(true)";
+           }
+           oo:command-flag "4";
+           default "true";
+        }
     }
     output {
         container result {
-            container summary {
+            container rtt_summary {
                 leaf packets_transmitted {
                     type int32;
                 }
                 leaf packets_received {
                     type int32;
                 }
-                leaf packets_lost_percent {
+                leaf packet_loss_percentage {
                     type int32;
                 }
                 }
-            container statistics {
+            container rtt_statistics {
                 container min {
                     uses ping-time;
                 }

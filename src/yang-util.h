@@ -10,6 +10,7 @@
 #define YANG_UCI_SECTION_NAME "section-name"
 #define YANG_UCI_SECTION "section"
 #define YANG_UCI_LEAF_AS_NAME "leaf-as-name"
+#define YANG_OPERATION_SCRIPT "script"
 #define YANG_OPERATION_COMMAND "command-name"
 #define YANG_OPERATION_OPTION "command-option"
 #define YANG_OPERATION_SUBCOMMAND "sub-command"

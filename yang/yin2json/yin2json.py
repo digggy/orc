@@ -129,6 +129,8 @@ def handle_operation_annotation(generated, key, value, imported):
         generated["command-name"] = value["@name"]
     if key == "oo:sub-command":
         generated["sub-command"] = value["@name"]
+    if key == "oo:script":
+        generated["script"] = value["@name"]
 
 
 def extract_type_statements(generated, key, value, imported):

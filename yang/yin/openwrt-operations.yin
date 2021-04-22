@@ -124,6 +124,7 @@
     </output>
   </rpc>
   <rpc name="ping">
+    <oo:script name="ping_to_json.sh"/>
     <oo:command-name name="ping"/>
     <description>
       <text>send ICMP ECHO_REQUEST to network hosts</text>
@@ -141,7 +142,7 @@
         <description>
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
-        <oo:command-option name="i"/>
+        <oo:command-option name="c"/>
         <type name="int32"/>
         <default value="4"/>
       </leaf>
@@ -149,21 +150,28 @@
         <mandatory value="true"/>
         <type name="inet:host"/>
       </leaf>
+      <leaf name="ipv4">
+        <type name="string">
+          <pattern value="(true)"/>
+        </type>
+        <oo:command-flag name="4"/>
+        <default value="true"/>
+      </leaf>
     </input>
     <output>
       <container name="result">
-        <container name="summary">
+        <container name="rtt_summary">
           <leaf name="packets_transmitted">
             <type name="int32"/>
           </leaf>
           <leaf name="packets_received">
             <type name="int32"/>
           </leaf>
-          <leaf name="packets_lost_percent">
-            <type name="percent"/>
+          <leaf name="packet_loss_percentage">
+            <type name="int32"/>
           </leaf>
         </container>
-        <container name="statistics">
+        <container name="rtt_statistics">
           <container name="min">
             <uses name="ping-time"/>
           </container>

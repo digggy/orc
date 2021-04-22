@@ -982,11 +982,11 @@ struct json_object *run_command(struct json_object *command_json,
   char buf[BUFSIZE];
   FILE *fp;
   struct json_object *parsed_json_result;
-
   // Construct the command accordingly
   strcpy(command_with_options,
          json_to_command(command_with_options, command_json));
-
+  //  json_pretty_print(command_json);
+  //  printf("COMMAND: %s\n", command_with_options);
   {
     if ((fp = popen(command_with_options, "r")) == NULL) {
       fprintf(stderr, "Error opening pipe!\n");
@@ -1107,20 +1107,95 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
       goto done;
     };
   }
-
   // add command-name to input_command
   json_object_object_add(input_command->command_args_json,
                          YANG_OPERATION_COMMAND, command);
 
+  struct json_object *script = NULL;
+  json_object_object_get_ex(top_level, YANG_OPERATION_SCRIPT, &script);
+  if (script) {
+    // if there is script we need to run the script
+    json_object_object_add(input_command->command_args_json,
+                           YANG_OPERATION_SCRIPT, script);
+  }
+
   struct json_object *parsed_json_result =
       run_command(input_command->command_args_json, top_level_name);
+
+  //  char * ping_output_json ="{\"result\":\n"
+  //      "  {\n"
+  //      "    \"rtt_summary\": {\n"
+  //      "  \"packets_transmitted\": 5,\n"
+  //      "  \"packets_received\": 5,\n"
+  //      "  \"packet_loss_percentage\": 0\n"
+  //      "},\n"
+  //      "    \"rtt_statistics\": {\n"
+  //      "  \"min\":  { \"value\": \"32.655\",  \"unit\": \"milliseconds\"
+  //      },\n" "  \"avg\":  { \"value\": \"56.459\",  \"unit\":
+  //      \"milliseconds\" },\n" "  \"max\":  { \"value\": \"81.485\", \"unit\":
+  //      \"milliseconds\" }\n"
+  //      "},\n"
+  //      "    \"icmp_sequences\": [{\n"
+  //      "  \"bytes\": 64,\n"
+  //      "  \"target\": \"142.250.186.78\",\n"
+  //      "  \"target_ip\": \"142.250.186.78\",\n"
+  //      "  \"seq\": 0,\n"
+  //      "  \"ttl\": 63,\n"
+  //      "  \"time\": {\n"
+  //      "    \"unit\": \"milliseconds\",\n"
+  //      "    \"value\": 63.773\n"
+  //      "  }\n"
+  //      "}, {\n"
+  //      "  \"bytes\": 64,\n"
+  //      "  \"target\": \"142.250.186.78\",\n"
+  //      "  \"target_ip\": \"142.250.186.78\",\n"
+  //      "  \"seq\": 1,\n"
+  //      "  \"ttl\": 63,\n"
+  //      "  \"time\": {\n"
+  //      "    \"unit\": \"milliseconds\",\n"
+  //      "    \"value\": 67.115\n"
+  //      "  }\n"
+  //      "}, {\n"
+  //      "  \"bytes\": 64,\n"
+  //      "  \"target\": \"142.250.186.78\",\n"
+  //      "  \"target_ip\": \"142.250.186.78\",\n"
+  //      "  \"seq\": 2,\n"
+  //      "  \"ttl\": 63,\n"
+  //      "  \"time\": {\n"
+  //      "    \"unit\": \"milliseconds\",\n"
+  //      "    \"value\": 81.485\n"
+  //      "  }\n"
+  //      "}, {\n"
+  //      "  \"bytes\": 64,\n"
+  //      "  \"target\": \"142.250.186.78\",\n"
+  //      "  \"target_ip\": \"142.250.186.78\",\n"
+  //      "  \"seq\": 3,\n"
+  //      "  \"ttl\": 63,\n"
+  //      "  \"time\": {\n"
+  //      "    \"unit\": \"milliseconds\",\n"
+  //      "    \"value\": 37.269\n"
+  //      "  }\n"
+  //      "}, {\n"
+  //      "  \"bytes\": 64,\n"
+  //      "  \"target\": \"142.250.186.78\",\n"
+  //      "  \"target_ip\": \"142.250.186.78\",\n"
+  //      "  \"seq\": 4,\n"
+  //      "  \"ttl\": 63,\n"
+  //      "  \"time\": {\n"
+  //      "    \"unit\": \"milliseconds\",\n"
+  //      "    \"value\": 32.655\n"
+  //      "  }\n"
+  //      "}]\n"
+  //      "  }\n"
+  //      "}";
+  //  struct json_object *parsed_json_result =
+  //  json_tokener_parse(ping_output_json);
 
   // check if it has output
   int output_error;
   struct json_object *yang_output_child =
       json_get_object_from_map(top_level, YANG_OUTPUT);
   // check if the yang schema has output node
-
   if (!yang_output_child) {
     if (parsed_json_result) {
       // doesnt have any output

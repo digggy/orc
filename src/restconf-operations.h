@@ -26,7 +26,7 @@ static const map_str2str json_output2yang[] = {
      "  \"StDev\": \"standard-deviation\"\n"
      "}"}
 };
-
+static const char* script_path = "/root/.restconf/";
 static const char system_commands [3][50] = {"copy", "delete", "reboot"};
 
 struct json_object *get_json_output2yang(char *operation);
