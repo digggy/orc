@@ -41,6 +41,24 @@
   <extension name="sub-command">
     <argument name="name"/>
   </extension>
+  <extension name="script">
+    <argument name="name"/>
+  </extension>
+  <grouping name="ping-time">
+    <description>
+      <text>Wrapper for time with units</text>
+    </description>
+    <leaf name="value">
+      <type name="decimal64">
+        <fraction-digits value="3"/>
+      </type>
+    </leaf>
+    <leaf name="unit">
+      <type name="string">
+        <pattern value="(milliseconds|seconds)"/>
+      </type>
+    </leaf>
+  </grouping>
   <grouping name="openwrt-operations-output">
     <description>
       <text>Used to return output from RPCs</text>
@@ -115,6 +133,7 @@
         <description>
           <text>Wait interval seconds between sending each packet</text>
         </description>
+        <oo:command-option name="i"/>
         <type name="int32"/>
         <default value="1"/>
       </leaf>
@@ -122,12 +141,13 @@
         <description>
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
+        <oo:command-option name="i"/>
         <type name="int32"/>
         <default value="4"/>
       </leaf>
-      <leaf name="quiet">
-        <type name="boolean"/>
-        <default value="true"/>
+      <leaf name="destination">
+        <mandatory value="true"/>
+        <type name="inet:host"/>
       </leaf>
     </input>
     <output>
@@ -139,45 +159,23 @@
           <leaf name="packets_received">
             <type name="int32"/>
           </leaf>
-          <leaf name="packets_lost">
+          <leaf name="packets_lost_percent">
             <type name="percent"/>
-          </leaf>
-          <leaf name="time">
-            <type name="decimal64">
-              <fraction-digits value="2"/>
-            </type>
           </leaf>
         </container>
         <container name="statistics">
-          <leaf name="min">
-            <type name="decimal64">
-              <fraction-digits value="2"/>
-            </type>
-          </leaf>
-          <leaf name="avg">
-            <type name="decimal64">
-              <fraction-digits value="2"/>
-            </type>
-          </leaf>
-          <leaf name="max">
-            <type name="decimal64">
-              <fraction-digits value="2"/>
-            </type>
-          </leaf>
-          <leaf name="mdev">
-            <type name="decimal64">
-              <fraction-digits value="2"/>
-            </type>
-          </leaf>
+          <container name="min">
+            <uses name="ping-time"/>
+          </container>
+          <container name="avg">
+            <uses name="ping-time"/>
+          </container>
+          <container name="max">
+            <uses name="ping-time"/>
+          </container>
         </container>
         <list name="icmp_sequences">
-          <key value="id"/>
-          <leaf name="id">
-            <description>
-              <text>packet id</text>
-            </description>
-            <type name="uint8"/>
-          </leaf>
+          <key value="seq"/>
           <leaf name="bytes">
             <type name="uint8"/>
           </leaf>
@@ -187,17 +185,15 @@
           <leaf name="target_ip">
             <type name="string"/>
           </leaf>
-          <leaf name="icmp_seq">
+          <leaf name="seq">
             <type name="uint8"/>
           </leaf>
           <leaf name="ttl">
             <type name="uint8"/>
           </leaf>
-          <leaf name="time_taken">
-            <type name="decimal64">
-              <fraction-digits value="2"/>
-            </type>
-          </leaf>
+          <container name="time">
+            <uses name="ping-time"/>
+          </container>
         </list>
       </container>
     </output>

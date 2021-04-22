@@ -127,18 +127,21 @@ module openwrt-operations {
         leaf interval {
             description
                 "Wait interval seconds between sending each packet";
+            oo:command-option "i";
             type int32;
             default 1;
         }
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
+                oo:command-option "i";
             type int32;
             default 4;
         }
-        leaf quiet {
-            type boolean;
-            default "true";
+        leaf destination {
+        // should be a choice between ipv4/6 or string representation
+            mandatory true;
+            type inet:host;
         }
     }
     output {
@@ -151,7 +154,7 @@ module openwrt-operations {
                     type int32;
                 }
                 leaf packets_lost_percent {
-                    type percent;
+                    type int32;
                 }
                 }
             container statistics {
