@@ -38,7 +38,20 @@ module openwrt-operations {
     extension script {
         argument name;
     }
-
+  grouping ping-time{
+    description
+        "Wrapper for time with units";
+    leaf value {
+        type decimal64 {
+             fraction-digits 3;
+        }
+    }
+    leaf unit {
+        type string {
+            pattern "(milliseconds|seconds)";
+        }
+    }
+  }
   grouping openwrt-operations-output {
     description
       "Used to return output from RPCs";
@@ -142,20 +155,14 @@ module openwrt-operations {
                 }
                 }
             container statistics {
-                leaf min {
-                    type decimal64 {
-                         fraction-digits 3;
-                    }
+                container min {
+                    uses ping-time;
                 }
-                leaf avg {
-                    type decimal64 {
-                         fraction-digits 3;
-                    }
+                container avg {
+                    uses ping-time;
                 }
-                leaf max {
-                    type decimal64 {
-                         fraction-digits 3;
-                    }
+                container max {
+                    uses ping-time;
                 }
             }
 
@@ -182,10 +189,8 @@ module openwrt-operations {
                 type uint8;
               }
 
-              leaf time {
-                type decimal64 {
-                    fraction-digits 3;
-                }
+              container time {
+                uses ping-time;
               }
             }
         }
