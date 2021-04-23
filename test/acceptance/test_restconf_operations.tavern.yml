@@ -24,3 +24,79 @@ stages:
           'openwrt-operations:ping': '/restconf/operations/openwrt-operations:ping'
           'openwrt-operations:mtr': '/restconf/operations/openwrt-operations:mtr'
           'openwrt-operations:opkg': '/restconf/operations/openwrt-operations:opkg'
+
+---
+
+test_name: Check for methods allowed on endpoints
+
+strict:
+  - headers:off
+  - json:off
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: POST on operations root
+    request:
+      url: "{url}/operations/"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+    response:
+      status_code:
+        - 405
+  
+  - name: OPTIONS on operations root
+    request:
+      url: "{url}/operations/"
+      method: OPTIONS
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+    response:
+      headers:
+        allow: OPTIONS, GET, HEAD
+      status_code:
+        - 200
+
+  - name: OPTIONS on data/ endpoints
+    request:
+      url: "{url}/data/restconf-example:course"
+      method: OPTIONS
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+    response:
+      headers:
+        allow: DELETE, GET, HEAD, PATCH, POST, PUT, OPTIONS
+      status_code:
+        - 200
+
+  - name: "OPTIONS on /operations/openwrt-operations:mtr endpoints"
+    request:
+      url: "{url}/operations/openwrt-operations:mtr"
+      method: OPTIONS
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+    response:
+      headers:
+        allow: OPTIONS, POST
+      status_code:
+        - 200
+
+  - name: "OPTIONS on /operations/openwrt-operations:ping endpoints"
+    request:
+      url: "{url}/operations/openwrt-operations:ping"
+      method: OPTIONS
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+    response:
+      headers:
+        allow: OPTIONS, POST
+      status_code:
+        - 200
+  
