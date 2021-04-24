@@ -586,8 +586,6 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       } else if (yang_is_list(yang_node_type)) {
         // list has children so further validation checks to its elements
         // printf("It is list\n");
-      } else if (yang_is_choice(yang_node_type)) {
-        printf("--> It is choice\n");
       }
     } else {
       // doesnt key doesnt exists

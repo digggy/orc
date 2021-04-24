@@ -63,7 +63,7 @@ includes:
 stages:
   - name: POST test on mtr
     request:
-      url: "{url}/operations/openwrt-operations:mtr"
+      url: "{url}/operations/openwrt-operations:ping"
       method: POST
       headers:
         content-type: application/yang-data+json

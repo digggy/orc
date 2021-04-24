@@ -1015,13 +1015,17 @@ struct json_object *run_command(struct json_object *command_json,
     parsed_json_result = json_tokener_parse(output);
     if (!parsed_json_result) {
       // this is to maintain the generic cases of output directly from the
-      // commands to the user
+      // commands to the user and the default output of success
+      if (strcmp(output, "") == 0) {
+        output = default_message;
+      }
       parsed_json_result = json_object_new_object();
       json_object_object_add(parsed_json_result, "result",
                              json_object_new_string(output));
     }
   }
   return parsed_json_result;
+  return NULL;
 }
 
 int invoke_operation(struct CgiContext *cgi, char **pathvec) {
@@ -1122,75 +1126,6 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
   struct json_object *parsed_json_result =
       run_command(input_command->command_args_json, top_level_name);
 
-  //  char * ping_output_json ="{\"result\":\n"
-  //      "  {\n"
-  //      "    \"rtt_summary\": {\n"
-  //      "  \"packets_transmitted\": 5,\n"
-  //      "  \"packets_received\": 5,\n"
-  //      "  \"packet_loss_percentage\": 0\n"
-  //      "},\n"
-  //      "    \"rtt_statistics\": {\n"
-  //      "  \"min\":  { \"value\": \"32.655\",  \"unit\": \"milliseconds\"
-  //      },\n" "  \"avg\":  { \"value\": \"56.459\",  \"unit\":
-  //      \"milliseconds\" },\n" "  \"max\":  { \"value\": \"81.485\", \"unit\":
-  //      \"milliseconds\" }\n"
-  //      "},\n"
-  //      "    \"icmp_sequences\": [{\n"
-  //      "  \"bytes\": 64,\n"
-  //      "  \"target\": \"142.250.186.78\",\n"
-  //      "  \"target_ip\": \"142.250.186.78\",\n"
-  //      "  \"seq\": 0,\n"
-  //      "  \"ttl\": 63,\n"
-  //      "  \"time\": {\n"
-  //      "    \"unit\": \"milliseconds\",\n"
-  //      "    \"value\": 63.773\n"
-  //      "  }\n"
-  //      "}, {\n"
-  //      "  \"bytes\": 64,\n"
-  //      "  \"target\": \"142.250.186.78\",\n"
-  //      "  \"target_ip\": \"142.250.186.78\",\n"
-  //      "  \"seq\": 1,\n"
-  //      "  \"ttl\": 63,\n"
-  //      "  \"time\": {\n"
-  //      "    \"unit\": \"milliseconds\",\n"
-  //      "    \"value\": 67.115\n"
-  //      "  }\n"
-  //      "}, {\n"
-  //      "  \"bytes\": 64,\n"
-  //      "  \"target\": \"142.250.186.78\",\n"
-  //      "  \"target_ip\": \"142.250.186.78\",\n"
-  //      "  \"seq\": 2,\n"
-  //      "  \"ttl\": 63,\n"
-  //      "  \"time\": {\n"
-  //      "    \"unit\": \"milliseconds\",\n"
-  //      "    \"value\": 81.485\n"
-  //      "  }\n"
-  //      "}, {\n"
-  //      "  \"bytes\": 64,\n"
-  //      "  \"target\": \"142.250.186.78\",\n"
-  //      "  \"target_ip\": \"142.250.186.78\",\n"
-  //      "  \"seq\": 3,\n"
-  //      "  \"ttl\": 63,\n"
-  //      "  \"time\": {\n"
-  //      "    \"unit\": \"milliseconds\",\n"
-  //      "    \"value\": 37.269\n"
-  //      "  }\n"
-  //      "}, {\n"
-  //      "  \"bytes\": 64,\n"
-  //      "  \"target\": \"142.250.186.78\",\n"
-  //      "  \"target_ip\": \"142.250.186.78\",\n"
-  //      "  \"seq\": 4,\n"
-  //      "  \"ttl\": 63,\n"
-  //      "  \"time\": {\n"
-  //      "    \"unit\": \"milliseconds\",\n"
-  //      "    \"value\": 32.655\n"
-  //      "  }\n"
-  //      "}]\n"
-  //      "  }\n"
-  //      "}";
-  //  struct json_object *parsed_json_result =
-  //  json_tokener_parse(ping_output_json);
-
   // check if it has output
   int output_error;
   struct json_object *yang_output_child =
@@ -1214,11 +1149,16 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     retval = restconf_malformed();
     goto done;
   };
+  //output wrapper
+  struct json_object * output_wrapper = NULL;
+  char *module_name_with_node = concat_with_colon(module_name, YANG_OUTPUT);
+  output_wrapper = json_object_new_object();
+  json_object_object_add(output_wrapper, module_name_with_node , parsed_json_result);
 
   // print the output
   content_type_json();
   headers_end();
-  json_pretty_print(parsed_json_result);
+  json_pretty_print(output_wrapper);
 
 done:
   return retval;
