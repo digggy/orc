@@ -145,7 +145,6 @@ void allowed_methods(char **pathvec) {
     } else {
       printf("Allow: OPTIONS, POST");
     }
-    printf("\nKeep-Alive: timeout=1");
   }
 
   // ToDo check for operations under operation resource

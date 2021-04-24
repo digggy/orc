@@ -27,7 +27,7 @@ stages:
 
 ---
 
-test_name: POST test on mtr
+test_name: POST tests on mtr
 
 strict:
   - headers:off
@@ -47,57 +47,32 @@ stages:
       json:
         !include POST/OPERATIONS/valid-mtr.yaml
     response:
-      verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            map:
-              report:
-                type: map
-                mapping:
-                  mtr:
-                    type: map
-                    mapping:
-                      source:
-                        type: str 
-                      destination: 
-                        type: str                  
-                      type-of-service: 
-                        type: str                  
-                      packet-size: 
-                        type: str                  
-                      bitpattern:
-                        type: str 
-                      tests:                                  
-                        type: str
-                  hubs:
-                    type: seq
-                    sequence:
-                      - type: map
-                        mapping:
-                          count: 
-                            type: str
-                          host: 
-                            type: str
-                          loss-percent:
-                            type: float
-                          sent:
-                            type: int
-                          last: 
-                            type: float
-                          average-rtt: 
-                            type: float
-                          best-rtt: 
-                            type: float
-                          worst-rtt: 
-                            type: float
-                          standard-deviation:
-                            type: float
+      !include POST/OPERATIONS/mtr-response.yaml
 
+---
 
+test_name: POST tests on ping
 
+strict:
+  - headers:off
+  - json:off
 
-# ---
+includes:
+  - !include common.yaml
+
+stages:
+  - name: POST test on mtr
+    request:
+      url: "{url}/operations/openwrt-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        !include POST/OPERATIONS/valid-mtr.yaml
+    response:
+      !include POST/OPERATIONS/mtr-response.yaml
+
 
 # test_name: Check for methods allowed on endpoints
 
