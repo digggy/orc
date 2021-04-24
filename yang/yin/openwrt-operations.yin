@@ -123,6 +123,35 @@
       <uses name="openwrt-operations-output"/>
     </output>
   </rpc>
+  <rpc name="free">
+    <oo:script name="free_to_json.sh"/>
+    <oo:command/>
+    <output>
+      <list name="result">
+        <leaf name="type">
+          <type name="string"/>
+        </leaf>
+        <leaf name="total">
+          <type name="uint64"/>
+        </leaf>
+        <leaf name="used">
+          <type name="uint64"/>
+        </leaf>
+        <leaf name="free">
+          <type name="uint64"/>
+        </leaf>
+        <leaf name="shared">
+          <type name="uint64"/>
+        </leaf>
+        <leaf name="buff_cache">
+          <type name="uint64"/>
+        </leaf>
+        <leaf name="available">
+          <type name="uint64"/>
+        </leaf>
+      </list>
+    </output>
+  </rpc>
   <rpc name="ping">
     <oo:script name="ping_to_json.sh"/>
     <oo:command-name name="ping"/>

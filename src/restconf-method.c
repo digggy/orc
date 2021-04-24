@@ -1025,7 +1025,6 @@ struct json_object *run_command(struct json_object *command_json,
     }
   }
   return parsed_json_result;
-  return NULL;
 }
 
 int invoke_operation(struct CgiContext *cgi, char **pathvec) {
@@ -1095,14 +1094,21 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
   // check if it has input
   struct json_object *yang_input_child =
       json_get_object_from_map(top_level, YANG_INPUT);
-  command_arguments *input_command = NULL;
+
+  command_arguments *input_command = malloc(sizeof(command_arguments));
+  if (!input_command) {
+    fprintf(stderr, "Memory allocation failed");
+    return 1;
+  }
+  input_command->command_args_json = json_tokener_parse(command_args);
+  input_command->error = RE_OK;
+
   if (!yang_input_child) {
     if (content) {
       // doesnt take any input
       retval = restconf_badrequest();
+      goto done;
     }
-    // TODO run operation without any input
-    goto done;
   } else {
     //  verify the content with the yang module.
     input_command = yang_verify_input(content, yang_input_child);
@@ -1149,11 +1155,12 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
     retval = restconf_malformed();
     goto done;
   };
-  //output wrapper
-  struct json_object * output_wrapper = NULL;
+  // output wrapper
+  struct json_object *output_wrapper = NULL;
   char *module_name_with_node = concat_with_colon(module_name, YANG_OUTPUT);
   output_wrapper = json_object_new_object();
-  json_object_object_add(output_wrapper, module_name_with_node , parsed_json_result);
+  json_object_object_add(output_wrapper, module_name_with_node,
+                         parsed_json_result);
 
   // print the output
   content_type_json();

@@ -118,6 +118,35 @@ module openwrt-operations {
               uses openwrt-operations-output;
             }
   }
+  rpc free {
+    oo:script "free_to_json.sh";
+    oo:command "free";
+    output{
+        list result {
+            leaf type {
+                type string;
+            }
+            leaf total {
+                type uint64;
+            }
+            leaf used {
+                type uint64;
+            }
+            leaf free {
+                type uint64;
+            }
+            leaf shared {
+                type uint64;
+            }
+            leaf buff_cache {
+                type uint64;
+            }
+            leaf available {
+                type uint64;
+            }
+        }
+    }
+  }
 
   rpc ping {
     oo:script "ping_to_json.sh";
