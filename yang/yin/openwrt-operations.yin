@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module name="openwrt-operations"
         xmlns="urn:ietf:params:xml:ns:yang:yin:1"
-        xmlns:oo="urn:jacobs:yang:openwrt-operations"
-        xmlns:inet="urn:ietf:params:xml:ns:yang:ietf-inet-types">
-  <namespace uri="urn:jacobs:yang:openwrt-operations"/>
+        xmlns:oo="urn:jacobs:yang:openwrt-operations-extension"
+        xmlns:inet="urn:ietf:params:xml:ns:yang:ietf-inet-types"
+        xmlns:oe="urn:jacobs:yang:openwrt-operations">
+  <namespace uri="urn:jacobs:yang:openwrt-operations-extension"/>
   <prefix value="oo"/>
   <import module="ietf-inet-types">
     <prefix value="inet"/>
+  </import>
+  <import module="openwrt-operations-extension">
+    <prefix value="oe"/>
   </import>
   <contact>
     <text>username &lt;username@jacobs-university.de&gt;</text>
@@ -29,21 +33,6 @@
       <pattern value="(0|1)"/>
     </type>
   </typedef>
-  <extension name="command-flag">
-    <argument name="name"/>
-  </extension>
-  <extension name="command-option">
-    <argument name="name"/>
-  </extension>
-  <extension name="command-name">
-    <argument name="name"/>
-  </extension>
-  <extension name="sub-command">
-    <argument name="name"/>
-  </extension>
-  <extension name="script">
-    <argument name="name"/>
-  </extension>
   <grouping name="ping-time">
     <description>
       <text>Wrapper for time with units</text>
@@ -71,7 +60,7 @@
     </leaf>
   </grouping>
   <rpc name="copy">
-    <oo:command-name name="cp"/>
+    <oe:command-name name="cp"/>
     <description>
       <text>Copy from one file to another</text>
     </description>
@@ -90,7 +79,7 @@
     </output>
   </rpc>
   <rpc name="delete">
-    <oo:command-name name="rm"/>
+    <oe:command-name name="rm"/>
     <description>
       <text>Delete a file</text>
     </description>
@@ -105,17 +94,17 @@
     </output>
   </rpc>
   <rpc name="reboot">
-    <oo:command-name name="reboot"/>
+    <oe:command-name name="reboot"/>
     <description>
       <text>Delete a file</text>
     </description>
     <input>
       <leaf name="delay">
-        <oo:command-option name="d"/>
+        <oe:command-option name="d"/>
         <type name="int32"/>
       </leaf>
       <leaf name="force">
-        <oo:command-option name="f"/>
+        <oe:command-option name="f"/>
         <type name="openwrt-bool"/>
       </leaf>
     </input>
@@ -124,8 +113,8 @@
     </output>
   </rpc>
   <rpc name="free">
-    <oo:script name="free_to_json.sh"/>
-    <oo:command/>
+    <oe:script name="free_to_json.sh"/>
+    <oe:command-name name="free"/>
     <output>
       <list name="result">
         <leaf name="type">
@@ -153,8 +142,8 @@
     </output>
   </rpc>
   <rpc name="ping">
-    <oo:script name="ping_to_json.sh"/>
-    <oo:command-name name="ping"/>
+    <oe:script name="ping_to_json.sh"/>
+    <oe:command-name name="ping"/>
     <description>
       <text>send ICMP ECHO_REQUEST to network hosts</text>
     </description>
@@ -163,7 +152,7 @@
         <description>
           <text>Wait interval seconds between sending each packet</text>
         </description>
-        <oo:command-option name="i"/>
+        <oe:command-option name="i"/>
         <type name="int32"/>
         <default value="1"/>
       </leaf>
@@ -171,7 +160,7 @@
         <description>
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
-        <oo:command-option name="c"/>
+        <oe:command-option name="c"/>
         <type name="int32"/>
         <default value="4"/>
       </leaf>
@@ -183,7 +172,7 @@
         <type name="string">
           <pattern value="(true)"/>
         </type>
-        <oo:command-flag name="4"/>
+        <oe:command-flag name="4"/>
         <default value="true"/>
       </leaf>
     </input>
@@ -236,20 +225,20 @@
     </output>
   </rpc>
   <rpc name="mtr">
-    <oo:command-name name="mtr"/>
+    <oe:command-name name="mtr"/>
     <input>
       <leaf name="report">
         <type name="string">
           <pattern value="(true)"/>
         </type>
-        <oo:command-flag name="r"/>
+        <oe:command-flag name="r"/>
         <default value="true"/>
       </leaf>
       <leaf name="json">
         <type name="string">
           <pattern value="(true)"/>
         </type>
-        <oo:command-flag name="j"/>
+        <oe:command-flag name="j"/>
         <default value="true"/>
       </leaf>
       <leaf name="destination">
@@ -261,7 +250,7 @@
           <text>Wait interval seconds between sending each packet</text>
         </description>
         <type name="int32"/>
-        <oo:command-option name="i"/>
+        <oe:command-option name="i"/>
         <default value="1"/>
       </leaf>
       <leaf name="count">
@@ -269,7 +258,7 @@
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
         <type name="int32"/>
-        <oo:command-option name="c"/>
+        <oe:command-option name="c"/>
         <default value="4"/>
       </leaf>
     </input>
@@ -341,19 +330,19 @@
     </output>
   </rpc>
   <rpc name="opkg">
-    <oo:command-name name="opkg"/>
+    <oe:command-name name="opkg"/>
     <input>
       <choice name="usage-type">
         <leaf name="upgrade">
-          <oo:sub-command name="upgrade"/>
+          <oe:sub-command name="upgrade"/>
           <type name="string"/>
         </leaf>
         <leaf name="install">
-          <oo:sub-command name="install"/>
+          <oe:sub-command name="install"/>
           <type name="string"/>
         </leaf>
         <leaf name="remove">
-          <oo:sub-command name="remove"/>
+          <oe:sub-command name="remove"/>
           <type name="string"/>
         </leaf>
       </choice>

@@ -1,0 +1,25 @@
+module openwrt-operations-extension {
+    namespace "urn:jacobs:yang:openwrt-operations";
+    prefix "ooe";
+
+    contact "Digdarshan Kunwar <d.kunwar@jacobs-university.de>";
+    revision 2021-05-14 {
+      description "initial revision";
+    }
+
+    extension command-flag {
+        argument name;
+    }
+    extension command-option {
+        argument name;
+    }
+    extension command-name {
+            argument name;
+    }
+    extension sub-command {
+            argument name;
+    }
+    extension script {
+        argument name;
+    }
+}

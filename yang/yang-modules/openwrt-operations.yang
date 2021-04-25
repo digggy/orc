@@ -1,11 +1,13 @@
 module openwrt-operations {
-  namespace "urn:jacobs:yang:openwrt-operations";
+  namespace "urn:jacobs:yang:openwrt-operations-extension";
   prefix "oo";
 
   import ietf-inet-types {
     prefix inet;
   }
-
+  import openwrt-operations-extension {
+    prefix oe;
+  }
   contact "username <username@jacobs-university.de>";
     revision 2021-03-20 {
       description "Inital set of operations";
@@ -22,21 +24,6 @@ module openwrt-operations {
        type string {
          pattern "(0|1)";
        }
-    }
-    extension command-flag {
-        argument name;
-    }
-    extension command-option {
-        argument name;
-    }
-    extension command-name {
-            argument name;
-    }
-    extension sub-command {
-            argument name;
-    }
-    extension script {
-        argument name;
     }
   grouping ping-time{
     description
@@ -63,7 +50,7 @@ module openwrt-operations {
   }
 
   rpc copy {
-    oo:command-name "cp";
+    oe:command-name "cp";
     description
       "Copy from one file to another";
     
@@ -84,7 +71,7 @@ module openwrt-operations {
   }
 
   rpc delete {
-    oo:command-name "rm";
+    oe:command-name "rm";
     description
       "Delete a file";
   
@@ -101,16 +88,16 @@ module openwrt-operations {
   }
 
   rpc reboot{
-    oo:command-name "reboot";
+    oe:command-name "reboot";
       description
         "Delete a file";
         input{
             leaf delay {
-                oo:command-option "d";
+                oe:command-option "d";
                 type int32;
             }
             leaf force {
-                oo:command-option "f";
+                oe:command-option "f";
                 type openwrt-bool;
             }
         }
@@ -119,8 +106,8 @@ module openwrt-operations {
             }
   }
   rpc free {
-    oo:script "free_to_json.sh";
-    oo:command "free";
+    oe:script "free_to_json.sh";
+    oe:command-name "free";
     output{
         list result {
             leaf type {
@@ -149,22 +136,22 @@ module openwrt-operations {
   }
 
   rpc ping {
-    oo:script "ping_to_json.sh";
-    oo:command-name "ping";
+    oe:script "ping_to_json.sh";
+    oe:command-name "ping";
     description
         "send ICMP ECHO_REQUEST to network hosts";
     input {
         leaf interval {
             description
                 "Wait interval seconds between sending each packet";
-            oo:command-option "i";
+            oe:command-option "i";
             type int32;
             default 1;
         }
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
-                oo:command-option "c";
+                oe:command-option "c";
             type int32;
             default 4;
         }
@@ -177,7 +164,7 @@ module openwrt-operations {
             type string {
                 pattern "(true)";
            }
-           oo:command-flag "4";
+           oe:command-flag "4";
            default "true";
         }
     }
@@ -238,13 +225,13 @@ module openwrt-operations {
   }
 
   rpc mtr {
-    oo:command-name "mtr";
+    oe:command-name "mtr";
     input {
         leaf report {
             type string {
                 pattern "(true)";
            }
-           oo:command-flag "r";
+           oe:command-flag "r";
            default "true";
         }
 
@@ -252,7 +239,7 @@ module openwrt-operations {
             type string {
                 pattern "(true)";
            }
-        oo:command-flag "j";
+        oe:command-flag "j";
         default "true";
         }
 
@@ -265,14 +252,14 @@ module openwrt-operations {
             description
                 "Wait interval seconds between sending each packet";
             type int32;
-            oo:command-option "i";
+            oe:command-option "i";
             default 1;
         }
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
             type int32;
-            oo:command-option "c";
+            oe:command-option "c";
             default 4;
         }
     }
@@ -352,19 +339,19 @@ module openwrt-operations {
   }
 
   rpc opkg{
-    oo:command-name "opkg";
+    oe:command-name "opkg";
     input {
         choice usage-type {
                leaf upgrade {
-                    oo:sub-command "upgrade";
+                    oe:sub-command "upgrade";
                     type string;
                 }
                leaf install {
-                    oo:sub-command "install";
+                    oe:sub-command "install";
                     type string;
                 }
                leaf remove {
-                    oo:sub-command "remove";
+                    oe:sub-command "remove";
                     type string;
                  }
              }

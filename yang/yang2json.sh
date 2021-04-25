@@ -5,7 +5,7 @@ parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 # cd to the directory of the bash script and get the files in relative location
 cd "$parent_path"
 
-declare -a f_array=("ietf-yang-types" "ietf-interfaces" "ietf-inet-types" "openwrt-network" "openwrt-system" "openwrt-uci-extension" "restconf-example" "openwrt-operations")
+declare -a f_array=("ietf-yang-types" "ietf-interfaces" "ietf-inet-types" "openwrt-network" "openwrt-system" "openwrt-uci-extension" "openwrt-operations-extension" "restconf-example" "openwrt-operations")
 
 # converting the yang files to yin format
 for val in ${f_array[@]}; do
@@ -14,7 +14,7 @@ for val in ${f_array[@]}; do
 done
 
 all_files=""
-declare -a openwrt_f_array=("${f_array[@]:3:5}")
+declare -a openwrt_f_array=("${f_array[@]:3:6}")
 
 #echo "${openwrt_f_array[@]}"
 for val in ${openwrt_f_array[@]}; do

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="openwrt-operations-extension"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:ooe="urn:jacobs:yang:openwrt-operations">
+  <namespace uri="urn:jacobs:yang:openwrt-operations"/>
+  <prefix value="ooe"/>
+  <contact>
+    <text>Digdarshan Kunwar &lt;d.kunwar@jacobs-university.de&gt;</text>
+  </contact>
+  <revision date="2021-05-14">
+    <description>
+      <text>initial revision</text>
+    </description>
+  </revision>
+  <extension name="command-flag">
+    <argument name="name"/>
+  </extension>
+  <extension name="command-option">
+    <argument name="name"/>
+  </extension>
+  <extension name="command-name">
+    <argument name="name"/>
+  </extension>
+  <extension name="sub-command">
+    <argument name="name"/>
+  </extension>
+  <extension name="script">
+    <argument name="name"/>
+  </extension>
+</module>
