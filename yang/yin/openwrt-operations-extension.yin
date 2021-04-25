@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module name="openwrt-operations-extension"
         xmlns="urn:ietf:params:xml:ns:yang:yin:1"
-        xmlns:ooe="urn:jacobs:yang:openwrt-operations">
-  <namespace uri="urn:jacobs:yang:openwrt-operations"/>
+        xmlns:ooe="urn:jacobs:yang:openwrt-operations-extension">
+  <namespace uri="urn:jacobs:yang:openwrt-operations-extension"/>
   <prefix value="ooe"/>
   <contact>
     <text>Digdarshan Kunwar &lt;d.kunwar@jacobs-university.de&gt;</text>

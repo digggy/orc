@@ -1,0 +1,115 @@
+module openwrt-system-operations {
+  namespace "urn:jacobs:yang:openwrt-system-operations";
+  prefix "oo";
+
+  import openwrt-operations-extension {
+    prefix oe;
+  }
+  contact "username <username@jacobs-university.de>";
+    revision 2021-03-20 {
+      description "Inital set of operations";
+  }
+
+   typedef percent {
+      type uint8 {
+           range "0 .. 100";
+      }
+           description "Percentage";
+   }
+
+    typedef openwrt-bool {
+       type string {
+         pattern "(0|1)";
+       }
+    }
+
+    grouping openwrt-operations-output {
+    description
+      "Used to return output from RPCs";
+    leaf result {
+      type string;
+      description
+        "Output returned by the network element";
+    }
+  }
+
+  rpc copy {
+    oe:command-name "cp";
+    description
+      "Copy from one file to another";
+    
+    input {
+      leaf _source {
+        mandatory true;
+        type string;
+      }
+      leaf _destination {
+        mandatory true;
+        type string;
+      }
+    }
+    
+    output {
+      uses openwrt-operations-output;
+    }
+  }
+
+  rpc delete {
+    oe:command-name "rm";
+    description
+      "Delete a file";
+  
+    input {
+      leaf _filename {
+        mandatory true;
+        type string;
+      }
+    }
+    
+    output {
+      uses openwrt-operations-output;
+    }
+  }
+
+  rpc reboot {
+    oe:command-name "reboot";
+      description
+        "Delete a file";
+        input{
+            leaf delay {
+                oe:command-option "d";
+                type int32;
+            }
+            leaf force {
+                oe:command-option "f";
+                type openwrt-bool;
+            }
+        }
+        output {
+              uses openwrt-operations-output;
+            }
+  }
+
+  rpc opkg{
+    oe:command-name "opkg";
+    input {
+        choice usage-type {
+               leaf upgrade {
+                    oe:sub-command "upgrade";
+                    type string;
+                }
+               leaf install {
+                    oe:sub-command "install";
+                    type string;
+                }
+               leaf remove {
+                    oe:sub-command "remove";
+                    type string;
+                 }
+             }
+    }
+    output{
+        uses openwrt-operations-output;
+    }
+  }
+}

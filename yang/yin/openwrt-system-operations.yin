@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="openwrt-system-operations"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:oo="urn:jacobs:yang:openwrt-system-operations"
+        xmlns:oe="urn:jacobs:yang:openwrt-operations-extension">
+  <namespace uri="urn:jacobs:yang:openwrt-system-operations"/>
+  <prefix value="oo"/>
+  <import module="openwrt-operations-extension">
+    <prefix value="oe"/>
+  </import>
+  <contact>
+    <text>username &lt;username@jacobs-university.de&gt;</text>
+  </contact>
+  <revision date="2021-03-20">
+    <description>
+      <text>Inital set of operations</text>
+    </description>
+  </revision>
+  <typedef name="percent">
+    <type name="uint8">
+      <range value="0 .. 100"/>
+    </type>
+    <description>
+      <text>Percentage</text>
+    </description>
+  </typedef>
+  <typedef name="openwrt-bool">
+    <type name="string">
+      <pattern value="(0|1)"/>
+    </type>
+  </typedef>
+  <grouping name="openwrt-operations-output">
+    <description>
+      <text>Used to return output from RPCs</text>
+    </description>
+    <leaf name="result">
+      <type name="string"/>
+      <description>
+        <text>Output returned by the network element</text>
+      </description>
+    </leaf>
+  </grouping>
+  <rpc name="copy">
+    <oe:command-name name="cp"/>
+    <description>
+      <text>Copy from one file to another</text>
+    </description>
+    <input>
+      <leaf name="_source">
+        <mandatory value="true"/>
+        <type name="string"/>
+      </leaf>
+      <leaf name="_destination">
+        <mandatory value="true"/>
+        <type name="string"/>
+      </leaf>
+    </input>
+    <output>
+      <uses name="openwrt-operations-output"/>
+    </output>
+  </rpc>
+  <rpc name="delete">
+    <oe:command-name name="rm"/>
+    <description>
+      <text>Delete a file</text>
+    </description>
+    <input>
+      <leaf name="_filename">
+        <mandatory value="true"/>
+        <type name="string"/>
+      </leaf>
+    </input>
+    <output>
+      <uses name="openwrt-operations-output"/>
+    </output>
+  </rpc>
+  <rpc name="reboot">
+    <oe:command-name name="reboot"/>
+    <description>
+      <text>Delete a file</text>
+    </description>
+    <input>
+      <leaf name="delay">
+        <oe:command-option name="d"/>
+        <type name="int32"/>
+      </leaf>
+      <leaf name="force">
+        <oe:command-option name="f"/>
+        <type name="openwrt-bool"/>
+      </leaf>
+    </input>
+    <output>
+      <uses name="openwrt-operations-output"/>
+    </output>
+  </rpc>
+  <rpc name="opkg">
+    <oe:command-name name="opkg"/>
+    <input>
+      <choice name="usage-type">
+        <leaf name="upgrade">
+          <oe:sub-command name="upgrade"/>
+          <type name="string"/>
+        </leaf>
+        <leaf name="install">
+          <oe:sub-command name="install"/>
+          <type name="string"/>
+        </leaf>
+        <leaf name="remove">
+          <oe:sub-command name="remove"/>
+          <type name="string"/>
+        </leaf>
+      </choice>
+    </input>
+    <output>
+      <uses name="openwrt-operations-output"/>
+    </output>
+  </rpc>
+</module>

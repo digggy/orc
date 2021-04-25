@@ -1,5 +1,5 @@
 module openwrt-operations-extension {
-    namespace "urn:jacobs:yang:openwrt-operations";
+    namespace "urn:jacobs:yang:openwrt-operations-extension";
     prefix "ooe";
 
     contact "Digdarshan Kunwar <d.kunwar@jacobs-university.de>";

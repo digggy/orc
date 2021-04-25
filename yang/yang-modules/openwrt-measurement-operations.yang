@@ -1,5 +1,5 @@
-module openwrt-operations {
-  namespace "urn:jacobs:yang:openwrt-operations-extension";
+module openwrt-measurement-operations {
+  namespace "urn:jacobs:yang:openwrt-operations";
   prefix "oo";
 
   import ietf-inet-types {
