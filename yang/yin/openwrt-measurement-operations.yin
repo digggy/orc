@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module name="openwrt-measurement-operations"
         xmlns="urn:ietf:params:xml:ns:yang:yin:1"
-        xmlns:oo="urn:jacobs:yang:openwrt-operations"
+        xmlns:oo="urn:jacobs:yang:openwrt-measurement-operations"
         xmlns:inet="urn:ietf:params:xml:ns:yang:ietf-inet-types"
         xmlns:oe="urn:jacobs:yang:openwrt-operations-extension">
-  <namespace uri="urn:jacobs:yang:openwrt-operations"/>
+  <namespace uri="urn:jacobs:yang:openwrt-measurement-operations"/>
   <prefix value="oo"/>
   <import module="ietf-inet-types">
     <prefix value="inet"/>
@@ -59,59 +59,6 @@
       </description>
     </leaf>
   </grouping>
-  <rpc name="copy">
-    <oe:command-name name="cp"/>
-    <description>
-      <text>Copy from one file to another</text>
-    </description>
-    <input>
-      <leaf name="_source">
-        <mandatory value="true"/>
-        <type name="string"/>
-      </leaf>
-      <leaf name="_destination">
-        <mandatory value="true"/>
-        <type name="string"/>
-      </leaf>
-    </input>
-    <output>
-      <uses name="openwrt-operations-output"/>
-    </output>
-  </rpc>
-  <rpc name="delete">
-    <oe:command-name name="rm"/>
-    <description>
-      <text>Delete a file</text>
-    </description>
-    <input>
-      <leaf name="_filename">
-        <mandatory value="true"/>
-        <type name="string"/>
-      </leaf>
-    </input>
-    <output>
-      <uses name="openwrt-operations-output"/>
-    </output>
-  </rpc>
-  <rpc name="reboot">
-    <oe:command-name name="reboot"/>
-    <description>
-      <text>Delete a file</text>
-    </description>
-    <input>
-      <leaf name="delay">
-        <oe:command-option name="d"/>
-        <type name="int32"/>
-      </leaf>
-      <leaf name="force">
-        <oe:command-option name="f"/>
-        <type name="openwrt-bool"/>
-      </leaf>
-    </input>
-    <output>
-      <uses name="openwrt-operations-output"/>
-    </output>
-  </rpc>
   <rpc name="free">
     <oe:script name="free_to_json.sh"/>
     <oe:command-name name="free"/>
@@ -327,28 +274,6 @@
           </leaf>
         </list>
       </container>
-    </output>
-  </rpc>
-  <rpc name="opkg">
-    <oe:command-name name="opkg"/>
-    <input>
-      <choice name="usage-type">
-        <leaf name="upgrade">
-          <oe:sub-command name="upgrade"/>
-          <type name="string"/>
-        </leaf>
-        <leaf name="install">
-          <oe:sub-command name="install"/>
-          <type name="string"/>
-        </leaf>
-        <leaf name="remove">
-          <oe:sub-command name="remove"/>
-          <type name="string"/>
-        </leaf>
-      </choice>
-    </input>
-    <output>
-      <uses name="openwrt-operations-output"/>
     </output>
   </rpc>
 </module>

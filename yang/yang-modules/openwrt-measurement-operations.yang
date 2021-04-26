@@ -1,5 +1,5 @@
 module openwrt-measurement-operations {
-  namespace "urn:jacobs:yang:openwrt-operations";
+  namespace "urn:jacobs:yang:openwrt-measurement-operations";
   prefix "oo";
 
   import ietf-inet-types {
@@ -25,6 +25,7 @@ module openwrt-measurement-operations {
          pattern "(0|1)";
        }
     }
+
   grouping ping-time{
     description
         "Wrapper for time with units";
@@ -49,62 +50,6 @@ module openwrt-measurement-operations {
     }
   }
 
-  rpc copy {
-    oe:command-name "cp";
-    description
-      "Copy from one file to another";
-    
-    input {
-      leaf _source {
-        mandatory true;
-        type string;
-      }
-      leaf _destination {
-        mandatory true;
-        type string;
-      }
-    }
-    
-    output {
-      uses openwrt-operations-output;
-    }
-  }
-
-  rpc delete {
-    oe:command-name "rm";
-    description
-      "Delete a file";
-  
-    input {
-      leaf _filename {
-        mandatory true;
-        type string;
-      }
-    }
-    
-    output {
-      uses openwrt-operations-output;
-    }
-  }
-
-  rpc reboot{
-    oe:command-name "reboot";
-      description
-        "Delete a file";
-        input{
-            leaf delay {
-                oe:command-option "d";
-                type int32;
-            }
-            leaf force {
-                oe:command-option "f";
-                type openwrt-bool;
-            }
-        }
-        output {
-              uses openwrt-operations-output;
-            }
-  }
   rpc free {
     oe:script "free_to_json.sh";
     oe:command-name "free";
@@ -338,26 +283,4 @@ module openwrt-measurement-operations {
     }
   }
 
-  rpc opkg{
-    oe:command-name "opkg";
-    input {
-        choice usage-type {
-               leaf upgrade {
-                    oe:sub-command "upgrade";
-                    type string;
-                }
-               leaf install {
-                    oe:sub-command "install";
-                    type string;
-                }
-               leaf remove {
-                    oe:sub-command "remove";
-                    type string;
-                 }
-             }
-    }
-    output{
-        uses openwrt-operations-output;
-    }
-  }
 }

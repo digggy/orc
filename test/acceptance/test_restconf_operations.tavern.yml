@@ -18,12 +18,15 @@ stages:
         - 200
       json:
         'openwrt-restconf:operations':
-          'openwrt-operations:copy': '/restconf/operations/openwrt-operations:copy'
-          'openwrt-operations:delete': '/restconf/operations/openwrt-operations:delete'
-          'openwrt-operations:reboot': '/restconf/operations/openwrt-operations:reboot'
-          'openwrt-operations:ping': '/restconf/operations/openwrt-operations:ping'
-          'openwrt-operations:mtr': '/restconf/operations/openwrt-operations:mtr'
-          'openwrt-operations:opkg': '/restconf/operations/openwrt-operations:opkg'
+          'openwrt-system-operations:copy': '/restconf/operations/openwrt-system-operations:copy'
+          'openwrt-system-operations:delete': '/restconf/operations/openwrt-system-operations:delete'
+          'openwrt-system-operations:reboot': '/restconf/operations/openwrt-system-operations:reboot'
+          'openwrt-system-operations:opkg': '/restconf/operations/openwrt-system-operations:opkg'
+          'openwrt-measurement-operations:free': '/restconf/operations/openwrt-measurement-operations:free'
+          'openwrt-measurement-operations:mtr': '/restconf/operations/openwrt-measurement-operations:mtr'
+          'openwrt-measurement-operations:ping': '/restconf/operations/openwrt-measurement-operations:ping'
+
+
 
 ---
 
@@ -37,9 +40,9 @@ includes:
   - !include common.yaml
 
 stages:
-  - name: POST test on mtr
+  - name: with valid-mtr
     request:
-      url: "{url}/operations/openwrt-operations:mtr"
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
       method: POST
       headers:
         content-type: application/yang-data+json
@@ -49,29 +52,77 @@ stages:
     response:
       !include POST/OPERATIONS/mtr-response.yaml
 
----
-
-test_name: POST tests on ping
-
-strict:
-  - headers:off
-  - json:off
-
-includes:
-  - !include common.yaml
-
-stages:
-  - name: POST test on mtr
+  - name: check with defaults
     request:
-      url: "{url}/operations/openwrt-operations:ping"
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
       method: POST
       headers:
         content-type: application/yang-data+json
         accept: application/yang-data+json
       json:
-        !include POST/OPERATIONS/valid-mtr.yaml
+        destination: 'google.com'
     response:
       !include POST/OPERATIONS/mtr-response.yaml
+
+#  - name: check with invalid type
+#    request:
+#      url: "{url}/operations/openwrt-measurement-operations:mtr"
+#      method: POST
+#      headers:
+#        content-type: application/yang-data+json
+#        accept: application/yang-data+json
+#      json:
+#        'destination': 1
+#    response:
+#      # Need to write
+#
+#  - name: check with empty request
+#    request:
+#      url: "{url}/operations/openwrt-measurement-operations:mtr"
+#      method: POST
+#      headers:
+#        content-type: application/yang-data+json
+#        accept: application/yang-data+json
+#      json:
+#        'destination': 1
+#    response:
+#    # Need to write
+#
+#  - name: check with
+#    request:
+#      url: "{url}/operations/openwrt-measurement-operations:mtr"
+#      method: POST
+#      headers:
+#        content-type: application/yang-data+json
+#        accept: application/yang-data+json
+#      json:
+#        'destination': 1
+#    response:
+#    # Need to write
+#
+#---
+
+#test_name: POST tests on ping
+#
+#strict:
+#  - headers:off
+#  - json:off
+#
+#includes:
+#  - !include common.yaml
+#
+#stages:
+#  - name: POST test on mtr
+#    request:
+#      url: "{url}/operations/openwrt-measurement-operations:ping"
+#      method: POST
+#      headers:
+#        content-type: application/yang-data+json
+#        accept: application/yang-data+json
+#      json:
+#        !include POST/OPERATIONS/valid-ping.yaml
+#    response:
+#      !include POST/OPERATIONS/ping-response.yaml
 
 
 # test_name: Check for methods allowed on endpoints
@@ -121,9 +172,9 @@ stages:
 #       status_code:
 #         - 200
 
-#   - name: "OPTIONS on /operations/openwrt-operations:mtr endpoints"
+#   - name: "OPTIONS on mtr endpoints"
 #     request:
-#       url: "{url}/operations/openwrt-operations:mtr"
+#       url: "{url}/operations/openwrt-measurement-operations:mtr"
 #       method: OPTIONS
 #       headers:
 #         content-type: application/yang-data+json
@@ -134,7 +185,7 @@ stages:
 #       status_code:
 #         - 200
 
-#   - name: "OPTIONS on /operations/openwrt-operations:ping endpoints"
+#   - name: "OPTIONS on /operations/openwrt-measurement-operations:ping endpoints"
 #     request:
 #       url: "{url}/operations/openwrt-operations:ping"
 #       method: OPTIONS
