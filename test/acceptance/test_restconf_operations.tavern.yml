@@ -206,23 +206,23 @@ stages:
     response:
       status_code: 400
 
-  - name: check with arbitary input for leafs
-    request:
-      url: "{url}/operations/openwrt-measurement-operations:ping"
-      method: POST
-      headers:
-        content-type: application/yang-data+json
-        accept: application/yang-data+json
-      json:
-        count: 'eight'
-        destination: 'google.com'
-    response:
-      status_code: 500
-      json:
-        ietf-restconf:errors:
-          error:
-            - error-type: 'protocol'
-              error-tag: 'malformed-message'
+#  - name: check with arbitary input for leafs
+#    request:
+#      url: "{url}/operations/openwrt-measurement-operations:ping"
+#      method: POST
+#      headers:
+#        content-type: application/yang-data+json
+#        accept: application/yang-data+json
+#      json:
+#        count: 'eight'
+#        destination: 'google.com'
+#    response:
+#      status_code: 500
+#      json:
+#        ietf-restconf:errors:
+#          error:
+#            - error-type: 'protocol'
+#              error-tag: 'malformed-message'
 
 
 # test_name: Check for methods allowed on endpoints

@@ -207,6 +207,7 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
   const char* leaf_type = NULL;
   struct json_object* extracted_type = NULL;
   int is_object = 0;
+  char* end = NULL;
 
   enum other_check { NONE, RANGE, PATTERN, FRACTION_DIGITS } verify_type = NONE;
   if (json_object_get_type(type) == json_type_object) {
@@ -234,7 +235,12 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       if (has_decimal(value)) {
         return 1;
       };
-      int integer = strtoimax(value, NULL, 10);
+      int integer = strtoimax(value, &end, 10);
+      if (end == value) {
+        // if no characters were converted these pointers are equal
+        fprintf(stderr, "ERROR: can't convert string to number\n");
+        return 1;
+      }
       if (integer < -128 || integer > 127) return 1;
       break;
     }
@@ -243,7 +249,12 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       if (has_decimal(value)) {
         return 1;
       };
-      int integer = strtoimax(value, NULL, 10);
+      int integer = strtoimax(value, &end, 10);
+      if (end == value) {
+        // if no characters were converted these pointers are equal
+        fprintf(stderr, "ERROR: can't convert string to number\n");
+        return 1;
+      }
       if (integer < -32768 || integer > 32767) return 1;
       break;
     }
@@ -252,7 +263,12 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       if (has_decimal(value)) {
         return 1;
       };
-      int integer = strtoimax(value, NULL, 10);
+      int integer = strtoimax(value, &end, 10);
+      if (end == value) {
+        // if no characters were converted these pointers are equal
+        fprintf(stderr, "ERROR: can't convert string to number\n");
+        return 1;
+      }
       if (integer < -2147483648 || integer > 2147483647) return 1;
       break;
     }
@@ -261,7 +277,12 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       if (has_decimal(value)) {
         return 1;
       };
-      int integer = strtoimax(value, NULL, 10);
+      int integer = strtoimax(value, &end, 10);
+      if (end == value) {
+        // if no characters were converted these pointers are equal
+        fprintf(stderr, "ERROR: can't convert string to number\n");
+        return 1;
+      }
       if (integer < 0 || integer > 255) return 1;
       break;
     }
@@ -270,7 +291,12 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       if (has_decimal(value)) {
         return 1;
       };
-      int integer = strtoimax(value, NULL, 10);
+      int integer = strtoimax(value, &end, 10);
+      if (end == value) {
+        // if no characters were converted these pointers are equal
+        fprintf(stderr, "ERROR: can't convert string to number\n");
+        return 1;
+      }
       if (integer < 0 || integer > 65535) return 1;
       break;
     }
@@ -279,7 +305,13 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       if (has_decimal(value)) {
         return 1;
       };
-      int integer = strtoimax(value, NULL, 10);
+      int integer = strtoimax(value, &end, 10);
+      if (end == value) {
+        // if no characters were converted these pointers are equal
+        fprintf(stderr, "ERROR: can't convert string to number\n");
+        return 1;
+      }
+
       if (integer < 0) return 1;
       break;
     }
@@ -287,7 +319,12 @@ static int yang_verify_value_type(struct json_object* type, const char* value) {
       break;
     case UINT_64: {
       verify_type = RANGE;
-      unsigned long integer = strtol(value, NULL, 10);
+      unsigned long integer = strtol(value, &end, 10);
+      if (end == value) {
+        // if no characters were converted these pointers are equal
+        fprintf(stderr, "ERROR: can't convert string to number\n");
+        return 1;
+      }
       if (integer < 0 || integer > 18446744073709551615u) return 1;
       break;
     }
