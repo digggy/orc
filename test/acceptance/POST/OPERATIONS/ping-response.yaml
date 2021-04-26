@@ -3,44 +3,64 @@ verify_response_with:
   extra_kwargs:
     schema:
       map:
-        report:
+        'openwrt-measurement-operations:output':
           type: map
           mapping:
-            mtr:
+            result:
               type: map
               mapping:
-                source:
-                  type: str
-                destination:
-                  type: str
-                type-of-service:
-                  type: str
-                packet-size:
-                  type: str
-                bitpattern:
-                  type: str
-                tests:
-                  type: str
-            hubs:
-              type: seq
-              sequence:
-                - type: map
+                rtt_summary:
+                  type: map
                   mapping:
-                    count:
-                      type: str
-                    host:
-                      type: str
-                    loss-percent:
-                      type: float
-                    sent:
+                    packets_transmitted:
                       type: int
-                    last:
-                      type: float
-                    average-rtt:
-                      type: float
-                    best-rtt:
-                      type: float
-                    worst-rtt:
-                      type: float
-                    standard-deviation:
-                      type: float
+                    packets_received:
+                      type: int
+                    packet_loss_percentage:
+                      type: int
+                rtt_statistics:
+                  type: map
+                  mapping:
+                      min:
+                        type: map
+                        mapping:
+                          value:
+                            type: str
+                          unit:
+                            type: str
+                      avg:
+                        type: map
+                        mapping:
+                          value:
+                            type: str
+                          unit:
+                            type: str
+                      max:
+                        type: map
+                        mapping:
+                          value:
+                            type: str
+                          unit:
+                            type: str
+                icmp_sequences:
+                  type: seq
+                  sequence:
+                    - type: map
+                      mapping:
+                        bytes:
+                          type: int
+                        target:
+                          type: str
+                        target_ip:
+                          type: str
+                        seq:
+                          type: int
+                        ttl:
+                          type: int
+                        time:
+                          type: map
+                          mapping:
+                            value:
+                              type: float
+                            unit:
+                              type: str
