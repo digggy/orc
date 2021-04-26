@@ -64,42 +64,64 @@ stages:
     response:
       !include POST/OPERATIONS/mtr-response.yaml
 
-#  - name: check with invalid type
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:mtr"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#      json:
-#        'destination': 1
-#    response:
-#      # Need to write
-#
-#  - name: check with empty request
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:mtr"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#      json:
-#        'destination': 1
-#    response:
-#    # Need to write
-#
-#  - name: check with
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:mtr"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#      json:
-#        'destination': 1
-#    response:
-#    # Need to write
-#
+  - name: check with invalid type for pattern
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        destination: '192.168.0.1111'
+    response:
+      status_code: 400
+      json:
+        ietf-restconf:errors:
+          error:
+            - error-type: 'protocol'
+              error-tag: 'malformed-message'
+
+
+  - name: check with empty request
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+    response:
+      status_code: 400
+      json:
+        ietf-restconf:errors:
+          error:
+            - error-type: 'protocol'
+              error-tag: 'malformed-message'
+
+
+  - name: check with dns name for destination
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        destination: 'cnds.jacobs-university.de'
+    response:
+      status_code: 200
+
+  - name: check with arbitary input
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        random: 'this is random message'
+    response:
+      status_code: 400
+
 #---
 
 #test_name: POST tests on ping
