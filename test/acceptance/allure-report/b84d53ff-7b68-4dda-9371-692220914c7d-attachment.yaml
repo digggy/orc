@@ -1,0 +1,11 @@
+- name: replace datastore
+  request:
+    url: "{url}/data/restconf-example:course"
+    method: PUT
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+    json:
+      !include GET/root-valid-extended.yaml
+  response:
+    status_code: 204

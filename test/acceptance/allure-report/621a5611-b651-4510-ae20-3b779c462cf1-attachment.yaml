@@ -1,0 +1,6 @@
+body: null
+headers:
+  Connection: Keep-Alive
+  Keep-Alive: timeout=1
+redirect_query_params: {}
+status_code: 204

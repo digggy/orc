@@ -160,6 +160,8 @@ static int regex_verify_value(const char* regex, const char* value) {
     return 1;
   }
   regfree(&regex_o);
+    printf("Regex %s \n", regex);
+    printf("Value %s \n", value);
   return 0;
 }
 

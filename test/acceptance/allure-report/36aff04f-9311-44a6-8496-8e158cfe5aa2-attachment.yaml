@@ -1,0 +1,11 @@
+- name: check with arbitary input
+  request:
+    url: "{url}/operations/openwrt-measurement-operations:mtr"
+    method: POST
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+    json:
+      random: 'this is random message'
+  response:
+    status_code: 400

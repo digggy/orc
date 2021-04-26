@@ -1,0 +1,10 @@
+- name: POST on operations root
+  request:
+    url: "{url}/operations/"
+    method: POST
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+  response:
+    status_code:
+      - 405

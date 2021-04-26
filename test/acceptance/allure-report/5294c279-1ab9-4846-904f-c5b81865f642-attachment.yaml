@@ -1,0 +1,18 @@
+body:
+  openwrt-restconf:operations:
+    openwrt-measurement-operations:free: /restconf/operations/openwrt-measurement-operations:free
+    openwrt-measurement-operations:mtr: /restconf/operations/openwrt-measurement-operations:mtr
+    openwrt-measurement-operations:ping: /restconf/operations/openwrt-measurement-operations:ping
+    openwrt-system-operations:copy: /restconf/operations/openwrt-system-operations:copy
+    openwrt-system-operations:delete: /restconf/operations/openwrt-system-operations:delete
+    openwrt-system-operations:opkg: /restconf/operations/openwrt-system-operations:opkg
+    openwrt-system-operations:reboot: /restconf/operations/openwrt-system-operations:reboot
+headers:
+  Accept-Patch: application/yang-data+json;charset=utf-8;
+  Allow: OPTIONS, GET, HEAD
+  Connection: Keep-Alive
+  Content-Type: application/yang-data+json;charset=utf-8;
+  Keep-Alive: timeout=1
+  Transfer-Encoding: chunked
+redirect_query_params: {}
+status_code: 200

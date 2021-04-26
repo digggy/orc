@@ -1,0 +1,9 @@
+body: null
+headers:
+  Accept-Patch: application/yang-data+json;charset=utf-8;
+  Allow: OPTIONS, POST
+  Connection: Keep-Alive
+  Content-Type: application/yang-data+json;charset=utf-8;
+  Keep-Alive: timeout=1
+redirect_query_params: {}
+status_code: 200

@@ -1,0 +1,58 @@
+body:
+  openwrt-measurement-operations:output:
+    result:
+      icmp_sequences:
+      - bytes: 64
+        seq: 0
+        target: 212.201.49.26
+        target_ip: 212.201.49.26
+        time:
+          unit: milliseconds
+          value: 39.092
+        ttl: 63
+      - bytes: 64
+        seq: 1
+        target: 212.201.49.26
+        target_ip: 212.201.49.26
+        time:
+          unit: milliseconds
+          value: 38.779
+        ttl: 63
+      - bytes: 64
+        seq: 2
+        target: 212.201.49.26
+        target_ip: 212.201.49.26
+        time:
+          unit: milliseconds
+          value: 37.966
+        ttl: 63
+      - bytes: 64
+        seq: 3
+        target: 212.201.49.26
+        target_ip: 212.201.49.26
+        time:
+          unit: milliseconds
+          value: 28.228
+        ttl: 63
+      rtt_statistics:
+        avg:
+          unit: milliseconds
+          value: '36.016'
+        max:
+          unit: milliseconds
+          value: '39.092'
+        min:
+          unit: milliseconds
+          value: '28.228'
+      rtt_summary:
+        packet_loss_percentage: 0
+        packets_received: 4
+        packets_transmitted: 4
+headers:
+  COMMAND: ping -4 -i 1 -c 4 cnds.jacobs-university.de > /tmp/restconf_tmp && /root/.restconf/ping_to_json.sh
+  Connection: Keep-Alive
+  Content-Type: application/yang-data+json;charset=utf-8;
+  Keep-Alive: timeout=1
+  Transfer-Encoding: chunked
+redirect_query_params: {}
+status_code: 200

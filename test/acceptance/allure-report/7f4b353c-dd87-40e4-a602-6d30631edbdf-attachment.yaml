@@ -1,0 +1,21 @@
+- name: Get all operations
+  request:
+    url: "{url}/operations/"
+    method: GET
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+  response:
+    status_code:
+      - 200
+    json:
+      'openwrt-restconf:operations':
+        'openwrt-system-operations:copy': '/restconf/operations/openwrt-system-operations:copy'
+        'openwrt-system-operations:delete': '/restconf/operations/openwrt-system-operations:delete'
+        'openwrt-system-operations:reboot': '/restconf/operations/openwrt-system-operations:reboot'
+        'openwrt-system-operations:opkg': '/restconf/operations/openwrt-system-operations:opkg'
+        'openwrt-measurement-operations:free': '/restconf/operations/openwrt-measurement-operations:free'
+        'openwrt-measurement-operations:mtr': '/restconf/operations/openwrt-measurement-operations:mtr'
+        'openwrt-measurement-operations:ping': '/restconf/operations/openwrt-measurement-operations:ping'
+
+

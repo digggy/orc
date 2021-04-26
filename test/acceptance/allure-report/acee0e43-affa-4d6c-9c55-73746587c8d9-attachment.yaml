@@ -1,0 +1,10 @@
+- name: delete current semester
+  request:
+    url: "{url}/data/restconf-example:course/semester"
+    method: DELETE
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+  response:
+    status_code:
+      - 204

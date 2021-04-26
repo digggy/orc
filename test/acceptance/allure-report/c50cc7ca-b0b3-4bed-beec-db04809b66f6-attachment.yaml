@@ -1,0 +1,8 @@
+body: null
+headers:
+  Connection: Keep-Alive
+  Keep-Alive: timeout=1
+  Location: http://192.168.56.3/cgi-bin/restconf/data/restconf-example:course/semester
+  Transfer-Encoding: chunked
+redirect_query_params: {}
+status_code: 201

@@ -1,0 +1,58 @@
+body:
+  openwrt-measurement-operations:output:
+    result:
+      icmp_sequences:
+      - bytes: 64
+        seq: 0
+        target: 8.8.8.8
+        target_ip: 8.8.8.8
+        time:
+          unit: milliseconds
+          value: 21.822
+        ttl: 63
+      - bytes: 64
+        seq: 1
+        target: 8.8.8.8
+        target_ip: 8.8.8.8
+        time:
+          unit: milliseconds
+          value: 37.476
+        ttl: 63
+      - bytes: 64
+        seq: 2
+        target: 8.8.8.8
+        target_ip: 8.8.8.8
+        time:
+          unit: milliseconds
+          value: 36.829
+        ttl: 63
+      - bytes: 64
+        seq: 3
+        target: 8.8.8.8
+        target_ip: 8.8.8.8
+        time:
+          unit: milliseconds
+          value: 21.196
+        ttl: 63
+      rtt_statistics:
+        avg:
+          unit: milliseconds
+          value: '29.330'
+        max:
+          unit: milliseconds
+          value: '37.476'
+        min:
+          unit: milliseconds
+          value: '21.196'
+      rtt_summary:
+        packet_loss_percentage: 0
+        packets_received: 4
+        packets_transmitted: 4
+headers:
+  COMMAND: ping -4 -i 1 -c 4 8.8.8.8 > /tmp/restconf_tmp && /root/.restconf/ping_to_json.sh
+  Connection: Keep-Alive
+  Content-Type: application/yang-data+json;charset=utf-8;
+  Keep-Alive: timeout=1
+  Transfer-Encoding: chunked
+redirect_query_params: {}
+status_code: 200

@@ -1,0 +1,14 @@
+- name: check empty state
+  request:
+    url: "{url}/data/restconf-example:course"
+    method: GET
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+  response:
+    status_code: 404
+    json:
+      ietf-restconf:errors:
+        error:
+          - error-tag: "invalid-value"
+            error-type: "protocol"

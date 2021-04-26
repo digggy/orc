@@ -1,0 +1,12 @@
+- name: "OPTIONS on mtr endpoints"
+  request:
+    url: "{url}/operations/openwrt-measurement-operations:mtr"
+    method: OPTIONS
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+  response:
+    headers:
+      allow: OPTIONS, POST
+    status_code:
+      - 200

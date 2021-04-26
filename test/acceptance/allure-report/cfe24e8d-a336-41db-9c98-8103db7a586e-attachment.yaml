@@ -1,0 +1,14 @@
+- name: post valid content
+  request:
+    url: "{url}/data/"
+    method: POST
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+    json:
+      !include POST/root-valid.yaml
+  response:
+    status_code: 201
+    headers:
+      location: "{url}/data/restconf-example:course"
+      transfer-encoding: chunked

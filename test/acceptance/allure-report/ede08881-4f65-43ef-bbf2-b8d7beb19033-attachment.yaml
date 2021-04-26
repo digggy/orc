@@ -1,0 +1,31 @@
+- name: POST test on ping
+  request:
+    url: "{url}/operations/openwrt-measurement-operations:ping"
+    method: POST
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+    json:
+      interval: 1
+      count: 4
+      destination: 8.8.8.8
+  response:
+    !include POST/OPERATIONS/ping-response.yaml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

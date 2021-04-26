@@ -1,0 +1,12 @@
+body:
+  ietf-restconf:errors:
+    error:
+    - error-tag: data-exists
+      error-type: protocol
+headers:
+  Connection: Keep-Alive
+  Content-Type: application/yang-data+json;charset=utf-8;
+  Keep-Alive: timeout=1
+  Transfer-Encoding: chunked
+redirect_query_params: {}
+status_code: 409

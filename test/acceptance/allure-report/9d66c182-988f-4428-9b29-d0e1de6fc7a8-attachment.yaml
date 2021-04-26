@@ -1,0 +1,15 @@
+allow_redirects: false
+headers:
+  accept: application/yang-data+json
+  content-type: application/yang-data+json
+json:
+  students:
+    age: 21
+    firstname: test2
+    grade: 20
+    lastname: student2
+    major: IMS
+method: PUT
+stream: false
+url: http://192.168.56.3/cgi-bin/restconf/data/restconf-example:course/students=test2,student2,21
+verify: true

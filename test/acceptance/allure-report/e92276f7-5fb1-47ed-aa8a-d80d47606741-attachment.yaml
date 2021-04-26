@@ -1,0 +1,23 @@
+body:
+  restconf-example:course:
+    instructor:
+      email: example@university.de
+      name: Example Lecturer
+    instructors:
+    - Example Lecturer
+    - Example Professor
+    name: Computer Networks
+    semester: 4
+    students:
+    - age: 21
+      firstname: test
+      grade: 75
+      lastname: student
+      major: CS
+headers:
+  Connection: Keep-Alive
+  Content-Type: application/yang-data+json;charset=utf-8;
+  Keep-Alive: timeout=1
+  Transfer-Encoding: chunked
+redirect_query_params: {}
+status_code: 200

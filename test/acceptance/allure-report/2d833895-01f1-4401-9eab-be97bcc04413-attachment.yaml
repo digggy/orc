@@ -1,0 +1,11 @@
+- name: check with defaults
+  request:
+    url: "{url}/operations/openwrt-measurement-operations:mtr"
+    method: POST
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+    json:
+      destination: 'google.com'
+  response:
+    !include POST/OPERATIONS/mtr-response.yaml

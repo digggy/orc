@@ -1,0 +1,8 @@
+- name: check if correct
+  request:
+    url: "{url}/data/restconf-example:course"
+    method: GET
+  response:
+    status_code: 200
+    json:
+      !include GET/root-valid-extended.yaml

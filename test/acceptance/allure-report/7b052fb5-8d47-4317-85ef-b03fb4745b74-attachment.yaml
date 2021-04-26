@@ -1,0 +1,12 @@
+- name: check malformed
+  request:
+    url: "{url}/data/"
+    method: POST
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+    json:
+      restconf-example:course:
+        this does not exist: 5
+  response:
+    status_code: 404

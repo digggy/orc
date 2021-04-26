@@ -6,19 +6,11 @@ PKG_RELEASE:=1
 
 PKG_MAINTAINER:=Malte Granderath <malte.granderath@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
-TARGET_CFLAGS += -ggdb3
 
 SOURCE_DIR:=/restconf
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
-TARGET_CFLAGS += -g3
-
-define Build/Compile
-    $(MAKE) -C $(PKG_BUILD_DIR)/ \
-    CC="$(TARGET_CC)" \
-    CFLAGS="$(TARGET_CFLAGS)"
-endef
 
 define Package/orc
 	SECTION:=utils

@@ -1,0 +1,127 @@
+body:
+  openwrt-measurement-operations:output:
+    report:
+      hubs:
+      - average-rtt: 0.5
+        best-rtt: 0.48
+        count: '1'
+        host: 10.0.3.2
+        last: 0.48
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 0.02
+        worst-rtt: 0.52
+      - average-rtt: 107.72
+        best-rtt: 8.4
+        count: '2'
+        host: 192.168.0.1
+        last: 138.7
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 68.3
+        worst-rtt: 162.32
+      - average-rtt: 72.01
+        best-rtt: 48.15
+        count: '3'
+        host: 83-169-183-13-isp.superkabel.de
+        last: 71.03
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 20.04
+        worst-rtt: 97.2
+      - average-rtt: 83.47
+        best-rtt: 33.48
+        count: '4'
+        host: ip5886cb5f.static.kabel-deutschland.de
+        last: 33.48
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 69.14
+        worst-rtt: 183.2
+      - average-rtt: 77.26
+        best-rtt: 15.03
+        count: '5'
+        host: 145.254.3.58
+        last: 23.22
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 73.31
+        worst-rtt: 171.25
+      - average-rtt: 45.09
+        best-rtt: 15.79
+        count: '6'
+        host: 145.254.2.49
+        last: 23.1
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 45.84
+        worst-rtt: 113.44
+      - average-rtt: 91.29
+        best-rtt: 32.37
+        count: '7'
+        host: 145.254.2.49
+        last: 153.93
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 63.16
+        worst-rtt: 153.93
+      - average-rtt: 87.34
+        best-rtt: 53.53
+        count: '8'
+        host: dfn.bcix.de
+        last: 70.22
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 52.53
+        worst-rtt: 165.47
+      - average-rtt: 127.29
+        best-rtt: 65.14
+        count: '9'
+        host: cr-han2-be7.x-win.dfn.de
+        last: 163.59
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 52.18
+        worst-rtt: 176.65
+      - average-rtt: 79.42
+        best-rtt: 39.35
+        count: '10'
+        host: kr-bre66-0.x-win.dfn.de
+        last: 110.3
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 32.08
+        worst-rtt: 110.3
+      - average-rtt: 105.22
+        best-rtt: 26.72
+        count: '11'
+        host: 212.201.48.73
+        last: 26.72
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 81.55
+        worst-rtt: 181.64
+      - average-rtt: 173.4
+        best-rtt: 97.61
+        count: '12'
+        host: cherry.eecs.jacobs-university.de
+        last: 142.52
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 89.43
+        worst-rtt: 302.91
+      mtr:
+        bitpattern: '0x00'
+        destination: cnds.jacobs-university.de
+        packet-size: '64'
+        source: OpenWrt
+        tests: '4'
+        type-of-service: '0x0'
+headers:
+  COMMAND: mtr -r -j -i 1 -c 4 cnds.jacobs-university.de
+  Connection: Keep-Alive
+  Content-Type: application/yang-data+json;charset=utf-8;
+  Keep-Alive: timeout=1
+  Transfer-Encoding: chunked
+redirect_query_params: {}
+status_code: 200

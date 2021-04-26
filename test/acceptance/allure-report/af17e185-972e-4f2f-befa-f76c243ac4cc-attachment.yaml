@@ -1,0 +1,11 @@
+- name: put item
+  request:
+    url: "{url}/data/restconf-example:course/students=test2,student2,21"
+    method: PUT
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+    json:
+      !include POST/new-student.yaml
+  response:
+    status_code: 201

@@ -1,0 +1,10 @@
+allow_redirects: false
+headers:
+  accept: application/yang-data+json
+  content-type: application/yang-data+json
+json:
+  semester: 5
+method: POST
+stream: false
+url: http://192.168.56.3/cgi-bin/restconf/data/restconf-example:course
+verify: true

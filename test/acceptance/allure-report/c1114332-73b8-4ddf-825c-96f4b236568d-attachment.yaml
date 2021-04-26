@@ -1,0 +1,109 @@
+body:
+  openwrt-measurement-operations:output:
+    report:
+      hubs:
+      - average-rtt: 0.49
+        best-rtt: 0.43
+        count: '1'
+        host: 10.0.3.2
+        last: 0.52
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 0.03
+        worst-rtt: 0.56
+      - average-rtt: 8.57
+        best-rtt: 3.77
+        count: '2'
+        host: 192.168.0.1
+        last: 11.71
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 2.89
+        worst-rtt: 12.37
+      - average-rtt: 21.3
+        best-rtt: 10.06
+        count: '3'
+        host: 83-169-183-13-isp.superkabel.de
+        last: 10.06
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 6.6
+        worst-rtt: 31.68
+      - average-rtt: 20.62
+        best-rtt: 17.95
+        count: '4'
+        host: ip5886cb5f.static.kabel-deutschland.de
+        last: 17.95
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 1.98
+        worst-rtt: 24.37
+      - average-rtt: 31.99
+        best-rtt: 16.28
+        count: '5'
+        host: 145.254.3.58
+        last: 28.61
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 17.47
+        worst-rtt: 67.57
+      - average-rtt: 26.53
+        best-rtt: 16.01
+        count: '6'
+        host: 145.254.2.215
+        last: 22.85
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 8.21
+        worst-rtt: 43.14
+      - average-rtt: 35.39
+        best-rtt: 31.78
+        count: '7'
+        host: 72.14.194.138
+        last: 31.78
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 3.17
+        worst-rtt: 41.62
+      - average-rtt: 36.05
+        best-rtt: 24.43
+        count: '8'
+        host: 216.239.63.19
+        last: 24.43
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 13.01
+        worst-rtt: 70.89
+      - average-rtt: 29.91
+        best-rtt: 20.17
+        count: '9'
+        host: 216.239.54.181
+        last: 33.05
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 5.48
+        worst-rtt: 36.82
+      - average-rtt: 32.74
+        best-rtt: 27.82
+        count: '10'
+        host: dns.google
+        last: 33.52
+        loss-percent: 0.0
+        sent: 10
+        standard-deviation: 3.64
+        worst-rtt: 38.89
+      mtr:
+        bitpattern: '0x00'
+        destination: 8.8.8.8
+        packet-size: '64'
+        source: OpenWrt
+        tests: '10'
+        type-of-service: '0x0'
+headers:
+  COMMAND: mtr -r -j -i 1 -c 10 8.8.8.8
+  Connection: Keep-Alive
+  Content-Type: application/yang-data+json;charset=utf-8;
+  Keep-Alive: timeout=1
+  Transfer-Encoding: chunked
+redirect_query_params: {}
+status_code: 200

@@ -29,102 +29,102 @@ stages:
 
 
 ---
-#
-#test_name: POST tests on mtr
-#
-#strict:
-#  - headers:off
-#  - json:off
-#
-#includes:
-#  - !include common.yaml
-#
-#stages:
-#  - name: with valid-mtr
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:mtr"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#      json:
-#        !include POST/OPERATIONS/valid-mtr.yaml
-#    response:
-#      !include POST/OPERATIONS/mtr-response.yaml
-#
-#  - name: check with defaults
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:mtr"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#      json:
-#        destination: 'google.com'
-#    response:
-#      !include POST/OPERATIONS/mtr-response.yaml
-#
-#  - name: check with invalid type for pattern
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:mtr"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#      json:
-#        destination: '192.168.0.1111'
-#    response:
-#      status_code: 400
-#      json:
-#        ietf-restconf:errors:
-#          error:
-#            - error-type: 'protocol'
-#              error-tag: 'malformed-message'
-#
-#
-#  - name: check with empty request
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:mtr"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#    response:
-#      status_code: 400
-#      json:
-#        ietf-restconf:errors:
-#          error:
-#            - error-type: 'protocol'
-#              error-tag: 'malformed-message'
-#
-#
-#  - name: check with dns name for destination
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:mtr"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#      json:
-#        destination: 'cnds.jacobs-university.de'
-#    response:
-#      status_code: 200
-#
-#  - name: check with arbitary input
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:mtr"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#      json:
-#        random: 'this is random message'
-#    response:
-#      status_code: 400
-#
-#---
 
-test_name: ping
+test_name: POST tests on mtr
+
+strict:
+  - headers:off
+  - json:off
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: with valid-mtr
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        !include POST/OPERATIONS/valid-mtr.yaml
+    response:
+      !include POST/OPERATIONS/mtr-response.yaml
+
+  - name: check with defaults
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        destination: 'google.com'
+    response:
+      !include POST/OPERATIONS/mtr-response.yaml
+
+  - name: check with invalid type for pattern
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        destination: '192_168.0.1111'
+    response:
+      status_code: 400
+      json:
+        ietf-restconf:errors:
+          error:
+            - error-type: 'protocol'
+              error-tag: 'malformed-message'
+
+
+  - name: check with empty request
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+    response:
+      status_code: 400
+      json:
+        ietf-restconf:errors:
+          error:
+            - error-type: 'protocol'
+              error-tag: 'malformed-message'
+
+
+  - name: check with dns name for destination
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        destination: 'cnds.jacobs-university.de'
+    response:
+      status_code: 200
+
+  - name: check with arbitary input
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:mtr"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        random: 'this is random message'
+    response:
+      status_code: 400
+
+---
+
+test_name: ping tests
 
 strict:
   - headers:off
@@ -156,7 +156,7 @@ stages:
 #        content-type: application/yang-data+json
 #        accept: application/yang-data+json
 #      json:
-#        destination: '192.168.0.1111'
+#        destination: '192.168.0.-1111'
 #    response:
 #      status_code: 400
 #      json:
@@ -206,95 +206,95 @@ stages:
     response:
       status_code: 400
 
-#  - name: check with arbitary input for leafs
-#    request:
-#      url: "{url}/operations/openwrt-measurement-operations:ping"
-#      method: POST
-#      headers:
-#        content-type: application/yang-data+json
-#        accept: application/yang-data+json
-#      json:
-#        count: 'eight'
-#        destination: 'google.com'
-#    response:
-#      status_code: 500
-#      json:
-#        ietf-restconf:errors:
-#          error:
-#            - error-type: 'protocol'
-#              error-tag: 'malformed-message'
+  - name: check with arbitary input for leafs
+    request:
+      url: "{url}/operations/openwrt-measurement-operations:ping"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        count: 'eight'
+        destination: 'google.com'
+    response:
+      status_code: 400
+      json:
+        ietf-restconf:errors:
+          error:
+            - error-type: 'protocol'
+              error-tag: 'malformed-message'
 
+---
 
-# test_name: Check for methods allowed on endpoints
+ test_name: Check for methods allowed on endpoints
 
-# strict:
-#   - headers:off
-#   - json:off
+ strict:
+   - headers:off
+   - json:off
 
-# includes:
-#   - !include common.yaml
+ includes:
+   - !include common.yaml
 
-# stages:
-#   - name: POST on operations root
-#     request:
-#       url: "{url}/operations/"
-#       method: POST
-#       headers:
-#         content-type: application/yang-data+json
-#         accept: application/yang-data+json
-#     response:
-#       status_code:
-#         - 405
-  
-#   - name: OPTIONS on operations root
-#     request:
-#       url: "{url}/operations/"
-#       method: OPTIONS
-#       headers:
-#         content-type: application/yang-data+json
-#         accept: application/yang-data+json
-#     response:
-#       headers:
-#         allow: OPTIONS, GET, HEAD
-#       status_code:
-#         - 200
+ stages:
+   - name: POST on operations root
+     request:
+       url: "{url}/operations/"
+       method: POST
+       headers:
+         content-type: application/yang-data+json
+         accept: application/yang-data+json
+     response:
+       status_code:
+         - 405
 
-#   - name: OPTIONS on data/ endpoints
-#     request:
-#       url: "{url}/data/restconf-example:course"
-#       method: OPTIONS
-#       headers:
-#         content-type: application/yang-data+json
-#         accept: application/yang-data+json
-#     response:
-#       headers:
-#         allow: DELETE, GET, HEAD, PATCH, POST, PUT, OPTIONS
-#       status_code:
-#         - 200
+   - name: OPTIONS on operations root
+     request:
+       url: "{url}/operations/"
+       method: OPTIONS
+       headers:
+         content-type: application/yang-data+json
+         accept: application/yang-data+json
+     response:
+       headers:
+         allow: OPTIONS, GET, HEAD
+       status_code:
+         - 200
 
-#   - name: "OPTIONS on mtr endpoints"
-#     request:
-#       url: "{url}/operations/openwrt-measurement-operations:mtr"
-#       method: OPTIONS
-#       headers:
-#         content-type: application/yang-data+json
-#         accept: application/yang-data+json
-#     response:
-#       headers:
-#         allow: OPTIONS, POST
-#       status_code:
-#         - 200
+   - name: OPTIONS on data/ endpoints
+     request:
+       url: "{url}/data/restconf-example:course"
+       method: OPTIONS
+       headers:
+         content-type: application/yang-data+json
+         accept: application/yang-data+json
+     response:
+       headers:
+         allow: DELETE, GET, HEAD, PATCH, POST, PUT, OPTIONS
+       status_code:
+         - 200
 
-#   - name: "OPTIONS on /operations/openwrt-measurement-operations:ping endpoints"
-#     request:
-#       url: "{url}/operations/openwrt-operations:ping"
-#       method: OPTIONS
-#       headers:
-#         content-type: application/yang-data+json
-#         accept: application/yang-data+json
-#     response:
-#       headers:
-#         allow: OPTIONS, POST
-#       status_code:
-#         - 200
-  
+   - name: "OPTIONS on mtr endpoints"
+     request:
+       url: "{url}/operations/openwrt-measurement-operations:mtr"
+       method: OPTIONS
+       headers:
+         content-type: application/yang-data+json
+         accept: application/yang-data+json
+     response:
+       headers:
+         allow: OPTIONS, POST
+       status_code:
+         - 200
+
+   - name: "OPTIONS on /operations/openwrt-measurement-operations:ping endpoints"
+     request:
+       url: "{url}/operations/openwrt-operations:ping"
+       method: OPTIONS
+       headers:
+         content-type: application/yang-data+json
+         accept: application/yang-data+json
+     response:
+       headers:
+         allow: OPTIONS, POST
+       status_code:
+         - 200

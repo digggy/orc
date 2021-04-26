@@ -1,0 +1,163 @@
+body:
+  openwrt-measurement-operations:output:
+    report:
+      hubs:
+      - average-rtt: 0.46
+        best-rtt: 0.43
+        count: '1'
+        host: 10.0.3.2
+        last: 0.43
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 0.03
+        worst-rtt: 0.51
+      - average-rtt: 7.97
+        best-rtt: 4.89
+        count: '2'
+        host: 192.168.0.1
+        last: 4.89
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 2.56
+        worst-rtt: 10.49
+      - average-rtt: 18.67
+        best-rtt: 16.03
+        count: '3'
+        host: 83-169-183-13-isp.superkabel.de
+        last: 16.04
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 3.05
+        worst-rtt: 21.46
+      - average-rtt: 20.94
+        best-rtt: 18.11
+        count: '4'
+        host: ip5886cb5f.static.kabel-deutschland.de
+        last: 18.11
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 2.9
+        worst-rtt: 24.15
+      - average-rtt: 25.15
+        best-rtt: 19.88
+        count: '5'
+        host: 145.254.3.58
+        last: 19.88
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 4.69
+        worst-rtt: 30.49
+      - average-rtt: 72.83
+        best-rtt: 45.24
+        count: '6'
+        host: 145.254.2.215
+        last: 81.74
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 31.28
+        worst-rtt: 113.17
+      - average-rtt: 35.32
+        best-rtt: 26.17
+        count: '7'
+        host: 72.14.194.138
+        last: 26.17
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 8.21
+        worst-rtt: 46.02
+      - average-rtt: 33.84
+        best-rtt: 28.89
+        count: '8'
+        host: 216.239.63.19
+        last: 28.89
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 8.93
+        worst-rtt: 47.22
+      - average-rtt: 45.02
+        best-rtt: 33.78
+        count: '9'
+        host: 108.170.253.68
+        last: 33.9
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 13.08
+        worst-rtt: 58.79
+      - average-rtt: 43.82
+        best-rtt: 33.53
+        count: '10'
+        host: 72.14.237.84
+        last: 34.15
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 16.9
+        worst-rtt: 68.94
+      - average-rtt: 43.16
+        best-rtt: 34.4
+        count: '11'
+        host: 172.253.50.206
+        last: 34.67
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 16.5
+        worst-rtt: 67.89
+      - average-rtt: 44.93
+        best-rtt: 39.11
+        count: '12'
+        host: 142.250.46.107
+        last: 49.6
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 4.35
+        worst-rtt: 49.6
+      - average-rtt: 43.48
+        best-rtt: 40.3
+        count: '13'
+        host: 108.170.233.58
+        last: 47.73
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 3.24
+        worst-rtt: 47.73
+      - average-rtt: 39.52
+        best-rtt: 34.48
+        count: '14'
+        host: 108.170.247.113
+        last: 48.21
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 5.99
+        worst-rtt: 48.21
+      - average-rtt: 40.91
+        best-rtt: 37.08
+        count: '15'
+        host: 209.85.142.129
+        last: 39.18
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 3.44
+        worst-rtt: 44.82
+      - average-rtt: 43.95
+        best-rtt: 40.94
+        count: '16'
+        host: muc11s01-in-f14.1e100.net
+        last: 41.33
+        loss-percent: 0.0
+        sent: 4
+        standard-deviation: 5.35
+        worst-rtt: 51.95
+      mtr:
+        bitpattern: '0x00'
+        destination: google.com
+        packet-size: '64'
+        source: OpenWrt
+        tests: '4'
+        type-of-service: '0x0'
+headers:
+  COMMAND: mtr -r -j -i 1 -c 4 google.com
+  Connection: Keep-Alive
+  Content-Type: application/yang-data+json;charset=utf-8;
+  Keep-Alive: timeout=1
+  Transfer-Encoding: chunked
+redirect_query_params: {}
+status_code: 200

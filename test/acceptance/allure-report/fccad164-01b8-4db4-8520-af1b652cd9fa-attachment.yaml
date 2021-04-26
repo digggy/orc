@@ -1,0 +1,15 @@
+- name: check with empty request
+  request:
+    url: "{url}/operations/openwrt-measurement-operations:ping"
+    method: POST
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+  response:
+    status_code: 400
+    json:
+      ietf-restconf:errors:
+        error:
+          - error-type: 'protocol'
+            error-tag: 'malformed-message'
+

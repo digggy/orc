@@ -1,0 +1,12 @@
+- name: OPTIONS on operations root
+  request:
+    url: "{url}/operations/"
+    method: OPTIONS
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+  response:
+    headers:
+      allow: OPTIONS, GET, HEAD
+    status_code:
+      - 200

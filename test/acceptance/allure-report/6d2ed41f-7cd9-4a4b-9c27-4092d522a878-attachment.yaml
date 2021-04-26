@@ -1,0 +1,5 @@
+allow_redirects: false
+method: GET
+stream: false
+url: http://192.168.56.3/cgi-bin/restconf/data/restconf-example:course
+verify: true

@@ -1,0 +1,11 @@
+- name: check duplicate keys
+  request:
+    url: "{url}/data/restconf-example:course/students"
+    method: POST
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+    json:
+      !include POST/duplicate-keys.yaml
+  response:
+    status_code: 400

@@ -1,0 +1,11 @@
+- name: check with dns name for destination
+  request:
+    url: "{url}/operations/openwrt-measurement-operations:ping"
+    method: POST
+    headers:
+      content-type: application/yang-data+json
+      accept: application/yang-data+json
+    json:
+      destination: 'cnds.jacobs-university.de'
+  response:
+    status_code: 200

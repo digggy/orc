@@ -1,0 +1,16 @@
+- name: check updated content
+  request:
+    url: "{url}/data/restconf-example:course/students=test2,student2,21"
+    method: GET
+  response:
+    status_code: 200
+    json:
+      {
+        "restconf-example:students": [{
+          "age": 21,
+          "firstname": "test2",
+          "grade": 20,
+          "lastname": "student2",
+          "major": "IMS"
+        }]
+      }
