@@ -26,9 +26,125 @@ stages:
           'openwrt-measurement-operations:mtr': '/restconf/operations/openwrt-measurement-operations:mtr'
           'openwrt-measurement-operations:ping': '/restconf/operations/openwrt-measurement-operations:ping'
 
+---
 
+test_name: For copy operation
+
+strict:
+  - headers:off
+  - json:off
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: copy a configuration to home dir
+    request:
+      url: "{url}/operations/openwrt-system-operations:copy"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        {
+          "_source": "/etc/config/restconf-example",
+          "_destination": "/root/"
+        }
+    response:
+      status_code: 200
+      json:
+        {
+          "openwrt-system-operations:output": {
+            "result": "RPC request successful"
+          }
+        }
+
+  - name: copy a invalid file
+    request:
+      url: "{url}/operations/openwrt-system-operations:copy"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        {
+          "_source": "/etc/config/random-file",
+          "_destination": "/root/"
+        }
+    response:
+      status_code: 500
+      json:
+        {
+          "ietf-restconf:errors": {
+            "error": [
+              {
+                "error-type": "protocol",
+                "error-tag": "command not found"
+              }
+            ]
+          }
+        }
 
 ---
+
+test_name: For delete operation
+
+strict:
+  - headers:off
+  - json:off
+
+includes:
+  - !include common.yaml
+
+stages:
+  - name: copy a configuration to home dir
+    request:
+      url: "{url}/operations/openwrt-system-operations:delete"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        {
+          "_filename":"/root/restconf-example"
+        }
+    response:
+      status_code: 200
+      json:
+        {
+          "openwrt-system-operations:output": {
+            "result": "RPC request successful"
+          }
+        }
+
+  - name: delete a invalid file
+    request:
+      url: "{url}/operations/openwrt-system-operations:copy"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        {
+          "_source": "/etc/config/random-file",
+          "_destination": "/root/"
+        }
+    response:
+      status_code: 500
+      json:
+        {
+          "ietf-restconf:errors": {
+            "error": [
+              {
+                "error-type": "protocol",
+                "error-tag": "command not found"
+              }
+            ]
+          }
+        }
+
+---
+
 
 test_name: POST tests on mtr
 
