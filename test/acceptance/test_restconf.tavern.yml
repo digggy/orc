@@ -325,3 +325,89 @@ stages:
         }
     response:
       status_code: 201
+
+---
+
+test_name: delete root resource test
+includes:
+  - !include common.yaml
+stages:
+  - name: delete course
+    request:
+      url: "{url}/data/restconf-example:course"
+      method: DELETE
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+    response:
+      status_code: 204
+  - name: add new course structure
+    request:
+      url: "{url}/data/"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        restconf-example:course:
+          name: Course Name
+          instructors:
+            - Prof. John Doe
+            - Dr. Elon Musk
+          semester: 1
+          instructor:
+            name: John Doe
+            email: j.doe@university.de
+          students:
+            - firstname: alex
+              lastname: gates
+              age: 22
+              major: CS
+              grade: 88
+
+    response:
+      status_code: 201
+
+---
+
+test_name: Add new resource that is not existent
+includes:
+  - !include common.yaml
+stages:
+  - name: add new configuration
+    request:
+      url: "{url}/data/"
+      method: POST
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+      json:
+        restconf-example-two:course:
+          name: Course Name
+          instructors:
+            - Prof. John Doe
+            - Dr. Elon Musk
+          semester: 1
+          instructor:
+            name: John Doe
+            email: j.doe@university.de
+          students:
+            - firstname: alex
+              lastname: gates
+              age: 22
+              major: CS
+              grade: 88
+
+    response:
+      status_code: 400
+
+  - name: get the student with insufficient keys
+    request:
+      url: "{url}/data/data/restconf-example:course/students=alex,gates"
+      method: GET
+      headers:
+        content-type: application/yang-data+json
+        accept: application/yang-data+json
+
+    response:
+      status_code: 400
