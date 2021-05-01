@@ -985,8 +985,8 @@ struct json_object *run_command(struct json_object *command_json,
   // Construct the command accordingly
   strcpy(command_with_options,
          json_to_command(command_with_options, command_json));
-  //  json_pretty_print(command_json);
-    printf("COMMAND: %s\n", command_with_options);
+//    json_pretty_print(command_json);
+//    printf("COMMAND: %s\n", command_with_options);
   {
     if ((fp = popen(command_with_options, "r")) == NULL) {
       fprintf(stderr, "Error opening pipe!\n");
