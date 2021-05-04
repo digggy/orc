@@ -5,7 +5,8 @@ module openwrt-system-operations {
   import openwrt-operations-extension {
     prefix oe;
   }
-  contact "username <username@jacobs-university.de>";
+  
+  contact "Digdarshan Kunwar <d.kunwar@jacobs-university.de>";
     revision 2021-03-20 {
       description "Inital set of operations";
   }
@@ -25,7 +26,7 @@ module openwrt-system-operations {
 
     grouping openwrt-operations-output {
     description
-      "Used to return output from RPCs";
+      "Used to return default output from RPCs";
     leaf result {
       type string;
       description
@@ -73,14 +74,18 @@ module openwrt-system-operations {
 
   rpc reboot {
     oe:command-name "reboot";
-      description
-        "Delete a file";
+    description
+      "Reboot the system";
         input{
             leaf delay {
+              description
+                "delay interval in seconds";              
                 oe:command-option "d";
                 type int32;
             }
             leaf force {
+              description
+                "force (don't go through init)";              
                 oe:command-option "f";
                 type openwrt-bool;
             }
@@ -92,17 +97,25 @@ module openwrt-system-operations {
 
   rpc opkg{
     oe:command-name "opkg";
+    description
+      "Package mamagement using opkg";
     input {
         choice usage-type {
                leaf upgrade {
+                    description
+                      "upgrade a package";
                     oe:sub-command "upgrade";
                     type string;
                 }
                leaf install {
+                    description
+                      "install a package";
                     oe:sub-command "install";
                     type string;
                 }
                leaf remove {
+                    description
+                      "remove a package";
                     oe:sub-command "remove";
                     type string;
                  }
