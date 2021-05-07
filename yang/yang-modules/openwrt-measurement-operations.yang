@@ -8,23 +8,10 @@ module openwrt-measurement-operations {
   import openwrt-operations-extension {
     prefix oe;
   }
-  contact "username <username@jacobs-university.de>";
+  contact "Digdarshan Kunwar<d.kunwar@jacobs-university.de>";
     revision 2021-03-20 {
       description "Inital set of operations";
   }
-
-   typedef percent {
-      type uint8 {
-           range "0 .. 100";
-      }
-           description "Percentage";
-   }
-
-    typedef openwrt-bool {
-       type string {
-         pattern "(0|1)";
-       }
-    }
 
   grouping ping-time{
     description
@@ -70,7 +57,7 @@ module openwrt-measurement-operations {
             leaf shared {
                 type uint64;
             }
-            leaf buff_cache {
+            leaf buff-cache {
                 type uint64;
             }
             leaf available {
@@ -101,7 +88,8 @@ module openwrt-measurement-operations {
             default 4;
         }
         leaf destination {
-        // should be a choice between ipv4/6 or string representation
+            description
+                "The ping destination address or domain name";        
             mandatory true;
             type inet:host;
         }
@@ -115,18 +103,20 @@ module openwrt-measurement-operations {
     }
     output {
         container result {
-            container rtt_summary {
-                leaf packets_transmitted {
+            description
+                "The result for the ping operation";
+            container rtt-summary {
+                leaf packets-transmitted {
                     type int32;
                 }
-                leaf packets_received {
+                leaf packets-received {
                     type int32;
                 }
-                leaf packet_loss_percentage {
+                leaf packet-loss-percentage {
                     type int32;
                 }
                 }
-            container rtt_statistics {
+            container rtt-statistics {
                 container min {
                     uses ping-time;
                 }
@@ -138,7 +128,7 @@ module openwrt-measurement-operations {
                 }
             }
 
-            list icmp_sequences {
+            list icmp-sequences {
               key "seq";
 
               leaf bytes {
@@ -149,7 +139,7 @@ module openwrt-measurement-operations {
                 type string;
               }
 
-              leaf target_ip {
+              leaf target-ip {
                 type string;
               }
 
@@ -173,6 +163,8 @@ module openwrt-measurement-operations {
     oe:command-name "mtr";
     input {
         leaf report {
+            description
+                "Enable the report format";
             type string {
                 pattern "(true)";
            }
@@ -181,6 +173,8 @@ module openwrt-measurement-operations {
         }
 
         leaf json {
+            description
+                "Enable the output format in JSON";
             type string {
                 pattern "(true)";
            }
@@ -189,7 +183,8 @@ module openwrt-measurement-operations {
         }
 
         leaf destination {
-        // should be a choice between ipv4/6 or string representation
+            description
+                "The destination address or domain name";
             mandatory true;
             type inet:host;
         }
@@ -210,12 +205,13 @@ module openwrt-measurement-operations {
     }
     output {
         container report {
+            description
+                "The result for the ping operation";
             container mtr {
                 leaf source {
                     type string;
                 }
                 leaf destination {
-                // should be a choice between ipv4/6 or string representation
                     type string;
                 }
                 leaf  type-of-service {

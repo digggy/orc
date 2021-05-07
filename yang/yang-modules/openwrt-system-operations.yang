@@ -40,11 +40,11 @@ module openwrt-system-operations {
       "Copy from one file to another";
     
     input {
-      leaf _source {
+      leaf source {
         mandatory true;
         type string;
       }
-      leaf _destination {
+      leaf destination {
         mandatory true;
         type string;
       }
