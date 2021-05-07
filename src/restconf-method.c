@@ -985,24 +985,24 @@ struct json_object *run_command(struct json_object *command_json,
   // Construct the command accordingly
   strcpy(command_with_options,
          json_to_command(command_with_options, command_json));
-//    json_pretty_print(command_json);
-//    printf("COMMAND: %s\n", command_with_options);
+  //    json_pretty_print(command_json);
+  //    printf("COMMAND: %s\n", command_with_options);
   {
-    if ((fp = popen(command_with_options, "r")) == NULL) {
-      fprintf(stderr, "Error opening pipe!\n");
-      restconf_operation_failed_internal("operation failed");
-      exit(1);
-      return NULL;
-    }
-    while (fgets(buf, BUFSIZE, fp) != NULL) {
-      output = concat(output, buf);
-    }
-    if (pclose(fp)) {
-      fprintf(stderr, "Command not found or exited with error status\n");
-      restconf_operation_failed_internal("command not found");
-      exit(1);
-      return NULL;
-    }
+        if ((fp = popen(command_with_options, "r")) == NULL) {
+          fprintf(stderr, "Error opening pipe!\n");
+          restconf_operation_failed_internal("operation failed");
+          exit(1);
+          return NULL;
+        }
+        while (fgets(buf, BUFSIZE, fp) != NULL) {
+          output = concat(output, buf);
+        }
+        if (pclose(fp)) {
+          fprintf(stderr, "Command not found or exited with error status\n");
+          restconf_operation_failed_internal("command not found");
+          exit(1);
+          return NULL;
+        }
     struct json_object *output2yang = NULL;
     output2yang = get_json_output2yang(top_level_name);
     if (output2yang) {
