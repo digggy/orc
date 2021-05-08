@@ -9,7 +9,7 @@
     <prefix value="oe"/>
   </import>
   <contact>
-    <text>username &lt;username@jacobs-university.de&gt;</text>
+    <text>Digdarshan Kunwar &lt;d.kunwar@jacobs-university.de&gt;</text>
   </contact>
   <revision date="2021-03-20">
     <description>
@@ -24,14 +24,9 @@
       <text>Percentage</text>
     </description>
   </typedef>
-  <typedef name="openwrt-bool">
-    <type name="string">
-      <pattern value="(0|1)"/>
-    </type>
-  </typedef>
   <grouping name="openwrt-operations-output">
     <description>
-      <text>Used to return output from RPCs</text>
+      <text>Used to return default output from RPCs</text>
     </description>
     <leaf name="result">
       <type name="string"/>
@@ -46,11 +41,11 @@
       <text>Copy from one file to another</text>
     </description>
     <input>
-      <leaf name="_source">
+      <leaf name="source">
         <mandatory value="true"/>
         <type name="string"/>
       </leaf>
-      <leaf name="_destination">
+      <leaf name="destination">
         <mandatory value="true"/>
         <type name="string"/>
       </leaf>
@@ -77,16 +72,22 @@
   <rpc name="reboot">
     <oe:command-name name="reboot"/>
     <description>
-      <text>Delete a file</text>
+      <text>Reboot the system</text>
     </description>
     <input>
       <leaf name="delay">
+        <description>
+          <text>delay interval in seconds</text>
+        </description>
         <oe:command-option name="d"/>
         <type name="int32"/>
       </leaf>
       <leaf name="force">
+        <description>
+          <text>force (don't go through init)</text>
+        </description>
         <oe:command-option name="f"/>
-        <type name="openwrt-bool"/>
+        <type name="boolean"/>
       </leaf>
     </input>
     <output>
@@ -95,17 +96,29 @@
   </rpc>
   <rpc name="opkg">
     <oe:command-name name="opkg"/>
+    <description>
+      <text>Package mamagement using opkg</text>
+    </description>
     <input>
       <choice name="usage-type">
         <leaf name="upgrade">
+          <description>
+            <text>upgrade a package</text>
+          </description>
           <oe:sub-command name="upgrade"/>
           <type name="string"/>
         </leaf>
         <leaf name="install">
+          <description>
+            <text>install a package</text>
+          </description>
           <oe:sub-command name="install"/>
           <type name="string"/>
         </leaf>
         <leaf name="remove">
+          <description>
+            <text>remove a package</text>
+          </description>
           <oe:sub-command name="remove"/>
           <type name="string"/>
         </leaf>

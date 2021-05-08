@@ -13,26 +13,13 @@
     <prefix value="oe"/>
   </import>
   <contact>
-    <text>username &lt;username@jacobs-university.de&gt;</text>
+    <text>Digdarshan Kunwar&lt;d.kunwar@jacobs-university.de&gt;</text>
   </contact>
   <revision date="2021-03-20">
     <description>
       <text>Inital set of operations</text>
     </description>
   </revision>
-  <typedef name="percent">
-    <type name="uint8">
-      <range value="0 .. 100"/>
-    </type>
-    <description>
-      <text>Percentage</text>
-    </description>
-  </typedef>
-  <typedef name="openwrt-bool">
-    <type name="string">
-      <pattern value="(0|1)"/>
-    </type>
-  </typedef>
   <grouping name="ping-time">
     <description>
       <text>Wrapper for time with units</text>
@@ -79,7 +66,7 @@
         <leaf name="shared">
           <type name="uint64"/>
         </leaf>
-        <leaf name="buff_cache">
+        <leaf name="buff-cache">
           <type name="uint64"/>
         </leaf>
         <leaf name="available">
@@ -89,7 +76,7 @@
     </output>
   </rpc>
   <rpc name="ping">
-    <oe:script name="ping_to_json.sh"/>
+    <oe:script name="ping"/>
     <oe:command-name name="ping"/>
     <description>
       <text>send ICMP ECHO_REQUEST to network hosts</text>
@@ -112,6 +99,9 @@
         <default value="4"/>
       </leaf>
       <leaf name="destination">
+        <description>
+          <text>The ping destination address or domain name</text>
+        </description>
         <mandatory value="true"/>
         <type name="inet:host"/>
       </leaf>
@@ -125,18 +115,21 @@
     </input>
     <output>
       <container name="result">
-        <container name="rtt_summary">
-          <leaf name="packets_transmitted">
+        <description>
+          <text>The result for the ping operation</text>
+        </description>
+        <container name="rtt-summary">
+          <leaf name="packets-transmitted">
             <type name="int32"/>
           </leaf>
-          <leaf name="packets_received">
+          <leaf name="packets-received">
             <type name="int32"/>
           </leaf>
-          <leaf name="packet_loss_percentage">
+          <leaf name="packet-loss-percentage">
             <type name="int32"/>
           </leaf>
         </container>
-        <container name="rtt_statistics">
+        <container name="rtt-statistics">
           <container name="min">
             <uses name="ping-time"/>
           </container>
@@ -147,7 +140,7 @@
             <uses name="ping-time"/>
           </container>
         </container>
-        <list name="icmp_sequences">
+        <list name="icmp-sequences">
           <key value="seq"/>
           <leaf name="bytes">
             <type name="uint8"/>
@@ -155,7 +148,7 @@
           <leaf name="target">
             <type name="string"/>
           </leaf>
-          <leaf name="target_ip">
+          <leaf name="target-ip">
             <type name="string"/>
           </leaf>
           <leaf name="seq">
@@ -175,6 +168,9 @@
     <oe:command-name name="mtr"/>
     <input>
       <leaf name="report">
+        <description>
+          <text>Enable the report format</text>
+        </description>
         <type name="string">
           <pattern value="(true)"/>
         </type>
@@ -182,6 +178,9 @@
         <default value="true"/>
       </leaf>
       <leaf name="json">
+        <description>
+          <text>Enable the output format in JSON</text>
+        </description>
         <type name="string">
           <pattern value="(true)"/>
         </type>
@@ -189,6 +188,9 @@
         <default value="true"/>
       </leaf>
       <leaf name="destination">
+        <description>
+          <text>The destination address or domain name</text>
+        </description>
         <mandatory value="true"/>
         <type name="inet:host"/>
       </leaf>
@@ -211,6 +213,9 @@
     </input>
     <output>
       <container name="report">
+        <description>
+          <text>The result for the ping operation</text>
+        </description>
         <container name="mtr">
           <leaf name="source">
             <type name="string"/>

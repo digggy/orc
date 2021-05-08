@@ -68,7 +68,7 @@ module openwrt-measurement-operations {
   }
 
   rpc ping {
-    oe:script "ping_to_json.sh";
+    oe:script "ping";
     oe:command-name "ping";
     description
         "send ICMP ECHO_REQUEST to network hosts";

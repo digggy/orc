@@ -73,6 +73,15 @@ char *add_to_command(char *command, char *string) {
   return command;
 }
 
+char *add_to_command_infront(char *str1, char *str2) {
+  char *p = malloc(strlen(str1) + strlen(str2) +
+                   1);  // Allocate memory for the new string
+  strcpy(p, str2);      // Copy str2 to the new string
+  strcat(p, " ");
+  strcat(p, str1);
+  return p;
+}
+
 char *json_to_command(char *command_with_options,
                       struct json_object *command_json) {
   // check if the operation has a script
@@ -113,12 +122,16 @@ char *json_to_command(char *command_with_options,
 
   // If there is script then the script is doing the parsing of the json
   if (script) {
-    char *restconf_tmp = "> /tmp/restconf_tmp &&";
-    // Format ping -4 -c 5 google.com > /tmp/restconf_tmp &&
-    // /root/.restconf/ping_to_json_test.sh
-    add_to_command(command_with_options, restconf_tmp);
-    add_to_command(command_with_options, script_path);
-    command_with_options = concat(command_with_options, script);
+    if (script) {
+      char *script_command = "";
+      // Format ping -4 -c 5 google.com > /tmp/restconf_tmp &&
+      // /root/.restconf/ping_to_json_test.sh
+
+      script_command = concat(script_command, script_path);
+      script_command = concat(script_command, script);
+      command_with_options =
+          add_to_command_infront(command_with_options, script_command);
+    }
   }
   return command_with_options;
 }
