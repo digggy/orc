@@ -27,4 +27,7 @@
   <extension name="script">
     <argument name="name"/>
   </extension>
+  <extension name="command">
+    <argument name="name"/>
+  </extension>
 </module>

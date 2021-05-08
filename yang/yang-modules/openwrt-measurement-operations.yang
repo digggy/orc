@@ -38,8 +38,7 @@ module openwrt-measurement-operations {
   }
 
   rpc free {
-    oe:script "free_to_json.sh";
-    oe:command-name "free";
+    oe:script "free";
     output{
         list result {
             leaf type {
@@ -69,21 +68,18 @@ module openwrt-measurement-operations {
 
   rpc ping {
     oe:script "ping";
-    oe:command-name "ping";
     description
         "send ICMP ECHO_REQUEST to network hosts";
     input {
         leaf interval {
             description
                 "Wait interval seconds between sending each packet";
-            oe:command-option "i";
             type int32;
             default 1;
         }
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
-                oe:command-option "c";
             type int32;
             default 4;
         }
@@ -92,13 +88,6 @@ module openwrt-measurement-operations {
                 "The ping destination address or domain name";        
             mandatory true;
             type inet:host;
-        }
-        leaf ipv4 {
-            type string {
-                pattern "(true)";
-           }
-           oe:command-flag "4";
-           default "true";
         }
     }
     output {
@@ -160,28 +149,8 @@ module openwrt-measurement-operations {
   }
 
   rpc mtr {
-    oe:command-name "mtr";
+    oe:command "mtr -r -j -i {interval} -c {count} {destination}";
     input {
-        leaf report {
-            description
-                "Enable the report format";
-            type string {
-                pattern "(true)";
-           }
-           oe:command-flag "r";
-           default "true";
-        }
-
-        leaf json {
-            description
-                "Enable the output format in JSON";
-            type string {
-                pattern "(true)";
-           }
-        oe:command-flag "j";
-        default "true";
-        }
-
         leaf destination {
             description
                 "The destination address or domain name";
@@ -192,14 +161,12 @@ module openwrt-measurement-operations {
             description
                 "Wait interval seconds between sending each packet";
             type int32;
-            oe:command-option "i";
             default 1;
         }
         leaf count {
             description
                 "Stop after sending count ECHO_REQUEST packets.";
             type int32;
-            oe:command-option "c";
             default 4;
         }
     }

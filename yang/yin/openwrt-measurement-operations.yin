@@ -47,8 +47,7 @@
     </leaf>
   </grouping>
   <rpc name="free">
-    <oe:script name="free_to_json.sh"/>
-    <oe:command-name name="free"/>
+    <oe:script name="free"/>
     <output>
       <list name="result">
         <leaf name="type">
@@ -77,7 +76,6 @@
   </rpc>
   <rpc name="ping">
     <oe:script name="ping"/>
-    <oe:command-name name="ping"/>
     <description>
       <text>send ICMP ECHO_REQUEST to network hosts</text>
     </description>
@@ -86,7 +84,6 @@
         <description>
           <text>Wait interval seconds between sending each packet</text>
         </description>
-        <oe:command-option name="i"/>
         <type name="int32"/>
         <default value="1"/>
       </leaf>
@@ -94,7 +91,6 @@
         <description>
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
-        <oe:command-option name="c"/>
         <type name="int32"/>
         <default value="4"/>
       </leaf>
@@ -104,13 +100,6 @@
         </description>
         <mandatory value="true"/>
         <type name="inet:host"/>
-      </leaf>
-      <leaf name="ipv4">
-        <type name="string">
-          <pattern value="(true)"/>
-        </type>
-        <oe:command-flag name="4"/>
-        <default value="true"/>
       </leaf>
     </input>
     <output>
@@ -165,28 +154,8 @@
     </output>
   </rpc>
   <rpc name="mtr">
-    <oe:command-name name="mtr"/>
+    <oe:command name="mtr -r -j -i {interval} -c {count} {destination}"/>
     <input>
-      <leaf name="report">
-        <description>
-          <text>Enable the report format</text>
-        </description>
-        <type name="string">
-          <pattern value="(true)"/>
-        </type>
-        <oe:command-flag name="r"/>
-        <default value="true"/>
-      </leaf>
-      <leaf name="json">
-        <description>
-          <text>Enable the output format in JSON</text>
-        </description>
-        <type name="string">
-          <pattern value="(true)"/>
-        </type>
-        <oe:command-flag name="j"/>
-        <default value="true"/>
-      </leaf>
       <leaf name="destination">
         <description>
           <text>The destination address or domain name</text>
@@ -199,7 +168,6 @@
           <text>Wait interval seconds between sending each packet</text>
         </description>
         <type name="int32"/>
-        <oe:command-option name="i"/>
         <default value="1"/>
       </leaf>
       <leaf name="count">
@@ -207,7 +175,6 @@
           <text>Stop after sending count ECHO_REQUEST packets.</text>
         </description>
         <type name="int32"/>
-        <oe:command-option name="c"/>
         <default value="4"/>
       </leaf>
     </input>

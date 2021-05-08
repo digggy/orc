@@ -8,11 +8,7 @@
 
 static char* command_args = "{\n"
     "  \"script\": null,\n"
-    "  \"command-name\": null,\n"
-    "  \"sub-command\": {},\n"
-    "  \"command-flag\": [],\n"
-    "  \"command-option\": {},\n"
-    "  \"arguments\": []\n"
+    "  \"command\": null,\n"
     "}";
 
 struct command_arguments {
@@ -29,7 +25,7 @@ error yang_verify_container(struct json_object* content_container, struct json_o
 
 error yang_verify_output(struct json_object* object,
                          struct json_object* yang);
-struct command_arguments* yang_verify_input(struct json_object* object,
+error yang_verify_input(struct json_object* object,
                                             struct json_object* yang);
 
 

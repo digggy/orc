@@ -456,24 +456,17 @@ error yang_verify_container(struct json_object* content_container,
   return error;
 };
 
-struct command_arguments* yang_verify_input(struct json_object* content_object,
+error yang_verify_input(struct json_object* content_object,
                                             struct json_object* input_child) {
   int mandatory_exist = 1;
-  error err;
+  error err = RE_OK;
   // struct that we return to the program
-  command_arguments* cmd = malloc(sizeof(command_arguments));
-  if (!cmd) {
-    fprintf(stderr, "Memory allocation failed");
-    return NULL;
-  }
-  cmd->command_args_json = json_tokener_parse(command_args);
-  cmd->error = RE_OK;
 
   struct json_object* yang = json_get_objects_from_map(input_child);
   struct json_object* yang_choice_objs = NULL;
   if (!yang) {
-    cmd->error = RE_OK;
-    return cmd;
+    err = RE_OK;
+    return err;
   }
   {
     // Check if the stdin has the mandatory items
@@ -492,8 +485,8 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
         exists = json_object_object_get_ex(content_object, mandatory_key,
                                            &jo_mandatory_node);
         if (!exists) {
-          cmd->error = MANDATORY_NOT_PRESENT;
-          return cmd;
+          err = MANDATORY_NOT_PRESENT;
+          return err;
         }
       }
     }
@@ -539,7 +532,7 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
           }
           if (num_existing_nodes > 1) {
             // only one choice should be fulfilled
-            cmd->error = MULTIPLE_CHOICE;
+              err = MULTIPLE_CHOICE;
           }
         }
       }
@@ -549,7 +542,7 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
   // If nothing is mandatory and content obj is empty then we return without any
   // checks
   if (content_object == NULL) {
-    return cmd;
+    return err;
   }
   json_object_object_foreach(content_object, key, content_json_value) {
     int exists;
@@ -565,57 +558,15 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       yang_node_type = json_get_string(yang_node, YANG_TYPE);
       if (yang_is_leaf(yang_node_type)) {
         // leaf doesnt have any child so do a validation check
-        struct json_object* command_arguments;
         if ((err = yang_verify_leaf(content_json_value, yang_node)) != RE_OK) {
-          cmd->error = err;
-          return cmd;
-        }
-        if (json_object_object_get_ex(yang_node, YANG_OPERATION_OPTION,
-                                      &command_arguments)) {
-          struct json_object* option_root = NULL;
-          json_object_object_get_ex(cmd->command_args_json,
-                                    YANG_OPERATION_OPTION, &option_root);
-          if (option_root) {
-            json_object_object_add(option_root,
-                                   json_object_get_string(command_arguments),
-                                   content_json_value);
-          }
-
-        } else if (json_object_object_get_ex(yang_node, YANG_OPERATION_FLAG,
-                                             &command_arguments)) {
-          struct json_object* flag_root = NULL;
-          json_object_object_get_ex(cmd->command_args_json, YANG_OPERATION_FLAG,
-                                    &flag_root);
-          if (flag_root) {
-            json_object_array_add(flag_root, command_arguments);
-          }
-
-        } else if (json_object_object_get_ex(yang_node,
-                                             YANG_OPERATION_SUBCOMMAND,
-                                             &command_arguments)) {
-          struct json_object* sub_command = NULL;
-          json_object_object_get_ex(cmd->command_args_json,
-                                    YANG_OPERATION_SUBCOMMAND, &sub_command);
-          if (sub_command) {
-            json_object_object_add(sub_command,
-                                   json_object_get_string(command_arguments),
-                                   content_json_value);
-          }
-
-        } else {
-          // not annotated so add to last
-          struct json_object* last_arg = NULL;
-          json_object_object_get_ex(cmd->command_args_json, YANG_OPERATION_ARGS,
-                                    &last_arg);
-          json_object_array_add(last_arg, content_json_value);
+          return err;
         }
 
       } else if (yang_is_leaf_list(yang_node_type)) {
         // leaf-list doesnt have any child so do a validation check
         if ((err = yang_verify_leaf_list(content_json_value, yang_node)) !=
             RE_OK) {
-          cmd->error = err;
-          return cmd;
+          return err;
         }
       } else if (yang_is_container(yang_node_type)) {
         // container has children so further validation check
@@ -626,12 +577,11 @@ struct command_arguments* yang_verify_input(struct json_object* content_object,
       }
     } else {
       // doesnt key doesnt exists
-      cmd->error = NO_SUCH_ELEMENT;
-      return cmd;
+      return NO_SUCH_ELEMENT;
     }
   }
   //  options = command_argumentss;
-  return cmd;
+  return err;
 }
 
 error yang_verify_output(struct json_object* content_object,

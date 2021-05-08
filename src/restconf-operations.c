@@ -3,6 +3,7 @@
 //
 #include "restconf-operations.h"
 #include <stdio.h>
+#include <string.h>
 #include "restconf-json.h"
 #include "util.h"
 
@@ -88,37 +89,6 @@ char *json_to_command(char *command_with_options,
   char *script = json_get_string(command_json, YANG_OPERATION_SCRIPT);
   strcpy(command_with_options,
          json_get_string(command_json, YANG_OPERATION_COMMAND));
-  // handle the subcommand
-  struct json_object *subcommand =
-      json_object_object_get(command_json, YANG_OPERATION_SUBCOMMAND);
-  json_object_object_foreach(subcommand, key, value) {
-    add_to_command(command_with_options,
-                   add_to_command(key, (char *)json_object_get_string(value)));
-  }
-  // handle the flags
-  struct json_object *flags = json_get_array(command_json, YANG_OPERATION_FLAG);
-  for (int i = 0; i < json_object_array_length(flags); i++) {
-    char *flag = "-";
-    add_to_command(command_with_options,
-                   concat(flag, json_object_get_string(
-                                    json_object_array_get_idx(flags, i))));
-  }
-  // handle the options
-  struct json_object *options =
-      json_object_object_get(command_json, YANG_OPERATION_OPTION);
-  json_object_object_foreach(options, flag, flag_value) {
-    char *flag_with_value = "-";
-    add_to_command(command_with_options, concat(flag_with_value, flag));
-    add_to_command(command_with_options,
-                   (char *)json_object_get_string(flag_value));
-  }
-  // handle other arguments
-  struct json_object *args = json_get_array(command_json, YANG_OPERATION_ARGS);
-  for (int i = 0; i < json_object_array_length(args); i++) {
-    add_to_command(
-        command_with_options,
-        (char *)json_object_get_string(json_object_array_get_idx(args, i)));
-  }
 
   // If there is script then the script is doing the parsing of the json
   if (script) {
@@ -134,4 +104,86 @@ char *json_to_command(char *command_with_options,
     }
   }
   return command_with_options;
+}
+
+char *replace_substring(const char *s, const char *oldW, const char *newW) {
+  char *result;
+  int i, cnt = 0;
+  int newWlen = strlen(newW);
+  int oldWlen = strlen(oldW);
+
+  for (i = 0; s[i] != '\0'; i++) {
+    if (strstr(&s[i], oldW) == &s[i]) {
+      cnt++;
+
+      // Jumping to index after the old word.
+      i += oldWlen - 1;
+    }
+  }
+
+  // Making new string of enough length
+  result = (char *)malloc(i + cnt * (newWlen - oldWlen) + 1);
+
+  i = 0;
+  while (*s) {
+    // compare the substring with the result
+    if (strstr(s, oldW) == s) {
+      strcpy(&result[i], newW);
+      i += newWlen;
+      s += oldWlen;
+    } else
+      result[i++] = *s++;
+  }
+
+  result[i] = '\0';
+  return result;
+}
+
+char* generate_command(struct json_object *command_json,
+                     struct json_object *content) {
+  char *script = json_get_string(command_json, YANG_OPERATION_SCRIPT);
+  char *command = json_get_string(command_json, YANG_OPERATION_COMMAND);
+
+  char *s = NULL;
+  if (script) {
+    s = script;
+  } else if (command) {
+    s = command;
+  }
+
+  const char *PATTERN1 = "{";
+  const char *PATTERN2 = "}";
+  char *target = NULL;
+  char *target_with_brackets = NULL;
+  char *start, *end;
+
+  while (start = strstr(s, PATTERN1)) {
+    if (start = strstr(s, PATTERN1)) {
+      if (end = strstr(start, PATTERN2) + strlen(PATTERN2)) {
+        target_with_brackets = (char *)malloc(end - start + 1);
+
+        target = (char *)malloc(end - start + 1 - strlen(PATTERN1) -
+                                strlen(PATTERN2));
+
+        memcpy(target, start + strlen(PATTERN1),
+               end - start - strlen(PATTERN1) - strlen(PATTERN2));
+        target[end - start - strlen(PATTERN2)] = '\0';
+
+        memcpy(target_with_brackets, start, end - start);
+        target_with_brackets[end - start] = '\0';
+      }
+    }
+    if (target_with_brackets) {
+      struct json_object* value_json = NULL;
+      json_object_object_get_ex(content, target, &value_json);
+      if(value_json){
+        char *value = json_object_get_string(value_json);
+        if (value) {
+          s = replace_substring(s, target_with_brackets, value);
+        }
+      }
+    }
+    free(target_with_brackets);
+  }
+  return s;
 }

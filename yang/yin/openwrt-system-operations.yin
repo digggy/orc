@@ -60,7 +60,7 @@
       <text>Delete a file</text>
     </description>
     <input>
-      <leaf name="_filename">
+      <leaf name="filename">
         <mandatory value="true"/>
         <type name="string"/>
       </leaf>

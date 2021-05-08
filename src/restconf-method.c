@@ -975,57 +975,53 @@ done:
   return retval;
 }
 
-struct json_object *run_command(struct json_object *command_json,
+struct json_object *run_command(char* command_string,
                                 char *top_level_name) {
   char command_with_options[1024];
   char *output = "";
   char buf[BUFSIZE];
   FILE *fp;
   struct json_object *parsed_json_result;
-  // Construct the command accordingly
-  strcpy(command_with_options,
-         json_to_command(command_with_options, command_json));
-      json_pretty_print(command_json);
-      printf("COMMAND: %s\n", command_with_options);
-//  {
-//        if ((fp = popen(command_with_options, "r")) == NULL) {
-//          fprintf(stderr, "Error opening pipe!\n");
-//          restconf_operation_failed_internal("operation failed");
-//          exit(1);
-//          return NULL;
-//        }
-//        while (fgets(buf, BUFSIZE, fp) != NULL) {
-//          output = concat(output, buf);
-//        }
-//        if (pclose(fp)) {
-//          fprintf(stderr, "Command not found or exited with error status\n");
-//          restconf_operation_failed_internal("command not found");
-//          exit(1);
-//          return NULL;
-//        }
-//    struct json_object *output2yang = NULL;
-//    output2yang = get_json_output2yang(top_level_name);
-//    if (output2yang) {
-//      // pre process the command output for yang validation
-//      // special cases such as mtr
-//      json_object_object_foreach(output2yang, key, value) {
-//        output = strrep(output, key, json_object_get_string(value));
-//      }
-//    }
-//    parsed_json_result = json_tokener_parse(output);
-//    if (!parsed_json_result) {
-//      // this is to maintain the generic cases of output directly from the
-//      // commands to the user and the default output of success
-//      if (strcmp(output, "") == 0) {
-//        output = default_message;
-//      }
-//      parsed_json_result = json_object_new_object();
-//      json_object_object_add(parsed_json_result, "result",
-//                             json_object_new_string(output));
-//    }
-//  }
-//  return parsed_json_result;
-  return NULL;
+  printf("COMMAND: %s\n", command_string);
+  {
+        if ((fp = popen(command_string, "r")) == NULL) {
+          fprintf(stderr, "Error opening pipe!\n");
+          restconf_operation_failed_internal("operation failed");
+          exit(1);
+          return NULL;
+        }
+        while (fgets(buf, BUFSIZE, fp) != NULL) {
+          output = concat(output, buf);
+        }
+        if (pclose(fp)) {
+          fprintf(stderr, "Command not found or exited with error status\n");
+          restconf_operation_failed_internal("command not found");
+          exit(1);
+          return NULL;
+        }
+    struct json_object *output2yang = NULL;
+    output2yang = get_json_output2yang(top_level_name);
+    if (output2yang) {
+      // pre process the command output for yang validation
+      // special cases such as mtr
+      json_object_object_foreach(output2yang, key, value) {
+        output = strrep(output, key, json_object_get_string(value));
+      }
+    }
+    parsed_json_result = json_tokener_parse(output);
+    if (!parsed_json_result) {
+      // this is to maintain the generic cases of output directly from the
+      // commands to the user and the default output of success
+      if (strcmp(output, "") == 0) {
+        output = default_message;
+      }
+      parsed_json_result = json_object_new_object();
+      json_object_object_add(parsed_json_result, "result",
+                             json_object_new_string(output));
+    }
+  }
+  return parsed_json_result;
+//  return NULL;
 }
 
 int invoke_operation(struct CgiContext *cgi, char **pathvec) {
@@ -1088,22 +1084,14 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
   struct json_object *command = NULL;
   json_object_object_get_ex(top_level, YANG_OPERATION_COMMAND, &command);
   if (!command) {
-    // if there is no oo:command-name in the yang we assume that the the
-    // toplevel name is the command
+    // needs to have a command annotation
     command = json_object_new_string(top_level_name);
   }
   // check if it has input
   struct json_object *yang_input_child =
       json_get_object_from_map(top_level, YANG_INPUT);
 
-  command_arguments *input_command = malloc(sizeof(command_arguments));
-  if (!input_command) {
-    fprintf(stderr, "Memory allocation failed");
-    return 1;
-  }
-  input_command->command_args_json = json_tokener_parse(command_args);
-  input_command->error = RE_OK;
-
+  error input_command =  RE_OK;
   if (!yang_input_child) {
     if (content) {
       // doesnt take any input
@@ -1113,25 +1101,27 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
   } else {
     //  verify the content with the yang module.
     input_command = yang_verify_input(content, yang_input_child);
-    if (input_command->error != RE_OK) {
+    if (input_command!= RE_OK) {
       retval = restconf_malformed();
       goto done;
     };
   }
-  // add command-name to input_command
-  json_object_object_add(input_command->command_args_json,
-                         YANG_OPERATION_COMMAND, command);
 
+  struct json_object *script_and_command = json_tokener_parse(command_args);
+  // add command-name to input_command
+  json_object_object_add(script_and_command,
+                         YANG_OPERATION_COMMAND, command);
   struct json_object *script = NULL;
   json_object_object_get_ex(top_level, YANG_OPERATION_SCRIPT, &script);
   if (script) {
     // if there is script we need to run the script
-    json_object_object_add(input_command->command_args_json,
+    json_object_object_add(script_and_command,
                            YANG_OPERATION_SCRIPT, script);
   }
-
-  struct json_object *parsed_json_result =
-      run_command(input_command->command_args_json, top_level_name);
+  // combine the script with the content
+  char* command_string = generate_command(script_and_command, content);
+    struct json_object *parsed_json_result =
+      run_command(command_string, top_level_name);
 
   // check if it has output
   int output_error;

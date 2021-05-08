@@ -55,7 +55,7 @@ module openwrt-system-operations {
       "Delete a file";
   
     input {
-      leaf _filename {
+      leaf filename {
         mandatory true;
         type string;
       }

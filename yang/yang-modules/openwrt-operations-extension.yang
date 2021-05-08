@@ -22,4 +22,7 @@ module openwrt-operations-extension {
     extension script {
         argument name;
     }
+    extension command {
+        argument name;
+    }
 }
