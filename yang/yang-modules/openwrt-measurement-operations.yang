@@ -67,7 +67,7 @@ module openwrt-measurement-operations {
   }
 
   rpc ping {
-    oe:script "ping";
+    oe:script "ping -i {interval} -c {count} {destination}";
     description
         "send ICMP ECHO_REQUEST to network hosts";
     input {

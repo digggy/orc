@@ -1119,7 +1119,7 @@ int invoke_operation(struct CgiContext *cgi, char **pathvec) {
                            YANG_OPERATION_SCRIPT, script);
   }
   // combine the script with the content
-  char* command_string = generate_command(script_and_command, content);
+  char* command_string = generate_command(script_and_command, content, top_level_name);
     struct json_object *parsed_json_result =
       run_command(command_string, top_level_name);
 

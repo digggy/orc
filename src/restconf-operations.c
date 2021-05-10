@@ -139,14 +139,15 @@ char *replace_substring(const char *s, const char *oldW, const char *newW) {
   return result;
 }
 
-char* generate_command(struct json_object *command_json,
-                     struct json_object *content) {
+char *generate_command(struct json_object *command_json,
+                       struct json_object *content, char *top_level) {
   char *script = json_get_string(command_json, YANG_OPERATION_SCRIPT);
   char *command = json_get_string(command_json, YANG_OPERATION_COMMAND);
 
   char *s = NULL;
   if (script) {
-    s = script;
+    char *operation_script_path = concat(script_path, top_level);
+    s = add_to_command_infront(script, operation_script_path);
   } else if (command) {
     s = command;
   }
@@ -174,9 +175,9 @@ char* generate_command(struct json_object *command_json,
       }
     }
     if (target_with_brackets) {
-      struct json_object* value_json = NULL;
+      struct json_object *value_json = NULL;
       json_object_object_get_ex(content, target, &value_json);
-      if(value_json){
+      if (value_json) {
         char *value = json_object_get_string(value_json);
         if (value) {
           s = replace_substring(s, target_with_brackets, value);

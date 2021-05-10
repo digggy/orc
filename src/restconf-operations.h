@@ -35,6 +35,7 @@ struct json_object *get_all_operations();
 char* add_to_command(char* command, char* string);
 char *json_to_command(char *command_with_options,
                       struct json_object *command_json);
-char* generate_command(struct json_object *command_json, struct json_object *content);
+char* generate_command(struct json_object *command_json,
+                       struct json_object *content, char *top_level);
 
 #endif  // RESTCONF_RESTCONF_OPERATIONS_H

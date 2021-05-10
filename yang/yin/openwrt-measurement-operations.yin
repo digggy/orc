@@ -75,7 +75,7 @@
     </output>
   </rpc>
   <rpc name="ping">
-    <oe:script name="ping"/>
+    <oe:script name="ping -i {interval} -c {count} {destination}"/>
     <description>
       <text>send ICMP ECHO_REQUEST to network hosts</text>
     </description>
