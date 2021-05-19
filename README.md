@@ -12,7 +12,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/digggy/orc">
-    <img src="./docs/resources/openwrt-logo.png" alt="Logo" height="80">
+    <img src="./docs/resources/openwrt-logo.png" alt="Logo" height="100">
   </a>
 
   <h3 align="center">OpenWrt RESTCONF</h3>
