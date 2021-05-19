@@ -1,28 +1,31 @@
-module openwrt-operations-extension {
-    namespace "urn:jacobs:yang:openwrt-operations-extension";
-    prefix "ooe";
-
-    contact "Digdarshan Kunwar <d.kunwar@jacobs-university.de>";
-    revision 2021-05-14 {
-      description "initial revision";
-    }
-
-    extension command-flag {
+    module openwrt-operations-extension {
+      namespace "urn:jacobs:yang:openwrt-operations-extension";
+      prefix ooe;
+    
+      contact
+        "Digdarshan Kunwar <d.kunwar@jacobs-university.de>";
+    
+      revision 2021-05-14 {
+        description
+          "initial revision";
+      }
+    
+      extension script {
+        description
+        "Represents the name of the shell or Lua script along with 
+        the input arguments.It supports  string formatting allowing 
+        for safe substitution of the parameters being passed to the 
+        script. These scripts perform the operations required by the 
+        RPC or action and return any necessary JSON output elements 
+        as defined in the YANG output statement";
         argument name;
-    }
-    extension command-option {
+      }
+    
+      extension command {
+        description
+          "It used to set the command string that is executed by the 
+          shell. It supports format string allowing safe substitution 
+          of parameters coming from the operation inputs";
         argument name;
+      }
     }
-    extension command-name {
-            argument name;
-    }
-    extension sub-command {
-            argument name;
-    }
-    extension script {
-        argument name;
-    }
-    extension command {
-        argument name;
-    }
-}
